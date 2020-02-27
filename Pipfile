@@ -11,6 +11,7 @@ pylint = "*"
 pylint-django = "*"
 psycopg2-binary = "*"
 djangorestframework = "*"
+django-filter = "*"
 
 [requires]
 python_version = "3.7"
