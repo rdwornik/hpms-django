@@ -1,3 +1,4 @@
+import json
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory
 from main import models
@@ -144,15 +145,26 @@ data = [
       "value":1582469035
    }
 ]
-
+data2 = {"time":"2020-03-01 10:36:00",
+         "server":"127.0.0.1:36969",
+         "headers":[      {
+            "name":"REDIRECT_REQUEST_METHOD",
+            "value":"GET"
+      },
+         {
+            "name":"REDIRECT_STATUS",
+            "value":"403"
+      }]
+}
 class HttpTest(APITestCase):
     def setUp(self):
         self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'admin123')
 
     def test_create_object(self):
         self.client.force_authenticate(self.user)
-        response = self.client.post('/api/logslog/',data=data,format='json')
+        response = self.client.post('/api/logslog/',data=data2,format='json')
+        print(response.content)
         self.assertEqual(response.status_code, 201)
-        response = self.client.post('/api/logslog/',data=data,format='json')
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(models.LogsLog.objects.all().count(),66)
+      #   response = self.client.post('/api/logslog/',data=data2,format='json')
+      #   self.assertEqual(response.status_code, 201)
+      #  self.assertEqual(models.LogsLog.objects.all().count(),66)

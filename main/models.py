@@ -16,9 +16,10 @@ class HeaderValue(models.Model):
 
 class LogsLog(models.Model):
     transaction = models.BigIntegerField(default=1)
+    time = models.DateTimeField()
     name = models.ForeignKey(HeaderName,on_delete=models.CASCADE)
     value = models.ForeignKey(HeaderValue,on_delete=models.CASCADE)
-
+    server = models.TextField()
     class Meta:
         verbose_name = 'Logs Log'
         verbose_name_plural = 'Logs Log'
