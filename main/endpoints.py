@@ -56,8 +56,6 @@ class NameSerializer(serializers.RelatedField):
     class Meta:
         model = HeaderName
 
-
-
 class LogsLogSerializer(serializers.ModelSerializer):
     name = NameSerializer(read_only=True)
     value = ValueSerializer(read_only=True)
@@ -73,13 +71,6 @@ class LogsLogSerializer(serializers.ModelSerializer):
 class LogsLogViewSet(viewsets.ModelViewSet):
     queryset = LogsLog.objects.all()
     serializer_class = HoneypotRequestSerializer
-
-    # def get_serializer(self, *args, **kwargs):
-    #     """ if an array is passed, set serializer to many """
-    #     if isinstance(kwargs.get('data', {}), list):
-    #         kwargs['many'] = True
-    #     return super(LogsLogViewSet, self).get_serializer(*args, **kwargs)
-
 
     def list(self, request, *args, **kwargs):
         serializer = LogsLogSerializer(self.get_queryset().order_by('transaction').reverse(),many=True)
