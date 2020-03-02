@@ -25,4 +25,4 @@ class LogsLog(models.Model):
         verbose_name_plural = 'Logs Log'
         get_latest_by = 'transaction'
     def __str__(self):
-        return "{0} {1} {2}".format(self.transaction,self.name, self.value)
+        return "{0} {1} {2} {3} {4}".format(self.transaction,self.name, self.value,self.time,self.server)
