@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_tables2',
     'main.apps.MainConfig',
 ]
 
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'main.middlewares.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'hpmsDjango.urls'
@@ -134,3 +136,13 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+LOGIN_REDIRECT_URL = '/visitors/'
+LOGIN_URL = '/login/'
+
+LOGIN_EXEMPT_URLS = (
+    r'^logout/$',
+)
+
+DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap.html'

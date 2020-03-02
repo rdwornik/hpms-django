@@ -66,6 +66,8 @@ class LogsLogSerializer(serializers.ModelSerializer):
             'name',
             'value',
             'transaction',
+            'time',
+            'server'
         ]
 
 class LogsLogViewSet(viewsets.ModelViewSet):

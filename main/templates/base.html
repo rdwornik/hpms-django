@@ -1,0 +1,79 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-­fit=no">
+<!-- Bootstrap CSS -->
+    <link  rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <title>HPMS</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-­light">
+        <a class="navbar-brand" href="/">HPMS</a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse"
+          id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li
+              {% url 'visitors' as visitor %}
+              class="nav-item {% if request.path == visitor %} active {% endif %}">
+                <a class="nav-link" href="{{ visitor }}">Visitors</a>
+            </li>
+            <li
+              {% url 'transactions' as transactions %}
+              class="nav-item {% if request.path == transactions %} active {% endif %}">
+                <a class="nav-link" href="{{ transactions }}">Transactions</a>
+            </li>
+            <li
+              {% url 'activity' as activity %}
+              class="nav-item {% if request.path == activity %} active {% endif %}">
+                <a class="nav-link" href="{{ activity }}" >Activity</a>
+            </li>
+            <li
+              {% url 'search' as search %}
+              class="nav-item {% if request.path == search %} active {% endif %}">
+                <a class="nav-link" href="{{ search }}" >Search</a>
+            </li>
+            <li
+              {% url 'all_notes' as all_notes %}
+              class="nav-item {% if request.path == all_notes %} active {% endif %}">
+                <a class="nav-link" href="{{ all_notes }}" >All notes</a>
+            </li>
+            <li
+              {% url 'tags' as tags %}
+              class="nav-item {% if request.path == tags %} active {% endif %}">
+                <a class="nav-link" href="{{ tags }}" >Tags</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ml-auto">
+              {% if user.is_authenticated %}
+                <li 
+                {% url 'logout' as logout %}
+                class="nav-item">
+                    <a class="nav-link" href="{{ logout }}" >Logut</a>
+                </li>
+              {% endif %}
+        </ul>
+        </div>
+      </nav>
+
+    <div style="position: relative; margin-left: 15px;">
+    {% block content %}
+    {% endblock content %}
+    </div>
+    <script src="{% static "js/jquery.min.js" %}"></script>
+    <script src="{% static "js/popper.min.js" %}"></script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
+  </body>
+</html>
