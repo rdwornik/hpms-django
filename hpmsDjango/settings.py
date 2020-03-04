@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_tables2',
+    'django_extensions',
     'main.apps.MainConfig',
 ]
 
@@ -111,13 +112,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Warsaw'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':
@@ -134,6 +135,7 @@ REST_FRAMEWORK = {
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 STATIC_URL = '/static/'
 
@@ -146,3 +148,9 @@ LOGIN_EXEMPT_URLS = (
 )
 
 DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap.html'
+
+import warnings
+warnings.filterwarnings(u'ignore',
+        message=u'DateTimeField LogsLog.time received a naive datetime',
+        category=RuntimeWarning,
+        )

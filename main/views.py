@@ -1,33 +1,32 @@
-import logging
-from django.shortcuts import render
-from datetime import datetime, timedelta
-from django import forms as django_forms
-from django.db import models as django_models
-import django_filters
+from django.views.generic.base import TemplateView
 from django_filters.views import FilterView
+from django_tables2.views import (
+    SingleTableMixin,
+    MultiTableMixin
+)
 
-from main import models
+from main import models, tables, filters
 # Create your views here.
 
-logger = logging.getLogger(__name__)
+class FilteredTransactionsListView(SingleTableMixin, FilterView):
+    table_class = tables.TransactionsTable
+    filterset_class = filters.TransactionsFilter
+    model = models.LogsLog
+    queryset = models.LogsLog.objects.distinct('transaction')
+    # table_data =  models.LogsLog.objects.distinct('transaction')
 
-class DateInput(django_forms.DateInput):
-    input_type = 'date'
-class LogsLogFilter(django_filters.FilterSet):
+class VisitorsTablesView(MultiTableMixin, TemplateView):
+    template_name = "visitors.html"
+    qs = models.LogsLog.objects.all()
 
-    time = django_filters.NumberFilter(method='since_added')
+    tables = [
+        tables.VisitorTable(qs,),
+        tables.NetworkTable(qs)
+    ]
 
-    def since_added(self, queryset, name, value):
-        print(name)
-        print(value)
-        time_threshold = datetime.now() - timedelta(hours=22)
-        print(time_threshold)
-        return queryset.filter(time__gt=time_threshold)
-
-    class Meta:
-        model = models.LogsLog
-        fields = ['time']
-
+    # table_pagination = {
+    #     "per_page": 10
+    # }
 
 
 

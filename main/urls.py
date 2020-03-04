@@ -13,16 +13,16 @@ router.register(r'logslog', LogsLogViewSet)
 urlpatterns = [
         path(
                 '',
-                TemplateView.as_view(template_name="visitors.html"),
+                views.VisitorsTablesView.as_view(),
         ),
         path(
                 'visitors/',
-                TemplateView.as_view(template_name="visitors.html"),
+                views.VisitorsTablesView.as_view(),
                 name="visitors"
         ),
         path(
                 'transactions/',
-                FilterView.as_view(filterset_class=views.LogsLogFilter),
+                views.FilteredTransactionsListView.as_view(template_name = "transactions.html"),
                 name="transactions"
         ),
         path(

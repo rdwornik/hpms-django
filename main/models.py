@@ -1,19 +1,23 @@
 from django.db import models
+from django.db.models import Q
 
 # Create your models here.
 
 class HeaderName(models.Model):
     header_name = models.TextField(unique=True)
     def __str__(self):
-        return "{0} {1}".format(self.id, self.header_name)
+        return "{0}".format(self.header_name)
 
 class HeaderValue(models.Model):
     header_value = models.TextField(unique=True)
     header_names = models.ManyToManyField(HeaderName, through="LogsLog")
 
     def __str__(self):
-        return "{0} {1}".format(self.id ,self.header_value)
+        return "{0}".format(self.header_value)
 
+class LogsLogManager(models.Manager):
+    def get_header_value(self,transaction, name):
+        return self.get(Q(transaction=transaction) & Q(name__header_name=name)).value.header_value
 
 class LogsLog(models.Model):
     transaction = models.BigIntegerField(default=1)
@@ -21,6 +25,7 @@ class LogsLog(models.Model):
     name = models.ForeignKey(HeaderName,on_delete=models.CASCADE)
     value = models.ForeignKey(HeaderValue,on_delete=models.CASCADE)
     server = models.TextField()
+    objects = LogsLogManager()
     class Meta:
         verbose_name = 'Logs Log'
         verbose_name_plural = 'Logs Log'
