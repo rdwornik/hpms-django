@@ -19,6 +19,7 @@ class LogsLogManager(models.Manager):
     def get_header_value(self,transaction, name):
         return self.get(Q(transaction=transaction) & Q(name__header_name=name)).value.header_value
 
+
 class LogsLog(models.Model):
     transaction = models.BigIntegerField(default=1)
     time = models.DateTimeField()
@@ -31,4 +32,4 @@ class LogsLog(models.Model):
         verbose_name_plural = 'Logs Log'
         get_latest_by = 'transaction'
     def __str__(self):
-        return "{0} {1} {2} {3} {4}".format(self.transaction,self.name, self.value,self.time,self.server)
+        return "{0} | {1} | {2} | {3} | {4}".format(self.transaction,self.name, self.value,self.time,self.server)

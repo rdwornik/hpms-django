@@ -13,6 +13,10 @@ class VisitorTable(tables.Table):
     # class Meta:
     #     attrs = {"class": "floatLeft"}
 
+    def render_visitor_ip(self,record):
+        return "{}".format(record['value__header_value'])
+
+
 class NetworkTable(tables.Table):
     network = tables.Column(empty_values=(), verbose_name="Network")
     visits = tables.Column(empty_values=(), verbose_name="Visits")

@@ -145,6 +145,8 @@ LOGIN_URL = '/login/'
 
 LOGIN_EXEMPT_URLS = (
     r'^logout/$',
+    r'^api/logslog/$',
+    r'logslog',
 )
 
 DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap.html'
