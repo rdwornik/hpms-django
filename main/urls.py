@@ -1,6 +1,6 @@
 from rest_framework import routers
 from django.views.generic import TemplateView
-from django.urls import path, include
+from django.urls import path, include, re_path
 from .endpoints import LogsLogViewSet
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import AuthenticationForm
@@ -20,6 +20,12 @@ urlpatterns = [
                 views.VisitorsTablesView.as_view(),
                 name="visitors"
         ),
+        path(
+                'transactions/<int:ip>/',
+                views.FilteredTransactionsListView.as_view(template_name = "transactions.html"),
+                name="transactions2"
+        ),
+
         path(
                 'transactions/',
                 views.FilteredTransactionsListView.as_view(template_name = "transactions.html"),

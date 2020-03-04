@@ -18,6 +18,8 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView):
     queryset = models.LogsLog.objects.distinct('transaction')
     # table_data =  models.LogsLog.objects.distinct('transaction')
 
+
+
 class VisitorsTablesView(MultiTableMixin, TemplateView):
     template_name = "visitors.html"
     qs = models.LogsLog.objects.filter(Q(name__header_name=VISITORS_IP)).values('value__header_value').annotate(visits = Count('value__header_value'))

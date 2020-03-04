@@ -2,19 +2,22 @@ import django_tables2 as tables
 from main import models
 from main import utils
 from django.utils.html import format_html
+from django_tables2.utils import A  # alias for Accessor
 
 REQUEST_METHOD = 'REQUEST_METHOD'
 
 
 
 class VisitorTable(tables.Table):
-    visitor_ip = tables.Column(empty_values=(), verbose_name="Visitors IP")
+    visitor_ip = tables.LinkColumn("transactions2",text="static text",empty_values=(), verbose_name="Visitors IP",args=[36])
+    #visitor_ip = tables.TemplateColumn('<a href="../transactions/?ip={{ record.visits }}">{{ record.value__header_value }}</a>')
+
     visits = tables.Column(empty_values=(), verbose_name="Visits")
     # class Meta:
     #     attrs = {"class": "floatLeft"}
 
-    def render_visitor_ip(self,record):
-        return "{}".format(record['value__header_value'])
+    # def render_visitor_ip(self,record):
+    #     return "{}".format(record['value__header_value'])
 
 
 class NetworkTable(tables.Table):

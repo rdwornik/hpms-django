@@ -4,7 +4,8 @@
   <h2>Order dashboard</h2>
   <form method="get">
     {{ filter.form.as_p }}
-    <input type="submit"/>
+    <input class="btn" type="submit"/>
+    <a class="btn" href="{% url 'transactions' %}">Reset</a>
   </form>
   <p>
     {% render_table table "tables/transactions_table.html"  %}
