@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_tables2',
     'django_extensions',
+    'widget_tweaks',
     'main.apps.MainConfig',
 ]
 

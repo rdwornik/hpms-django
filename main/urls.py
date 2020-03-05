@@ -21,12 +21,6 @@ urlpatterns = [
                 name="visitors"
         ),
         path(
-                'transactions/<int:ip>/',
-                views.FilteredTransactionsListView.as_view(template_name = "transactions.html"),
-                name="transactions2"
-        ),
-
-        path(
                 'transactions/',
                 views.FilteredTransactionsListView.as_view(template_name = "transactions.html"),
                 name="transactions"

@@ -2,12 +2,23 @@
 {% load render_table from django_tables2 %}
 {% block content %}
   <h2>Order dashboard</h2>
-  <form method="get">
-    {{ filter.form.as_p }}
-    <input class="btn" type="submit"/>
-    <a class="btn" href="{% url 'transactions' %}">Reset</a>
-  </form>
-  <p>
+    <form method="get">
+      {% load widget_tweaks %}
+      <div class="form-row">
+        {% for field in filter.form %}
+          {% if field.is_hidden %}
+            {{ field }}
+          {% else %}
+          <div class="form-group col-md-4">
+            {{ field.errors }}
+            {{ field.label_tag }}
+            {{ field|add_class:"form-control" }}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <button class="btn btn-primary" type="submit">Submit</button>
+      <a class="btn btn-primary" href="{% url 'transactions' %}">Reset</a>
+    </form>
     {% render_table table "tables/transactions_table.html"  %}
-  </p>
 {% endblock content %}

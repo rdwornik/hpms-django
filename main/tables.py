@@ -9,14 +9,12 @@ REQUEST_METHOD = 'REQUEST_METHOD'
 
 
 class VisitorTable(tables.Table):
-    visitor_ip = tables.LinkColumn("transactions2",text="static text",empty_values=(), verbose_name="Visitors IP",args=[36])
-    #visitor_ip = tables.TemplateColumn('<a href="../transactions/?ip={{ record.visits }}">{{ record.value__header_value }}</a>')
-
+    visitor_ip = tables.TemplateColumn('<a href="../transactions/?ip={{ record.value_id }}">{{ record.value__header_value }}</a>')
     visits = tables.Column(empty_values=(), verbose_name="Visits")
-    # class Meta:
-    #     attrs = {"class": "floatLeft"}
 
     # def render_visitor_ip(self,record):
+    #     print(record)
+    #     print(self.data.data.all())
     #     return "{}".format(record['value__header_value'])
 
 
@@ -51,19 +49,4 @@ class TransactionsTable(tables.Table):
         header_value = self.objects.get_header_value(value,REQUEST_METHOD)
         tag = utils.methods[header_value]
         return format_html("{} <b><font color={}>{}</font></b>", value, tag[1], tag[0])
-        
-    # def render_request_uri(self, value, record):
-    #     pass
-        # uri = self.objects.get()
-        # print(self.data.data.all())
-        # return "<%s>" % record
-    # def render_row_number(self):
-    #     return "Row %d" % next(self.counter)
-    # def render_request_uri(self):
-    #     return "Row %d" % next(self.counter)
-    # def render_id(self, value, record):
-    #     # print(type(record))
-    #     # print(record.transaction)
-    #     # print(self)
-    #     return "<%s>" % record
 

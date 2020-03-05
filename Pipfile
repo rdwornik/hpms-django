@@ -17,6 +17,7 @@ ipython = "*"
 django-tables2 = "*"
 pytz = "*"
 werkzeug = "*"
+django-widget-tweaks = "*"
 
 [requires]
 python_version = "3.7"
