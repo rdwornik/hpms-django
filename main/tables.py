@@ -2,30 +2,19 @@ import django_tables2 as tables
 from main import models
 from main import utils
 from django.utils.html import format_html
-from django_tables2.utils import A  # alias for Accessor
 
 REQUEST_METHOD = 'REQUEST_METHOD'
-
-
-
 class VisitorTable(tables.Table):
-    visitor_ip = tables.TemplateColumn('<a href="../transactions/?ip={{ record.value_id }}">{{ record.value__header_value }}</a>')
+    visitor_ip = tables.TemplateColumn('<a href="..{% url "transactions" %}?ip={{ record.value_id }}">{{ record.value__header_value }}</a>',verbose_name="Visitors IP")
+    # visitor_ip = tables.Column(
+    #     empty_values=(),
+    #     linkify=lambda record : '..{% url "transactions" %}?ip={}'.format(record['value_id']),
+    #     verbose_name="Visitors IP")
     visits = tables.Column(empty_values=(), verbose_name="Visits")
-
     # def render_visitor_ip(self,record):
     #     print(record)
-    #     print(self.data.data.all())
+    #     # print(self.data.data.all())
     #     return "{}".format(record['value__header_value'])
-
-
-class NetworkTable(tables.Table):
-    network = tables.Column(empty_values=(), verbose_name="Network")
-    visits = tables.Column(empty_values=(), verbose_name="Visits")
-    hosts = tables.Column(empty_values=(), verbose_name="Hosts")
-
-    # class Meta:
-    #     attrs = {"class": "floatRight"}
-
 class TransactionTable(tables.Table):
     class Meta:
         model = models.LogsLog
@@ -44,11 +33,6 @@ class TransactionsTable(tables.Table):
                 "a" : { "class" :  "stretched-link" }
                 })
     time = tables.DateTimeColumn(format="d F Y H:i:s")
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.objects = self.data.model.objects
-        
     class Meta:
         model = models.LogsLog
         exclude = ('name',)
@@ -60,7 +44,7 @@ class TransactionsTable(tables.Table):
         }
 
     def render_transaction(self, value, record):
-        header_value = self.objects.get_header_value(value,REQUEST_METHOD)
+        header_value = self.data.model.objects.get_header_value(value,REQUEST_METHOD)
         tag = utils.methods[header_value]
         return format_html("{}<b><font color={}> {}</font></b>".format(value, tag[1], tag[0]))
     #     return format_html('<th scope="row"><a href="{}" class="stretched-link"><b><font color={}>{}</font></b></a></th>',value,tag[1],tag[0])

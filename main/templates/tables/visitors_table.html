@@ -1,9 +1,8 @@
 {% load django_tables2 %}
 {% load i18n %}
 {% block table-wrapper %}
-<div class="table-responsive col-md-6">
     {% block table %}
-        <table class="table table-striped" style="table-layout: fixed; width:100%"  >
+        <table class="table table-striped">
             {% block table.thead %}
             {% if table.show_header %}
                 <thead {{ table.attrs.thead.as_html }}>
