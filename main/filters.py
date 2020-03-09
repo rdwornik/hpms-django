@@ -23,7 +23,7 @@ class TransactionsFilter(django_filters.FilterSet):
     @property
     def qs(self):
         parent = super().qs
-        return parent.distinct('transaction')
+        return parent.order_by('-transaction').distinct('transaction')
 
     class Meta:
         model = models.LogsLog

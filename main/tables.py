@@ -26,14 +26,25 @@ class NetworkTable(tables.Table):
     # class Meta:
     #     attrs = {"class": "floatRight"}
 
+class TransactionTable(tables.Table):
+    class Meta:
+        model = models.LogsLog
+        exclude = ['server','transaction','id','time']
+        attrs = {
+            "class": "table table-striped"
+        }
 class TransactionsTable(tables.Table):
     # request_uri = tables.Column(verbose_name='REQUEST URI',empty_values=())
     # row_number = tables.Column(empty_values=())
     # id = tables.Column()
     # transaction = tables.Column(attrs={"td": {"style": "font-weight:bold; color:red;"}})
-    transaction = tables.Column()
+    transaction = tables.Column(
+        linkify=lambda value: value,
+        attrs={"td" : { "scope" : "row" },
+                "a" : { "class" :  "stretched-link" }
+                })
     time = tables.DateTimeColumn(format="d F Y H:i:s")
-   
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.objects = self.data.model.objects
@@ -42,11 +53,15 @@ class TransactionsTable(tables.Table):
         model = models.LogsLog
         exclude = ('name',)
         attrs = {
-            "class": "table table-striped"
+            "class": "table  table-hover table-striped"
+        }
+        row_attrs = {
+            "style": "transform: rotate(0);"
         }
 
     def render_transaction(self, value, record):
         header_value = self.objects.get_header_value(value,REQUEST_METHOD)
         tag = utils.methods[header_value]
-        return format_html("{} <b><font color={}>{}</font></b>", value, tag[1], tag[0])
-
+        return format_html("{}<b><font color={}> {}</font></b>".format(value, tag[1], tag[0]))
+    #     return format_html('<th scope="row"><a href="{}" class="stretched-link"><b><font color={}>{}</font></b></a></th>',value,tag[1],tag[0])
+    #     # return value

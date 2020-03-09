@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from django.db.models import Q, Count, Sum
 from django_filters.views import FilterView
@@ -13,6 +14,13 @@ from main import models, tables, filters
 
 VISITORS_IP = 'VISITORS_IP'
 
+def transaction_list(request, transaction=1):
+    table = tables.TransactionTable(models.LogsLog.objects.filter(Q(transaction = transaction)))    
+    return render(request, "transactions_detail.html", {
+        "table":table,
+        "transaction": transaction
+    })
+
 class FilteredTransactionsListView(SingleTableMixin, FilterView):
     table_class = tables.TransactionsTable
     filterset_class = filters.TransactionsFilter
@@ -23,8 +31,6 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView):
         "per_page": 10
     }
     # table_data =  models.LogsLog.objects.distinct('transaction')
-
-
 
 class VisitorsTablesView(MultiTableMixin, TemplateView):
     template_name = "visitors.html"
@@ -42,6 +48,3 @@ class VisitorsTablesView(MultiTableMixin, TemplateView):
     table_pagination = {
         "per_page": 10
     }
-
-
-

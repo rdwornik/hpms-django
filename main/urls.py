@@ -26,6 +26,11 @@ urlpatterns = [
                 name="transactions"
         ),
         path(
+                'transactions/<int:transaction>/',
+                views.transaction_list,
+                name="transactions_detail"
+        ),
+        path(
                 'activity/',
                 TemplateView.as_view(template_name="activity.html"),
                 name="activity"
