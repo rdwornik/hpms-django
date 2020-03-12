@@ -4,6 +4,7 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"/>
   <h2>Transaction dashboard</h2>
     <form method="get">
+      {% csrf_token %}
       {% load widget_tweaks %}
       <div class="form-row">
         {% for field in filter.form %}

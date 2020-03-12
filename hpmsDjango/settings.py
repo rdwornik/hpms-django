@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_extensions',
     'widget_tweaks',
+    'bootstrap_modal_forms',
     'main.apps.MainConfig',
 ]
 
@@ -151,6 +152,8 @@ LOGIN_EXEMPT_URLS = (
 )
 
 DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap.html'
+
+
 
 import warnings
 warnings.filterwarnings(u'ignore',

@@ -35,13 +35,15 @@ class HoneypotRequestSerializer(serializers.ModelSerializer):
                         value = item[1][0],
                         **validated_data
                     )for item in headers ]
-                obj = LogsLog.objects.bulk_create(logs)
+                obj = LogsLog.objects.bulk_create(logs,ignore_conflicts=True)
         except LogsLog.DoesNotExist:
             logs = [LogsLog(name = item[0][0],
                         value = item[1][0],
                         **validated_data
                         )for item in headers ]
-            obj = LogsLog.objects.bulk_create(logs)
+            obj = LogsLog.objects.bulk_create(logs,ignore_conflicts=True)
+        
+        
         return obj[0]
 
 class ValueSerializer(serializers.RelatedField):

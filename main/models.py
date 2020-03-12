@@ -1,25 +1,23 @@
 from django.db import models
 from django.db.models import Q
-
 # Create your models here.
-
 class HeaderName(models.Model):
     header_name = models.TextField(unique=True)
     def __str__(self):
         return "{0}".format(self.header_name)
-
 class HeaderValue(models.Model):
     header_value = models.TextField(unique=True)
     header_names = models.ManyToManyField(HeaderName, through="LogsLog")
 
     def __str__(self):
         return "{0}".format(self.header_value)
-
 class LogsLogManager(models.Manager):
     def get_header_value(self,transaction, name):
-        return self.get(Q(transaction=transaction) & Q(name__header_name=name)).value.header_value
-
-
+        # TODO : error message
+        try:
+            return self.get(Q(transaction=transaction) & Q(name__header_name=name)).value.header_value
+        except LogsLog.MultipleObjectsReturned as e:
+            pass
 class LogsLog(models.Model):
     transaction = models.BigIntegerField(default=1)
     time = models.DateTimeField()
@@ -27,9 +25,33 @@ class LogsLog(models.Model):
     value = models.ForeignKey(HeaderValue,on_delete=models.CASCADE)
     server = models.TextField()
     objects = LogsLogManager()
+
     class Meta:
         verbose_name = 'Logs Log'
         verbose_name_plural = 'Logs Log'
         get_latest_by = 'transaction'
     def __str__(self):
         return "{0} | {1} | {2} | {3} | {4}".format(self.transaction,self.name, self.value,self.time,self.server)
+
+class LogsTag(models.Model):
+    name_cryteria = models.ForeignKey(HeaderName, on_delete=models.CASCADE)
+    value_cryteria = models.TextField()
+    tag = models.TextField()
+    description = models.TextField()
+
+    class Meta:
+        verbose_name = 'Logs Tag'
+        verbose_name_plural = 'Logs Tags'
+
+    def __str__(self):
+        return "{0}".format(self.tag)
+
+class LogsTagAssign(models.Model):
+    transaction = models.IntegerField()
+    tag = models.ForeignKey(LogsLog,on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Logs Tag Assign'
+        verbose_name_plural = 'Logs Tags Assign'
+    def __str__(self):
+        return "{0}".format(self.tag)

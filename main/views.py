@@ -8,8 +8,9 @@ from django_tables2.views import (
 )
 
 from django_tables2.paginators import LazyPaginator
-
-from main import models, tables, filters
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from main import models, tables, filters, forms
 # Create your views here.
 
 VISITORS_IP = 'VISITORS_IP'
@@ -21,6 +22,40 @@ def transaction_list(request, transaction=1):
         "transaction": transaction
     })
 
+def action_tag(request, id=None):
+    if request.method == "GET":
+        if not id:
+            form = forms.TagForm()
+        else:
+            tag = models.LogsTag.objects.get(pk=id)
+            form = forms.TagForm(instance=tag)
+            # form.is_valid()
+            # form.save()
+    if request.method == "POST":
+        if not id:
+            form = forms.TagForm()
+        else:
+            tag = models.LogsTag.objects.get(pk=id)
+            form = forms.TagForm(request.POST, instance=tag)
+            form.save()
+            return HttpResponseRedirect(reverse('tags'))
+    return render(
+        request,
+        "tags_action.html",
+        {
+            'form':form
+        }
+    )
+
+
+def tags_form(request):
+    action = forms.TagsActionSelectForm(initial={'select':'empty'})
+    table = tables.TagsTable(models.LogsTag.objects.all())
+    return render(request, "tags.html",  {
+        'action' : action,
+        'table': table
+    })
+
 class FilteredTransactionsListView(SingleTableMixin, FilterView):
     table_class = tables.TransactionsTable
     filterset_class = filters.TransactionsFilter
@@ -30,8 +65,6 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView):
     table_pagination = {
         "per_page": 10
     }
-    # table_data =  models.LogsLog.objects.distinct('transaction')
-
 class VisitorsTablesView(SingleTableView):
     template_name = "visitors.html"
     table_class = tables.VisitorTable

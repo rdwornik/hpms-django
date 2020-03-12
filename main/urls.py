@@ -46,8 +46,18 @@ urlpatterns = [
                 name="all_notes"
         ),
         path(
+                'action-tag/',
+                views.action_tag,
+                name="action_tag"
+        ),
+        path(
+                'tags/<int:id>/edit/',
+                views.action_tag,
+                name="action_tag"
+        ),
+        path(
                 'tags/',
-                TemplateView.as_view(template_name="tags.html"),
+                views.tags_form,
                 name="tags"
         ),
         path(

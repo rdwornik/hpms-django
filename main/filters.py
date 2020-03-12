@@ -2,16 +2,13 @@ import django_filters
 
 from datetime import datetime, timedelta
 from django.forms.widgets import NumberInput, HiddenInput, TextInput
-# from django.forms import GenericIPAddressField,DateInput
 from django import forms as django_forms
 from main import models
 from django.db.models import Q
 
 class TransactionsFilter(django_filters.FilterSet):
-
     time = django_filters.NumberFilter(method='time_filter',widget=NumberInput(attrs={'placeholder': 'hours'}))
     ip = django_filters.NumberFilter(method='ip_filter',field_name='value',widget=HiddenInput())
-
 
     def time_filter(self, queryset, name, value):
         time_threshold = datetime.now() - timedelta(hours=int(value))
@@ -29,14 +26,4 @@ class TransactionsFilter(django_filters.FilterSet):
         model = models.LogsLog
         fields = ['time','transaction','name']
 
-# class NetworkFilter(django_filters.FilterSet):
-#     mask = django_filters.NumberFilter(field_name='value',method='mask_filter')
-    
-#     def time_filter(self, queryset, name, value):
-#         print(queryset)
-#         return queryset
-
-#     class Meta:
-#         model = models.LogsLog
-#         fields = ['value']
 
