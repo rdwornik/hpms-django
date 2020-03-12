@@ -7,6 +7,16 @@ REQUEST_METHOD = 'REQUEST_METHOD'
 REQUEST_URI = 'REQUEST_URI'
 VISITORS_IP = 'VISITORS_IP'
 
+class TagsCheckboxColumn(tables.CheckBoxColumn):
+    def render(self, value, bound_column, record):
+        default = {"type": "checkbox", "name": bound_column.name, "value": value}
+        if self.is_checked(value, record):
+            default.update({"checked": "checked"})
+        general = self.attrs.get("input")
+        specific = self.attrs.get("td__input")
+        attrs = tables.utils.AttributeDict(default, **(specific or general or {}))
+        return format_html("<p><label><input %s/><span></span></label></p>" % attrs.as_html())
+
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn('<a href="..{% url "transactions" %}?ip={{ record.value_id }}">{{ record.value__header_value }}</a>',verbose_name="Visitors IP")
     visits = tables.Column(empty_values=(), verbose_name="Visits")
@@ -61,8 +71,7 @@ class TagsTable(tables.Table):
             },
             "th":{
                 "style":"width: 13%"
-            },
-            "a" : { "class" :  "stretched-link" }
+            }
         })
     name_cryteria = tables.Column(
         attrs={
@@ -82,17 +91,32 @@ class TagsTable(tables.Table):
                 "style":"width: 20%"
             }
         })
-    checkbox = tables.TemplateColumn(
-        "<input class='action-select' type='checkbox' name='_selected_tags' value='{{ record.id }}' />",
-        verbose_name="",
+    # checkbox = tables.TemplateColumn(
+    #     "<input class='action-select' type='checkbox' name='_selected_tags' value='{{ record.id }}' />",
+    #     verbose_name="",
+    #     attrs={
+    #         "td":{
+    #             "style":"word-break: break-all"
+    #         },
+    #         "th":{
+    #             "style":"width: 1%"
+    #         }
+    #     })
+    selection = tables.CheckBoxColumn(
+        accessor="pk",
         attrs={
-            "td":{
-                "style":"word-break: break-all"
-            },
             "th":{
-                "style":"width: 1%"
+                "style":"width: 2%",
+            },
+            "th__input":{
+                "id":"action-toggle",
+                "onclick":"toggle(this)"
+            },
+            "td__input":{
+                "name" : "selected_tags",
             }
-        })
+        }
+        )
     description = tables.Column(
         attrs={
             "td":{
@@ -102,22 +126,23 @@ class TagsTable(tables.Table):
                 "style":"width:38%"
             }
         })
-    id = tables.Column(
-        attrs={
-            "td":{
-                "style":"word-break: break-all"
-            },
-            "th":{
-                "style":"width:1%"
-            }
-        })
+    # id = tables.Column(
+    #     attrs={
+    #         "td":{
+    #             "style":"word-break: break-all"
+    #         },
+    #         "th":{
+    #             "style":"width:1%"
+    #         }
+    #     })
+    # def is_checked(value, record):
+    #     print(value)
+    #     print(record)
+    #     return True
     class Meta:
         models = models.LogsTag
-        sequence = ('id','checkbox', 'tag', 'name_cryteria', 'value_cryteria', 'description')
+        sequence = ('selection', 'tag', 'name_cryteria', 'value_cryteria', 'description')
         attrs = {
-            "class": "table table-hover table-striped",
+            "class": "table table-striped",
             "id" : "tags-list"
-        }
-        row_attrs = {
-            "style": "transform: rotate(0);"
         }
