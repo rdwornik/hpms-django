@@ -2,20 +2,13 @@ import django_tables2 as tables
 from main import models
 from main import utils
 from django.utils.html import format_html
+from django_tables2.utils import A  # alias for Accessor
 
 REQUEST_METHOD = 'REQUEST_METHOD'
 REQUEST_URI = 'REQUEST_URI'
 VISITORS_IP = 'VISITORS_IP'
 
-class TagsCheckboxColumn(tables.CheckBoxColumn):
-    def render(self, value, bound_column, record):
-        default = {"type": "checkbox", "name": bound_column.name, "value": value}
-        if self.is_checked(value, record):
-            default.update({"checked": "checked"})
-        general = self.attrs.get("input")
-        specific = self.attrs.get("td__input")
-        attrs = tables.utils.AttributeDict(default, **(specific or general or {}))
-        return format_html("<p><label><input %s/><span></span></label></p>" % attrs.as_html())
+
 
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn('<a href="..{% url "transactions" %}?ip={{ record.value_id }}">{{ record.value__header_value }}</a>',verbose_name="Visitors IP")
@@ -62,11 +55,12 @@ class TransactionsTable(tables.Table):
         queryset = queryset.order_by(("-" if is_descending else "") + "transaction",("-" if is_descending else "") + "time").distinct('transaction')
         return (queryset,True)
 class TagsTable(tables.Table):
-    tag = tables.Column(
-        linkify=lambda record: "{}/edit/".format(record.id),
+    id = tables.Column(visible=False)
+    tag = tables.LinkColumn(
+        "action_tag_edit",
+        text=lambda value: value, args=[A("pk")],
         attrs={
             "td":{
-                "scope" : "row" ,
                 "style":"word-break: break-all",
             },
             "th":{
@@ -91,29 +85,17 @@ class TagsTable(tables.Table):
                 "style":"width: 20%"
             }
         })
-    # checkbox = tables.TemplateColumn(
-    #     "<input class='action-select' type='checkbox' name='_selected_tags' value='{{ record.id }}' />",
-    #     verbose_name="",
-    #     attrs={
-    #         "td":{
-    #             "style":"word-break: break-all"
-    #         },
-    #         "th":{
-    #             "style":"width: 1%"
-    #         }
-    #     })
     selection = tables.CheckBoxColumn(
         accessor="pk",
         attrs={
             "th":{
-                "style":"width: 2%",
-            },
-            "th__input":{
-                "id":"action-toggle",
-                "onclick":"toggle(this)"
+                "style":"width: 2%"
             },
             "td__input":{
                 "name" : "selected_tags",
+            },
+            "th__input":{
+                "type" : "hidden"
             }
         }
         )
@@ -126,22 +108,9 @@ class TagsTable(tables.Table):
                 "style":"width:38%"
             }
         })
-    # id = tables.Column(
-    #     attrs={
-    #         "td":{
-    #             "style":"word-break: break-all"
-    #         },
-    #         "th":{
-    #             "style":"width:1%"
-    #         }
-    #     })
-    # def is_checked(value, record):
-    #     print(value)
-    #     print(record)
-    #     return True
     class Meta:
         models = models.LogsTag
-        sequence = ('selection', 'tag', 'name_cryteria', 'value_cryteria', 'description')
+        sequence = ('id','selection', 'tag', 'name_cryteria', 'value_cryteria', 'description')
         attrs = {
             "class": "table table-striped",
             "id" : "tags-list"

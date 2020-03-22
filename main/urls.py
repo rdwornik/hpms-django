@@ -46,14 +46,14 @@ urlpatterns = [
                 name="all_notes"
         ),
         path(
-                'action-tag/',
+                'tags/add/',
                 views.action_tag,
-                name="action_tag"
+                name="action_tag_add"
         ),
         path(
                 'tags/<int:id>/edit/',
                 views.action_tag,
-                name="action_tag"
+                name="action_tag_edit"
         ),
         path(
                 'tags/',

@@ -18,6 +18,7 @@ class LogsLogManager(models.Manager):
             return self.get(Q(transaction=transaction) & Q(name__header_name=name)).value.header_value
         except LogsLog.MultipleObjectsReturned as e:
             pass
+
 class LogsLog(models.Model):
     transaction = models.BigIntegerField(default=1)
     time = models.DateTimeField()
@@ -32,6 +33,7 @@ class LogsLog(models.Model):
         get_latest_by = 'transaction'
     def __str__(self):
         return "{0} | {1} | {2} | {3} | {4}".format(self.transaction,self.name, self.value,self.time,self.server)
+
 
 class LogsTag(models.Model):
     name_cryteria = models.ForeignKey(HeaderName, on_delete=models.CASCADE)
@@ -48,7 +50,7 @@ class LogsTag(models.Model):
 
 class LogsTagAssign(models.Model):
     transaction = models.IntegerField()
-    tag = models.ForeignKey(LogsLog,on_delete=models.CASCADE)
+    tag = models.ForeignKey(LogsTag,on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Logs Tag Assign'

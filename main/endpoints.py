@@ -22,11 +22,9 @@ class HoneypotRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         http_headers = validated_data.pop("headers")
-        headers = [
-        (HeaderName.objects.get_or_create(header_name=item['name']),
+        headers = [(HeaderName.objects.get_or_create(header_name=item['name']),
         HeaderValue.objects.get_or_create(header_value=item['value']))
-        for item in http_headers
-        ]
+        for item in http_headers]
         try:
             with transaction.atomic():
                 trans = LogsLog.objects.latest().transaction + 1
@@ -42,7 +40,6 @@ class HoneypotRequestSerializer(serializers.ModelSerializer):
                         **validated_data
                         )for item in headers ]
             obj = LogsLog.objects.bulk_create(logs,ignore_conflicts=True)
-        
         
         return obj[0]
 

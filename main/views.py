@@ -27,30 +27,28 @@ def action_tag(request, id=None):
         if not id:
             form = forms.TagForm()
         else:
-            tag = models.LogsTag.objects.get(pk=id)
-            form = forms.TagForm(instance=tag)
-            # form.is_valid()
-            # form.save()
+            t = models.LogsTag.objects.get(pk=id)
+            form = forms.TagForm(instance=t)
+        return render(request, "tags_action.html", { "form" : form })
     if request.method == "POST":
         if not id:
-            form = forms.TagForm()
+            t = models.LogsTag()
         else:
-            tag = models.LogsTag.objects.get(pk=id)
-            form = forms.TagForm(request.POST, instance=tag)
-            form.save()
-            return HttpResponseRedirect(reverse('tags'))
-    return render(
-        request,
-        "tags_action.html",
-        {
-            'form':form
-        }
-    )
+            t = models.LogsTag.objects.get(pk=id)
+        form = forms.TagForm(request.POST, instance=t)
+        form.save()
+        return HttpResponseRedirect(reverse('tags'))
 
 
 def tags_form(request):
+    if request.method == "POST":
+        if request.POST.get('select') == 'delete_selected' \
+        and request.POST.__contains__('selected_tags'):
+            tags_to_delete = request.POST.getlist('selected_tags')
+            models.LogsTag.objects.filter(id__in=tags_to_delete).delete()
     action = forms.TagsActionSelectForm(initial={'select':'empty'})
-    table = tables.TagsTable(models.LogsTag.objects.all())
+    table = tables.TagsTable(models.LogsTag.objects.all(), order_by="-id") 
+    table.paginate(page=request.GET.get("page", 1), per_page=5)
     return render(request, "tags.html",  {
         'action' : action,
         'table': table
