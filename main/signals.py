@@ -1,5 +1,3 @@
 import django.dispatch
-from django.dispatch import receiver
-from main import models
 
-
+tag_submited = django.dispatch.Signal(providing_args=['tag','edited'])

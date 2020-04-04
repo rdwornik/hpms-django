@@ -10,7 +10,7 @@ from django_tables2.views import (
 from django_tables2.paginators import LazyPaginator
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from main import models, tables, filters, forms
+from main import models, tables, filters, forms, signals
 # Create your views here.
 
 VISITORS_IP = 'VISITORS_IP'
@@ -27,16 +27,24 @@ def action_tag(request, id=None):
         if not id:
             form = forms.TagForm()
         else:
-            t = models.LogsTag.objects.get(pk=id)
-            form = forms.TagForm(instance=t)
+            tag = models.LogsTag.objects.get(pk=id)
+            form = forms.TagForm(instance=tag)
         return render(request, "tags_action.html", { "form" : form })
+
     if request.method == "POST":
         if not id:
-            t = models.LogsTag()
+            tag = models.LogsTag()
+            edited = False
         else:
-            t = models.LogsTag.objects.get(pk=id)
-        form = forms.TagForm(request.POST, instance=t)
-        form.save()
+            tag = models.LogsTag.objects.get(pk=id)
+            edited = True
+        form = forms.TagForm(request.POST, instance=tag)
+        # print(form.is_valid())
+        # field_errors = [ (field.label, field.errors) for field in form]
+        # print(field_errors) 
+        if form.has_changed() and form.is_valid():
+            tag = form.save()
+            signals.tag_submited.send(sender=models.LogsTagAssign , tag=tag, edited=edited)
         return HttpResponseRedirect(reverse('tags'))
 
 

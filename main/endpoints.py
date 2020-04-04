@@ -8,7 +8,7 @@ from rest_framework import (
 from rest_framework.response import Response
 
 
-from .models import LogsLog, HeaderName, HeaderValue
+from .models import LogsLog, HeaderName, HeaderValue, LogsTagAssign
 
 class HttpHeaderSerializer(serializers.Serializer):
     name = serializers.CharField(required=False, allow_blank=True)
@@ -22,26 +22,30 @@ class HoneypotRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         http_headers = validated_data.pop("headers")
-        headers = [(HeaderName.objects.get_or_create(header_name=item['name']),
-        HeaderValue.objects.get_or_create(header_value=item['value']))
-        for item in http_headers]
+        headers = [
+            (
+            HeaderName.objects.get_or_create(header_name=item['name']),
+            HeaderValue.objects.get_or_create(header_value=item['value'])
+            )
+            for item in http_headers
+            ]
         try:
             with transaction.atomic():
                 trans = LogsLog.objects.latest().transaction + 1
-                logs = [LogsLog(transaction=trans,
+                logs = [ LogsLog(transaction=trans,
                         name = item[0][0],
                         value = item[1][0],
                         **validated_data
                     )for item in headers ]
-                obj = LogsLog.objects.bulk_create(logs,ignore_conflicts=True)
+                logs_created = LogsLog.objects.bulk_create(logs,ignore_conflicts=True)
         except LogsLog.DoesNotExist:
-            logs = [LogsLog(name = item[0][0],
+            logs = [ LogsLog(name = item[0][0],
                         value = item[1][0],
                         **validated_data
                         )for item in headers ]
-            obj = LogsLog.objects.bulk_create(logs,ignore_conflicts=True)
-        
-        return obj[0]
+            logs_created = LogsLog.objects.bulk_create(logs,ignore_conflicts=True)
+        LogsTagAssign.objects.assign_tags(logs_created)
+        return logs_created[0]
 
 class ValueSerializer(serializers.RelatedField):
     def to_representation(self, value):

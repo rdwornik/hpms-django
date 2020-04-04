@@ -18,6 +18,7 @@ django-tables2 = "*"
 pytz = "*"
 werkzeug = "*"
 django-widget-tweaks = "*"
+factory-boy = "*"
 
 [requires]
 python_version = "3.7"

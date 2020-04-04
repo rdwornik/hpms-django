@@ -6,4 +6,3 @@ methods = {
     'HEAD' : ('H', 'yellow')
 }
 
-transaction_done = django.dispatch.Signal(providing_args=["transaction"])

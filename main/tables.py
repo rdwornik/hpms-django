@@ -3,15 +3,17 @@ from main import models
 from main import utils
 from django.utils.html import format_html
 from django_tables2.utils import A  # alias for Accessor
+from django.db.models import Q
 
 REQUEST_METHOD = 'REQUEST_METHOD'
 REQUEST_URI = 'REQUEST_URI'
 VISITORS_IP = 'VISITORS_IP'
-
-
-
 class VisitorTable(tables.Table):
-    visitor_ip = tables.TemplateColumn('<a href="..{% url "transactions" %}?ip={{ record.value_id }}">{{ record.value__header_value }}</a>',verbose_name="Visitors IP")
+    visitor_ip = tables.TemplateColumn(
+        '<a href="..{% url "transactions" %}?ip={{ record.value_id }}"> \
+        {{ record.value__header_value }} \
+        </a>',
+        verbose_name="Visitors IP")
     visits = tables.Column(empty_values=(), verbose_name="Visits")
 
 class TransactionTable(tables.Table):
@@ -22,21 +24,26 @@ class TransactionTable(tables.Table):
             "class": "table table-striped"
         }
 class TransactionsTable(tables.Table):
+    id = tables.Column(orderable=False)
+    visitor_ip = tables.Column(verbose_name="Visitor IP",
+                                empty_values=(),
+                                orderable=False)
+    request_uri = tables.Column(verbose_name='Request URI',
+                                empty_values=(),
+                                orderable=False)
+    server = tables.Column(orderable=False)
     transaction = tables.Column(
         linkify=lambda value: value,
-        attrs={"td" : { "scope" : "row" },
+        attrs={
+                "td" : { "scope" : "row" },
                 "a" : { "class" :  "stretched-link" }
-                })
+            })
     time = tables.DateTimeColumn(format="d F Y H:i:s")
-    visitor_ip = tables.Column(verbose_name="Visitor IP",empty_values=(),orderable=False)
-    request_uri = tables.Column(verbose_name='Request URI',empty_values=(),orderable=False)
-    id = tables.Column(orderable=False)
-    server = tables.Column(orderable=False)
-
+    tags = tables.Column(empty_values=())
     class Meta:
         model = models.LogsLog
         exclude = ('name','value')
-        sequence =('id','transaction','time','visitor_ip','request_uri','server')
+        sequence =('id','transaction','time','visitor_ip','request_uri','tags','server')
         attrs = {
             "class": "table  table-hover table-striped"
         }
@@ -51,6 +58,11 @@ class TransactionsTable(tables.Table):
         header_value = self.data.model.objects.get_header_value(value,REQUEST_METHOD)
         tag = utils.methods[header_value]
         return format_html("{}<b><font color={}> {}</font></b>".format(value, tag[1], tag[0]))
+    def render_tags(self, record):
+        print(record.transaction)
+        tags = models.LogsTagAssign.objects.filter(Q(transaction=record.transaction))
+        print(tags)
+        return format_html("hl")
     def order_time(self, queryset, is_descending):
         queryset = queryset.order_by(("-" if is_descending else "") + "transaction",("-" if is_descending else "") + "time").distinct('transaction')
         return (queryset,True)

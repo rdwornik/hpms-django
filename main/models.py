@@ -1,5 +1,6 @@
+
 from django.db import models
-from django.db.models import Q
+from main import utils, managers
 # Create your models here.
 class HeaderName(models.Model):
     header_name = models.TextField(unique=True)
@@ -11,21 +12,13 @@ class HeaderValue(models.Model):
 
     def __str__(self):
         return "{0}".format(self.header_value)
-class LogsLogManager(models.Manager):
-    def get_header_value(self,transaction, name):
-        # TODO : error message
-        try:
-            return self.get(Q(transaction=transaction) & Q(name__header_name=name)).value.header_value
-        except LogsLog.MultipleObjectsReturned as e:
-            pass
-
 class LogsLog(models.Model):
     transaction = models.BigIntegerField(default=1)
     time = models.DateTimeField()
     name = models.ForeignKey(HeaderName,on_delete=models.CASCADE)
     value = models.ForeignKey(HeaderValue,on_delete=models.CASCADE)
     server = models.TextField()
-    objects = LogsLogManager()
+    objects = managers.LogsLogManager()
 
     class Meta:
         verbose_name = 'Logs Log'
@@ -33,8 +26,6 @@ class LogsLog(models.Model):
         get_latest_by = 'transaction'
     def __str__(self):
         return "{0} | {1} | {2} | {3} | {4}".format(self.transaction,self.name, self.value,self.time,self.server)
-
-
 class LogsTag(models.Model):
     name_cryteria = models.ForeignKey(HeaderName, on_delete=models.CASCADE)
     value_cryteria = models.TextField()
@@ -47,13 +38,14 @@ class LogsTag(models.Model):
 
     def __str__(self):
         return "{0}".format(self.tag)
-
 class LogsTagAssign(models.Model):
     transaction = models.IntegerField()
     tag = models.ForeignKey(LogsTag,on_delete=models.CASCADE)
+    objects = managers.LogsTagAssignManager()
 
     class Meta:
         verbose_name = 'Logs Tag Assign'
         verbose_name_plural = 'Logs Tags Assign'
+
     def __str__(self):
-        return "{0}".format(self.tag)
+        return "{0} {1}".format(self.transaction, self.tag)
