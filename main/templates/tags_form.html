@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% load django_tables2 %}
 {% block content %}
-  <h2>Tags</h2>
-  <p>Create tag</p>
+  <h2>Tag Form</h2>
   <form method="POST">
     {% csrf_token %}
     {% load widget_tweaks %}

@@ -7,7 +7,6 @@ from rest_framework import (
 )
 from rest_framework.response import Response
 
-
 from .models import LogsLog, HeaderName, HeaderValue, LogsTagAssign
 
 class HttpHeaderSerializer(serializers.Serializer):
@@ -18,31 +17,33 @@ class HoneypotRequestSerializer(serializers.ModelSerializer):
     headers = HttpHeaderSerializer(many=True,write_only=True)
     class Meta:
         model = LogsLog
-        exclude = ['id','transaction','name','value']
+        exclude = ["id","transaction","name","value"]
 
     def create(self, validated_data):
         http_headers = validated_data.pop("headers")
         headers = [
             (
-            HeaderName.objects.get_or_create(header_name=item['name']),
-            HeaderValue.objects.get_or_create(header_value=item['value'])
+            HeaderName.objects.get_or_create(header_name=header["name"]),
+            HeaderValue.objects.get_or_create(header_value=header["value"])
             )
-            for item in http_headers
+            for header in http_headers
             ]
         try:
             with transaction.atomic():
                 trans = LogsLog.objects.latest().transaction + 1
-                logs = [ LogsLog(transaction=trans,
-                        name = item[0][0],
-                        value = item[1][0],
+                logs = [ LogsLog(
+                        transaction=trans,
+                        name = header_name[0],
+                        value = header_value[0],
                         **validated_data
-                    )for item in headers ]
+                    )for header_name, header_value in headers ]
                 logs_created = LogsLog.objects.bulk_create(logs,ignore_conflicts=True)
         except LogsLog.DoesNotExist:
-            logs = [ LogsLog(name = item[0][0],
-                        value = item[1][0],
+            logs = [ LogsLog(
+                        name = header_name[0],
+                        value = header_value[0],
                         **validated_data
-                        )for item in headers ]
+                        )for header_name, header_value in headers ]
             logs_created = LogsLog.objects.bulk_create(logs,ignore_conflicts=True)
         LogsTagAssign.objects.assign_tags(logs_created)
         return logs_created[0]
@@ -66,11 +67,11 @@ class LogsLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = LogsLog
         fields = [
-            'name',
-            'value',
-            'transaction',
-            'time',
-            'server'
+            "name",
+            "value",
+            "transaction",
+            "time",
+            "server"
         ]
 
 class LogsLogViewSet(viewsets.ModelViewSet):
@@ -78,5 +79,5 @@ class LogsLogViewSet(viewsets.ModelViewSet):
     serializer_class = HoneypotRequestSerializer
 
     def list(self, request, *args, **kwargs):
-        serializer = LogsLogSerializer(self.get_queryset().order_by('transaction').reverse(),many=True)
+        serializer = LogsLogSerializer(self.get_queryset().order_by("transaction").reverse(),many=True)
         return Response(serializer.data)

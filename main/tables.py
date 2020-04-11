@@ -1,13 +1,12 @@
 import django_tables2 as tables
+import json
 from main import models
 from main import utils
+from django.conf import settings
 from django.utils.html import format_html
 from django_tables2.utils import A  # alias for Accessor
 from django.db.models import Q
 
-REQUEST_METHOD = 'REQUEST_METHOD'
-REQUEST_URI = 'REQUEST_URI'
-VISITORS_IP = 'VISITORS_IP'
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn(
         '<a href="..{% url "transactions" %}?ip={{ record.value_id }}"> \
@@ -16,34 +15,95 @@ class VisitorTable(tables.Table):
         verbose_name="Visitors IP")
     visits = tables.Column(empty_values=(), verbose_name="Visits")
 
-class TransactionTable(tables.Table):
+class TransactionsDetailTable(tables.Table):
     class Meta:
         model = models.LogsLog
-        exclude = ['server','transaction','id','time']
+        exclude = ["server","transaction","id","time"]
         attrs = {
             "class": "table table-striped"
         }
 class TransactionsTable(tables.Table):
-    id = tables.Column(orderable=False)
-    visitor_ip = tables.Column(verbose_name="Visitor IP",
-                                empty_values=(),
-                                orderable=False)
-    request_uri = tables.Column(verbose_name='Request URI',
-                                empty_values=(),
-                                orderable=False)
-    server = tables.Column(orderable=False)
+    id = tables.Column(
+        orderable=False,
+        visible=False
+        )
+    visitor_ip = tables.Column(
+        verbose_name="Visitor IP",
+        empty_values=(),
+        orderable=False,
+        attrs={
+            "td":{
+                "style":"word-break: break-all",
+            },
+            "th":{
+                "style":"width: 10%"
+            }
+        })
+    request_uri = tables.Column(
+        verbose_name="Request URI",
+        empty_values=(),
+        orderable=False,
+        attrs={
+            "td":{
+                "style":"word-break: break-all",
+            },
+            "th":{
+                "style":"width: 30%"
+            }
+        })
+    server = tables.Column(
+        orderable=False,
+        attrs={
+            "td":{
+                "style":"word-break: break-all",
+            },
+            "th":{
+                "style":"width: 10%"
+            }
+        })
     transaction = tables.Column(
         linkify=lambda value: value,
         attrs={
-                "td" : { "scope" : "row" },
+                "td" : { 
+                    "scope" : "row",
+                    "style": "word-break: break-all"
+                    },
+                "th":{
+                    "style":"width: 10%"
+                },                
                 "a" : { "class" :  "stretched-link" }
-            })
-    time = tables.DateTimeColumn(format="d F Y H:i:s")
-    tags = tables.Column(empty_values=())
+        })
+    time = tables.DateTimeColumn(
+        format="d F Y H:i:s",
+        attrs={
+            "td":{
+                "style":"word-break: break-all",
+            },
+            "th":{
+                "style":"width: 10%"
+            }
+        })
+    tags = tables.Column(
+        empty_values=(),
+        orderable=False,
+        attrs={
+            "td":{
+                "style":"word-break: break-all",
+            },
+            "th":{
+                "style":"width: 30%"
+            }
+        })
     class Meta:
         model = models.LogsLog
-        exclude = ('name','value')
-        sequence =('id','transaction','time','visitor_ip','request_uri','tags','server')
+        exclude = ("name","value")
+        sequence =("id",
+                   "transaction",
+                   "time",
+                   "visitor_ip",
+                   "server",
+                   "request_uri",
+                   "tags")
         attrs = {
             "class": "table  table-hover table-striped"
         }
@@ -51,25 +111,30 @@ class TransactionsTable(tables.Table):
             "style": "transform: rotate(0);"
         }
     def render_request_uri(self, record):
-        return self.data.model.objects.get_header_value(record.transaction,REQUEST_URI)
+        return self.data.model.objects.get_header_value(record.transaction,settings.REQUEST_URI)
     def render_visitor_ip(self,record):
-        return self.data.model.objects.get_header_value(record.transaction,VISITORS_IP)
+        return self.data.model.objects.get_header_value(record.transaction,settings.VISITORS_IP)
     def render_transaction(self, value):
-        header_value = self.data.model.objects.get_header_value(value,REQUEST_METHOD)
-        tag = utils.methods[header_value]
-        return format_html("{}<b><font color={}> {}</font></b>".format(value, tag[1], tag[0]))
+        request_method = self.data.model.objects.get_header_value(value,settings.REQUEST_METHOD)
+        tag = utils.get_or_create_methods_tag(request_method)
+        color, letter = tag[1], tag[0]
+        return format_html("{}<b><font color={}> {}</font></b>".format(value, color, letter))
     def render_tags(self, record):
-        print(record.transaction)
-        tags = models.LogsTagAssign.objects.filter(Q(transaction=record.transaction))
-        print(tags)
-        return format_html("hl")
+        assigned_tags = models.LogsTagAssign.objects.filter(Q(transaction=record.transaction)).values("tag_id")
+        tags = {}
+        for num, t in enumerate(assigned_tags, start=1):
+            tags[num] = models.LogsTag.objects.get(pk=t["tag_id"]).tag
+        return format_html("".join("<b>{}</b> : {} <br/>".format(k, v) for k, v in tags.items()))
     def order_time(self, queryset, is_descending):
-        queryset = queryset.order_by(("-" if is_descending else "") + "transaction",("-" if is_descending else "") + "time").distinct('transaction')
+        queryset = queryset.order_by(
+                                    ("-" if is_descending else "") + 
+                                     "transaction",("-" if is_descending else "") + 
+                                     "time").distinct("transaction")
         return (queryset,True)
 class TagsTable(tables.Table):
     id = tables.Column(visible=False)
     tag = tables.LinkColumn(
-        "action_tag_edit",
+        "tags_edit",
         text=lambda value: value, args=[A("pk")],
         attrs={
             "td":{
@@ -122,7 +187,7 @@ class TagsTable(tables.Table):
         })
     class Meta:
         models = models.LogsTag
-        sequence = ('id','selection', 'tag', 'name_cryteria', 'value_cryteria', 'description')
+        sequence = ("id","selection", "tag", "name_cryteria", "value_cryteria", "description")
         attrs = {
             "class": "table table-striped",
             "id" : "tags-list"

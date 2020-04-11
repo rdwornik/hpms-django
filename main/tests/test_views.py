@@ -1,10 +1,10 @@
 from django.test import TestCase
 from unittest.mock import patch
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.urls import reverse
 from main import forms, models, factories
-
 
 class TestPage(TestCase):
     def setUp(self):
@@ -14,39 +14,93 @@ class TestPage(TestCase):
             email="admin@example.com"
         )
         self.client.force_login(self.user)
-
-
-    def test_home_page_works(self):
-        response = self.client.get("/")
+        self.n1 = factories.HeaderNameFactory(header_name="VISITORS_IP")
+        self.v1 = factories.HeaderValueFactory(header_value="127.0.0.1")
+        self.v2 = factories.HeaderValueFactory(header_value="127.0.1.2")
+        self.v3 = factories.HeaderValueFactory(header_value="128.0.0.1")
+        self.l1 =factories.LogsLogFactory(name=self.n1, value=self.v1)
+        self.l2 =factories.LogsLogFactory(name=self.n1, value=self.v2)
+        self.l3 =factories.LogsLogFactory(name=self.n1, value=self.v3)
+        
+    def test_transactions_page_works(self):
+        response = self.client.get(reverse("transactions"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'home.html')
-        self.assertContains(response, 'HPMS')
-
-    def test_tags_add_page_loads_correctly(self):
-        response = self.client.get(reverse("action_tag_add"))
+        self.assertTemplateUsed(response, "transactions.html")
+        self.assertContains(response, "Transactions")
+      
+    def test_transactions_detail_page_works(self):
+        response = self.client.get(reverse("transactions_detail",args=[self.l1.transaction]))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "tags_action.html")
-        self.assertIsInstance                                                                                                                                   (
+        self.assertTemplateUsed(response, "transactions_detail.html")
+        self.assertContains(response, "Transaction {}".format(self.l1.transaction))
+    
+    def test_tags_page_works(self):
+        tag = factories.LogsTagFactory(name_cryteria=self.n1,
+                                       value_cryteria="127.*")
+        response = self.client.get(reverse("tags"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "tags.html")
+        self.assertContains(response, "Tags")
+
+    def test_tag_add_form_page_works(self):
+        response = self.client.get(reverse("tags_add"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "tags_form.html")
+        self.assertContains(response, "Tag Form")
+        self.assertIsInstance(
             response.context["form"], forms.TagForm
         )
-    def test_tags_action_submission_works(self):
-        n1 = factories.HeaderNameFactory(header_name='VISITORS_IP')
-        v1 = factories.HeaderValueFactory(header_value='127.0.0.1')
-        v2 = factories.HeaderValueFactory(header_value='127.0.0.2')
-        v3 = factories.HeaderValueFactory(header_value='128.0.0.1')
+    
+    def test_tag_edit_form_page_works(self):
+        tag = factories.LogsTagFactory(name_cryteria=self.n1,
+                                       value_cryteria="127.*")
+        response = self.client.get(reverse("tags_edit",args=[tag.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "tags_form.html")
+        self.assertContains(response, "Tag Form")
+        self.assertIsInstance(
+            response.context["form"], forms.TagForm
+        )
 
-        l1 =factories.LogsLogFactory(name=n1, value=v1)
-        l2 =factories.LogsLogFactory(name=n1, value=v2)
-        l3 =factories.LogsLogFactory(name=n1, value=v3)
-
+    def test_visitors_page_works(self):
+        response = self.client.get(reverse("visitors"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "visitors.html")
+        self.assertContains(response, "Visitors")
+    
+    def test_search_page_works(self):
+        response = self.client.get(reverse("search"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "search.html")
+        self.assertContains(response, "Search")
+        
+    def test_logout_page_works(self):
+        response = self.client.get(reverse("logout"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "logout.html")
+        self.assertContains(response, "You have been logout")
+    
+    def test_all_notes_page_works(self):
+        response = self.client.get(reverse("all_notes"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "all_notes.html")
+        self.assertContains(response, "All notes")
+    
+    def test_activity_page_works(self):
+        response = self.client.get(reverse("activity"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "activity.html")
+        self.assertContains(response, "Activity")
+    
+    def test_tag_add_works(self):
         post_data ={
-                'name_cryteria' : n1.id ,
-                'value_cryteria' : '127.*' ,
-                'tag' : 'localhost' ,
-                'description' : 'localhost'
+                "name_cryteria" : self.n1.id ,
+                "value_cryteria" : "127.*" ,
+                "tag" : "localhost" ,
+                "description" : "localhost"
         }
         response = self.client.post(
-                reverse("action_tag_add"), post_data
+                reverse("tags_add"), post_data
             )
         self.assertEqual(response.status_code, 302)
         self.assertTrue(
@@ -54,7 +108,41 @@ class TestPage(TestCase):
                 tag="localhost"
             ).exists()
         )
+
+    def test_tag_delete_works(self):
+        tag = factories.LogsTagFactory(name_cryteria=self.n1,
+                                       value_cryteria="127.*")
+        post_data = {
+                "select" : "delete_selected",
+                "selected_tags":[tag.id]
+        }
+        response = self.client.post(
+            reverse("tags"), post_data
+        )
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            models.LogsTagAssign.objects.count(),
-            2
+            models.LogsTag.objects.count(),
+            0
+        )
+        
+    def test_tag_edit_works(self):
+        tag = factories.LogsTagFactory(name_cryteria=self.n1,
+                                       value_cryteria="127.*")   
+        post_data ={
+                "name_cryteria" : self.n1.id ,
+                "value_cryteria" : tag.value_cryteria ,
+                "tag" : "localhost" ,
+                "description" : "localhost"
+        }     
+        response = self.client.post(
+                reverse("tags_edit", 
+                        args=[tag.id]
+                        ),
+                post_data
+        )
+        self.assertEquals(response.status_code,302)
+        self.assertEqual(models.LogsTag.objects.get(pk=tag.id).tag, "localhost")
+        self.assertEqual(
+            models.LogsTag.objects.count(),
+            1
         )

@@ -21,9 +21,9 @@ class LogsLog(models.Model):
     objects = managers.LogsLogManager()
 
     class Meta:
-        verbose_name = 'Logs Log'
-        verbose_name_plural = 'Logs Log'
-        get_latest_by = 'transaction'
+        verbose_name = "Logs Log"
+        verbose_name_plural = "Logs Log"
+        get_latest_by = "transaction"
     def __str__(self):
         return "{0} | {1} | {2} | {3} | {4}".format(self.transaction,self.name, self.value,self.time,self.server)
 class LogsTag(models.Model):
@@ -33,19 +33,21 @@ class LogsTag(models.Model):
     description = models.TextField()
 
     class Meta:
-        verbose_name = 'Logs Tag'
-        verbose_name_plural = 'Logs Tags'
+        verbose_name = "Logs Tag"
+        verbose_name_plural = "Logs Tags"
 
     def __str__(self):
         return "{0}".format(self.tag)
+    
 class LogsTagAssign(models.Model):
     transaction = models.IntegerField()
     tag = models.ForeignKey(LogsTag,on_delete=models.CASCADE)
+    
     objects = managers.LogsTagAssignManager()
 
     class Meta:
-        verbose_name = 'Logs Tag Assign'
-        verbose_name_plural = 'Logs Tags Assign'
+        verbose_name = "Logs Tag Assign"
+        verbose_name_plural = "Logs Tags Assign"
 
     def __str__(self):
         return "{0} {1}".format(self.transaction, self.tag)

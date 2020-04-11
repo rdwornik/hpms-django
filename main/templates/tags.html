@@ -2,7 +2,6 @@
 {% load django_tables2 %}
 {% block content %}
   <h2>Tags</h2>
-  <p>Create tag</p>
   <div class="container-fluid">
     <div id="tagslist">
       <form id="tagslit-form" method="post" novalideta="">
@@ -17,7 +16,7 @@
             </div>
             <div class="col-auto my-1">
               <button type="submit" class="btn btn-primary">Go</button>
-              <a class="btn btn-secondary" href="{% url 'action_tag_add' %}" role="button">Add tag</a>
+              <a class="btn btn-secondary" href="{% url 'tags_add' %}" role="button">Add tag</a>
             </div>
           </div>
         </div>

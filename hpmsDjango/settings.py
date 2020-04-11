@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_extensions',
     'widget_tweaks',
-    'bootstrap_modal_forms',
     'main.apps.MainConfig',
 ]
 
@@ -141,15 +140,17 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 STATIC_URL = '/static/'
 
-
 LOGIN_REDIRECT_URL = '/visitors/'
 LOGIN_URL = '/login/'
 
 LOGIN_EXEMPT_URLS = (
     r'^logout/$',
-    r'^api/logslog/$',
-    r'logslog',
+    r'^api/logslogs/$',
 )
+
+REQUEST_METHOD = "REQUEST_METHOD"
+REQUEST_URI = "REQUEST_URI"
+VISITORS_IP = "VISITORS_IP"
 
 DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap.html'
 

@@ -6,73 +6,74 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import AuthenticationForm
 from django_filters.views import FilterView
 from main import views
-router = routers.DefaultRouter()
-router.register(r'logslog', LogsLogViewSet)
+
+router = routers.DefaultRouter(trailing_slash=True)
+router.register(r"logslogs", LogsLogViewSet)
 
 
 urlpatterns = [
         path(
-                '',
+                "",
                 views.VisitorsTablesView.as_view(),
         ),
         path(
-                'visitors/',
+                "visitors/",
                 views.VisitorsTablesView.as_view(),
                 name="visitors"
         ),
         path(
-                'transactions/',
+                "transactions/",
                 views.FilteredTransactionsListView.as_view(template_name = "transactions.html"),
                 name="transactions"
         ),
         path(
-                'transactions/<int:transaction>/',
-                views.transaction_list,
+                "transactions/<int:transaction>/",
+                views.transactions_detail_view,
                 name="transactions_detail"
         ),
         path(
-                'activity/',
+                "activity/",
                 TemplateView.as_view(template_name="activity.html"),
                 name="activity"
         ),
         path(
-                'search/',
+                "search/",
                 TemplateView.as_view(template_name="search.html"),
                 name="search"
         ),
         path(
-                'all-notes/',
+                "all-notes/",
                 TemplateView.as_view(template_name="all_notes.html"),
                 name="all_notes"
         ),
         path(
-                'tags/add/',
-                views.action_tag,
-                name="action_tag_add"
+                "tags/add/",
+                views.tags_form_view,
+                name="tags_add"
         ),
         path(
-                'tags/<int:id>/edit/',
-                views.action_tag,
-                name="action_tag_edit"
+                "tags/<int:id>/edit/",
+                views.tags_form_view,
+                name="tags_edit"
         ),
         path(
-                'tags/',
-                views.tags_form,
+                "tags/",
+                views.tags_view,
                 name="tags"
         ),
         path(
-                'login/',
+                "login/",
                 auth_views.LoginView.as_view(
                         template_name="login.html",
                 ),
-                name='login',
+                name="login",
         ),
         path(
-                'logout/',
+                "logout/",
                 auth_views.LogoutView.as_view(
                         template_name="logout.html",
                 ),
-                name='logout',
+                name="logout",
         ),
-        path('api/', include(router.urls)),
+        path("api/", include(router.urls)),
 ]

@@ -10,6 +10,7 @@ class LogsLogFactory(factory.django.DjangoModelFactory):
 
     time = datetime.now()
     transaction = factory.Sequence(int)
+    server = "www.hpmsphp.example.com"
 
 class HeaderNameFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -24,3 +25,8 @@ class LogsTagFactory(factory.django.DjangoModelFactory):
         model = models.LogsTag
     tag = "test"
     description = "test"
+    
+class LogsTagAssignFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.LogsTagAssign
+    

@@ -18,9 +18,9 @@ class TagsActionSelectForm(forms.Form):
 class TagForm(ModelForm):
     class Meta:
         model = LogsTag
-        fields = '__all__'
-        localized_fields = '__all__'
+        fields = "__all__"
+        localized_fields = "__all__"
         widgets = {
-            'tag': TextInput(),
-            'value_cryteria' : TextInput()
+            "tag": TextInput(),
+            "value_cryteria" : TextInput()
         }

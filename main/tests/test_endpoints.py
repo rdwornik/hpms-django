@@ -24,7 +24,6 @@ data1 = {
          "value":"403"
       }]
 }
-
 data2 = {
    "time":"2020-03-01 10:36:00",
    "server":"127.0.0.1:36969",
@@ -38,7 +37,7 @@ data2 = {
          "value":"403"
       }]
 }
-class HttpTest(APITestCase):
+class TestEndpoints(APITestCase):
    def setUp(self):
       self.user = User.objects.create_superuser(
             username="admin",
@@ -48,19 +47,16 @@ class HttpTest(APITestCase):
       self.client.force_authenticate(self.user)
 
    def test_create_object(self):
-      response = self.client.post('/api/logslog/',data=data1,format='json')
-      self.assertEqual(response.status_code, 201)
-      response = self.client.post('/api/logslog/',data=data2,format='json')
-      self.assertEqual(response.status_code, 201)
-      #  self.assertEqual(models.LogsLog.objects.all().count(),66)
-   def test_assign_tags_on_create(self):
       n1 = factories.HeaderNameFactory(header_name = "VISITORS_IP")
       t1 = factories.LogsTagFactory(
          name_cryteria = n1,
-         value_cryteria = '127.*'
+         value_cryteria = "127.*"
       )
-
-      response = self.client.post('/api/logslog/',data=data1,format='json')
+      
+      response = self.client.post("/api/logslogs/",data=data1,format="json")
       self.assertEqual(response.status_code, 201)
-      response = self.client.post('/api/logslog/',data=data2,format='json')
+      self.assertEqual(models.LogsLog.objects.count(),2)
+      response = self.client.post("/api/logslogs/",data=data2,format="json")
       self.assertEqual(response.status_code, 201)
+      self.assertEqual(models.LogsLog.objects.count(),4)
+      self.assertEqual(models.LogsTagAssign.objects.count(),1)

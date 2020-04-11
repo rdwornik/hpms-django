@@ -3,18 +3,19 @@ from django.db.models import Q, Manager
 
 from main import models
 
-
 class LogsLogManager(Manager):
     def get_header_value(self,transaction, name):
-        # TODO : error message
+        # TODO : crete logger for multpleobjects returned
         try:
             return self.get(
                 Q(transaction = transaction) &
                 Q(name__header_name = name)
                 ).value.header_value
+        except models.LogsLog.DoesNotExist as e:
+            return "None"
         except models.LogsLog.MultipleObjectsReturned as e:
             pass
-
+            
 class LogsTagAssignManager(Manager):
     def assign_tags(self, logs_log_list):
         [
