@@ -22,6 +22,5 @@
       <button class="btn btn-primary" type="submit">Submit</button>
       <a class="btn btn-primary" href="{% url 'transactions' %}">Reset</a>
     </form>
-
     {% render_table table "tables/transactions_table.html"  %}
 {% endblock content %}
