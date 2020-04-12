@@ -3,24 +3,20 @@
 {% block content %}
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"/>
   <h2>Transactions</h2>
-    <form method="get">
+    <form method="get" class="form-inline">
       {% csrf_token %}
       {% load widget_tweaks %}
-      <div class="form-row">
         {% for field in filter.form %}
           {% if field.is_hidden %}
             {{ field }}
           {% else %}
-          <div class="form-group col-md-4">
             {{ field.errors }}
-            {{ field.label_tag }}
-            {{ field|add_class:"form-control" }}
-          </div>
+            {{ field|add_label_class:"sr-only" }}
+            {{ field|add_class:"form-control mb-2 mr-sm-2" }}
           {% endif %}
         {% endfor %}
-      </div>
-      <button class="btn btn-primary" type="submit">Submit</button>
-      <a class="btn btn-primary" href="{% url 'transactions' %}">Reset</a>
+      <button class="btn btn-primary mb-2 mr-sm-2" type="submit">Submit</button>
+      <a class="btn btn-primary mb-2" href="{% url 'transactions' %}">Reset</a>
     </form>
     {% render_table table "tables/transactions_table.html"  %}
 {% endblock content %}

@@ -8,8 +8,11 @@ from django.conf import settings
 from django.db.models import Q
 
 class TransactionsFilter(django_filters.FilterSet):
-    time = django_filters.NumberFilter(method="time_filter",widget=NumberInput(attrs={"placeholder": "hours"}))
-    ip = django_filters.NumberFilter(method="ip_filter",field_name="value",widget=HiddenInput())
+    time = django_filters.NumberFilter(method="time_filter",
+                                       widget=NumberInput(attrs={"placeholder": "hours"}))
+    ip = django_filters.NumberFilter(method="ip_filter",
+                                     field_name="value",
+                                     widget=HiddenInput())
 
     def time_filter(self, queryset, name, value):
         time_threshold = datetime.now() - timedelta(hours=int(value))
