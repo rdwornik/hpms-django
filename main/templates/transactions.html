@@ -4,7 +4,6 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"/>
   <h2>Transactions</h2>
     <form method="get" class="form-inline">
-      {% csrf_token %}
       {% load widget_tweaks %}
         {% for field in filter.form %}
           {% if field.is_hidden %}
