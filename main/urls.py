@@ -1,11 +1,13 @@
 from rest_framework import routers
 from django.views.generic import TemplateView
 from django.urls import path, include, re_path
-from .endpoints import LogsLogViewSet
+from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import AuthenticationForm
 from django_filters.views import FilterView
+
 from main import views
+from .endpoints import LogsLogViewSet
 
 router = routers.DefaultRouter(trailing_slash=True)
 router.register(r"logslogs", LogsLogViewSet)
@@ -60,6 +62,11 @@ urlpatterns = [
                 "tags/",
                 views.tags_view,
                 name="tags"
+        ),
+        url(
+                r'^tags-autocomplete/$',
+                views.TagsAutocomplete.as_view(),
+                name='tags-autocomplete',
         ),
         path(
                 "login/",

@@ -31,6 +31,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'dal',
+    'dal_select2',
+    # 'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -153,7 +156,6 @@ REQUEST_URI = "REQUEST_URI"
 VISITORS_IP = "VISITORS_IP"
 
 DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap.html'
-
 
 
 import warnings

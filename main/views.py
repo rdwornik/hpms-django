@@ -9,10 +9,11 @@ from django_tables2.views import (
 from django.conf import settings
 from django_tables2.paginators import LazyPaginator
 from django.http import HttpResponseRedirect
+from django.views.generic.edit import FormView
 from django.urls import reverse
+from dal import autocomplete
 from main import models, tables, filters, forms, signals
 # Create your views here.
-
 
 def transactions_detail_view(request, transaction=1):
     table = tables.TransactionsDetailTable(models.LogsLog.objects.filter(Q(transaction = transaction)))    
@@ -43,7 +44,6 @@ def tags_form_view(request, id=None):
             signals.tag_submited.send(sender=models.LogsTagAssign , tag=tag, edited=edited)
         return HttpResponseRedirect(reverse("tags"))
 
-
 def tags_view(request):
     if request.method == "POST":
         if request.POST.get("select") == "delete_selected" \
@@ -58,15 +58,17 @@ def tags_view(request):
         "table": table
     })
 
-class FilteredTransactionsListView(SingleTableMixin, FilterView):
+class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     table_class = tables.TransactionsTable
     filterset_class = filters.TransactionsFilter
     model = models.LogsLog
     queryset = models.LogsLog.objects.all()
     paginator_class = LazyPaginator
+    form_class = forms.TagsAutocompleteForm
     table_pagination = {
         "per_page": 10
     }
+    
 class VisitorsTablesView(SingleTableView):
     template_name = "visitors.html"
     table_class = tables.VisitorTable
@@ -75,3 +77,14 @@ class VisitorsTablesView(SingleTableView):
     table_pagination = {
         "per_page": 10
     }
+
+class TagsAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated:
+            return models.LogsTag.objects.none()
+        qs = models.LogsTag.objects.all()
+        if self.q:
+            qs = qs.filter(tag__istartswith=self.q)
+        return qs
+        

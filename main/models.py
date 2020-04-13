@@ -32,7 +32,7 @@ class LogsLog(models.Model):
                                                     self.value,
                                                     self.time,
                                                     self.server)
-        
+      
 class LogsTag(models.Model):
     name_cryteria = models.ForeignKey(HeaderName, on_delete=models.CASCADE)
     value_cryteria = models.TextField()

@@ -19,6 +19,7 @@ pytz = "*"
 werkzeug = "*"
 django-widget-tweaks = "*"
 factory-boy = "*"
+django-autocomplete-light = "*"
 
 [requires]
 python_version = "3.7"
