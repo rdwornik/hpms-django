@@ -6,28 +6,34 @@ from django import forms as django_forms
 from django.conf import settings
 from django.db.models import Q
 from django.urls import reverse
-
+from django.http import HttpRequest
 from dal import autocomplete
-from main import models
+from main import models, views
+from urllib.request import urlopen
+from .forms import get_choice_list
 
-SERVER_CHOICES = [(id, choice) for id, choice in enumerate(
+SERVER_CHOICES = [(id, server) for id, server in enumerate(
     models.LogsLog.objects.values_list("server",flat=True).distinct())]
+
+VISITOR_IP_CHOICES = [(id, value) for value, id in get_choice_list()]
 
 class TransactionsFilter(django_filters.FilterSet):
     time = django_filters.NumberFilter(method="time_filter",
-                                       widget=NumberInput(attrs={"placeholder": "hours"}))
-    ip = django_filters.NumberFilter(method="ip_filter",
-                                     field_name="value",
-                                     widget=HiddenInput())
+                                       widget=NumberInput(attrs={"placeholder": "Select hours from now"}))
+    
+    ip = django_filters.ChoiceFilter(method="ip_filter",
+                                     choices=VISITOR_IP_CHOICES,
+                                     widget=autocomplete.ListSelect2(url="visitors-ip-list-autocomplete",
+                                                                     attrs={"data-placeholder" : "Select Visitor IP"}))
 
     server = django_filters.ChoiceFilter(method="server_filter",
                                          choices=SERVER_CHOICES,
                                          empty_label="Select Server")
     
     tags = django_filters.ModelChoiceFilter(method="tags_filter",
-                                     queryset=models.LogsTag.objects.all(),
-                                     widget=autocomplete.ModelSelect2(url="tags-autocomplete")
-                                     )
+                                            queryset=models.LogsTag.objects.all(),
+                                            widget=autocomplete.ModelSelect2(url="tags-autocomplete", 
+                                                                      attrs={"data-placeholder" : "Select Tag"}))
     
     def time_filter(self, queryset, name, value):
         time_threshold = datetime.now() - timedelta(hours=int(value))
@@ -48,7 +54,7 @@ class TransactionsFilter(django_filters.FilterSet):
     def qs(self):
         parent = super().qs
         return parent.order_by("-transaction").distinct("transaction")
-
+       
     class Meta:
         model = models.LogsLog
         fields = ["time","server","tags"]

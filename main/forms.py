@@ -3,6 +3,8 @@ import logging
 from django import forms
 from django.views.generic.edit import FormView
 from django.forms import ModelForm, TextInput
+from django.db.models import Q
+from django.conf import settings
 
 from dal import autocomplete
 from main import models
@@ -25,11 +27,23 @@ class TagForm(ModelForm):
             "tag": TextInput(),
             "value_cryteria" : TextInput()
         }
-
-class TagsAutocompleteForm(forms.ModelForm):
+        
+def get_choice_list():
+    return  models.LogsLog.objects.filter(
+                                        Q(name__header_name=settings.VISITORS_IP)
+                                     ).values_list(
+                                        "value__header_value","value_id"
+                                     ).distinct()
+                                    
+class TransactionsAutocompleteForm(forms.ModelForm):
     tags = forms.ModelChoiceField(
         queryset=models.LogsTag.objects.all(),
-        widget=autocomplete.ModelSelect2(url='tags-autocomplete')
+        widget=autocomplete.ModelSelect2(url='tags-autocomplete'),
+    )
+    
+    visitors_ip = autocomplete.Select2ListChoiceField(
+        choice_list=get_choice_list,
+        widget=autocomplete.ListSelect2(url="visitors-ip-list-autocomplete"),
     )
 
     class Meta:

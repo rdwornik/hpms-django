@@ -64,7 +64,7 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     model = models.LogsLog
     queryset = models.LogsLog.objects.all()
     paginator_class = LazyPaginator
-    form_class = forms.TagsAutocompleteForm
+    form_class = forms.TransactionsAutocompleteForm
     table_pagination = {
         "per_page": 10
     }
@@ -80,11 +80,22 @@ class VisitorsTablesView(SingleTableView):
 
 class TagsAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        # Don't forget to filter out results depending on the visitor !
         if not self.request.user.is_authenticated:
             return models.LogsTag.objects.none()
         qs = models.LogsTag.objects.all()
         if self.q:
             qs = qs.filter(tag__istartswith=self.q)
         return qs
+
+class VisitorsIPAutocompleteFromList(autocomplete.Select2ListView):
+    def get_list(self):
+        return  forms.get_choice_list()
+    
+    def autocomplete_results(self, results):
+        return [(x,y) for x, y in results if self.q.lower() in x.lower()]
+  
+    def results(self, results):
+        print(results)
+        return [dict(id=id, text=value) for value, id in results]
+
         

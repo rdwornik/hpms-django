@@ -68,6 +68,11 @@ urlpatterns = [
                 views.TagsAutocomplete.as_view(),
                 name='tags-autocomplete',
         ),
+        url(
+                r'^visitors-ip-list-autocomplete/$',
+                views.VisitorsIPAutocompleteFromList.as_view(),
+                name='visitors-ip-list-autocomplete',
+        ),
         path(
                 "login/",
                 auth_views.LoginView.as_view(

@@ -13,19 +13,22 @@
         {% for field in filter.form %}
           {% if field.is_hidden %}
             {{ field }}
-          {% else %}
+          {% else %}  
             {% if field.name == "tags" %}
               {{ field.errors }}
-              {{ field|add_class:"js-example-basic-single mb-2"}}
+              {{ field|add_class:"mb-2 mr-sm-1"}}
+            {% elif field.name == "ip" %}
+              {{ field.errors }}
+              {{ field|add_class:"mb-2 mr-sm-1"}}
             {% else %}
               {{ field.errors }}
               {{ field|add_label_class:"sr-only" }}
-              {{ field|add_class:"form-control mb-2 mr-sm-2" }}
+              {{ field|add_class:"form-control mb-2 mr-sm-1" }}
             {% endif %}
           {% endif %}
         {% endfor %}
-      <button class="btn btn-primary mb-2 mr-sm-2" type="submit">Submit</button>
-      <a class="btn btn-primary mb-2" href="{% url 'transactions' %}">Reset</a>
+      <button class="btn btn-primary mb-2 mr-sm-1" type="submit">Submit</button>
+      <a class="btn btn-primary mb-2  mr-sm-1" href="{% url 'transactions' %}">Reset</a>
     </form>
     {% render_table table "tables/transactions_table.html"  %}
 {% endblock content %}

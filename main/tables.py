@@ -48,7 +48,7 @@ class TransactionsTable(tables.Table):
                 "style":"word-break: break-all",
             },
             "th":{
-                "style":"width: 30%"
+                "style":"width: 25%"
             }
         })
     server = tables.Column(
@@ -58,7 +58,7 @@ class TransactionsTable(tables.Table):
                 "style":"word-break: break-all",
             },
             "th":{
-                "style":"width: 10%"
+                "style":"width: 15%"
             }
         })
     transaction = tables.Column(
@@ -80,7 +80,7 @@ class TransactionsTable(tables.Table):
                 "style":"word-break: break-all",
             },
             "th":{
-                "style":"width: 10%"
+                "style":"width: 15%"
             }
         })
     tags = tables.Column(
@@ -91,7 +91,7 @@ class TransactionsTable(tables.Table):
                 "style":"word-break: break-all",
             },
             "th":{
-                "style":"width: 30%"
+                "style":"width: 25%"
             }
         })
     class Meta:
