@@ -16,9 +16,11 @@
           {% else %}  
             {% if field.name == "tags" %}
               {{ field.errors }}
+              {{ field|add_label_class:"sr-only" }}
               {{ field|add_class:"mb-2 mr-sm-1"}}
             {% elif field.name == "ip" %}
               {{ field.errors }}
+              {{ field|add_label_class:"sr-only" }}
               {{ field|add_class:"mb-2 mr-sm-1"}}
             {% else %}
               {{ field.errors }}

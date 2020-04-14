@@ -95,7 +95,6 @@ class VisitorsIPAutocompleteFromList(autocomplete.Select2ListView):
         return [(x,y) for x, y in results if self.q.lower() in x.lower()]
   
     def results(self, results):
-        print(results)
         return [dict(id=id, text=value) for value, id in results]
 
         
