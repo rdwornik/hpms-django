@@ -143,8 +143,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = '/visitors/'
-LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/hpms/visitors/'
+LOGIN_URL = '/hpms/login/'
 
 LOGIN_EXEMPT_URLS = (
     r'^logout/$',

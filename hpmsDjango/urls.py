@@ -20,8 +20,8 @@ from main import views
 
 
 urlpatterns = [
-    path('', RedirectView.as_view(url='/login'), name='login_redirect'),
+    path('', RedirectView.as_view(url='/hpms/login'), name='login_redirect'),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('', include("main.urls")),
+    path('hpms/', include("main.urls")),
 ]
