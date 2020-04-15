@@ -50,13 +50,37 @@ def tags_view(request):
         and request.POST.__contains__("selected_tags"):
             tags_to_delete = request.POST.getlist("selected_tags")
             models.LogsTag.objects.filter(id__in=tags_to_delete).delete()
-    action = forms.TagsActionSelectForm(initial={"select":"empty"})
+    form = forms.TagsActionSelectForm(initial={"select":"empty"})
     table = tables.TagsTable(models.LogsTag.objects.all(), order_by="-id") 
     table.paginate(page=request.GET.get("page", 1), per_page=5)
     return render(request, "tags.html",  {
-        "action" : action,
+        "form" : form,
         "table": table
     })
+
+class FilteredTagsListView(SingleTableMixin, FilterView, FormView):
+    table_class = tables.TagsTable
+    filterset_class = filters.TagsFilter
+    form_class = forms.TagsActionSelectForm
+    model = models.LogsTag
+    queryset = models.LogsTag.objects.all()
+    initial={"select":"empty"}
+    table_pagination = {
+        "per_page": 10
+    }
+    def post(self, request, *args, **kwargs):
+        # super().post(request, *args, **kwargs)
+        print(request.POST)
+        if request.POST.get("select") == "delete_selected" \
+        and request.POST.__contains__("selected_tags"):
+            tags_to_delete = request.POST.getlist("selected_tags")
+            models.LogsTag.objects.filter(id__in=tags_to_delete).delete()
+        table = self.table_class(self.queryset, order_by="-id") 
+        return render(request,self.template_name,{"form":self.form_class, "table":table,"filter":self.filterset_class})
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        table = self.table_class(self.queryset, order_by="-id") 
+        return render(request,self.template_name,{"form":form, "table":table,"filter":self.filterset_class})
 
 class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     table_class = tables.TransactionsTable

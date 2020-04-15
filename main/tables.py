@@ -194,5 +194,4 @@ class TagsTable(tables.Table):
         sequence = ("id","selection", "tag", "name_cryteria", "value_cryteria", "description")
         attrs = {
             "class": "table table-striped",
-            "id" : "tags-list"
         }

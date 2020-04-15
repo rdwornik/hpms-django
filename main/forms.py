@@ -11,12 +11,21 @@ from main import models
 
 logger = logging.getLogger(__name__)
 
-class TagsActionSelectForm(forms.Form):
+class TagsActionSelectForm(ModelForm):
     ACTIONS = (
         ("delete_selected","Deleted selected Tags"),
         ("empty","---------------")
         )
     select = forms.TypedChoiceField(choices=ACTIONS)
+    
+    tags = forms.ModelChoiceField(
+        queryset=models.LogsTag.objects.all(),
+        widget=autocomplete.ModelSelect2(url='tags-autocomplete'),
+    )
+    
+    class Meta:
+        model = models.LogsTag
+        fields = ['tags']
 
 class TagForm(ModelForm):
     class Meta:

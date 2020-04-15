@@ -14,7 +14,6 @@ from .forms import get_choice_list
 
 SERVER_CHOICES = [(id, server) for id, server in enumerate(
     models.LogsLog.objects.values_list("server",flat=True).distinct())]
-
 VISITOR_IP_CHOICES = [(id, value) for value, id in get_choice_list()]
 
 class TransactionsFilter(django_filters.FilterSet):
@@ -58,3 +57,12 @@ class TransactionsFilter(django_filters.FilterSet):
     class Meta:
         model = models.LogsLog
         fields = ["time","server","tags"]
+        
+class TagsFilter(django_filters.FilterSet):
+    tags = django_filters.ModelChoiceFilter(queryset=models.LogsTag.objects.all(),
+                                            widget=autocomplete.ModelSelect2(url="tags-autocomplete", 
+                                                                      attrs={"data-placeholder" : "Select Tag"}))
+    class Meta:
+        model = models.LogsTag
+        fields = ["tags"]
+    

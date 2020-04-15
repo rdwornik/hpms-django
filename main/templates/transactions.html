@@ -11,9 +11,6 @@
     <form method="get" class="form-inline">
       {% load widget_tweaks %}
         {% for field in filter.form %}
-          {% if field.is_hidden %}
-            {{ field }}
-          {% else %}  
             {% if field.name == "tags" %}
               {{ field.errors }}
               {{ field|add_label_class:"sr-only" }}
@@ -27,7 +24,6 @@
               {{ field|add_label_class:"sr-only" }}
               {{ field|add_class:"form-control form-control-sm mb-2 mr-sm-1" }}
             {% endif %}
-          {% endif %}
         {% endfor %}
       <button class="btn btn-primary btn-sm mb-2 mr-sm-1" type="submit">Submit</button>
       <a class="btn btn-primary btn-sm mb-2  mr-sm-1" href="{% url 'transactions' %}">Reset</a>
