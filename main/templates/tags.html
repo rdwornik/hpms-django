@@ -2,21 +2,20 @@
 {% load django_tables2 %}
 {% block content %}
   <h2>Tags</h2>
-  <div class="container-fluid">
     <div id="tagslist">
       <form id="tagslit-form" method="post" novalideta="">
         <div class="action">
           <div class="form-row align-items-center">
-            <div class="col-sm3 my-1">
+            <div class="col-sm3 my-2">
               {% load widget_tweaks %}
               {% csrf_token %}
               {{ action.select.errors }}
               {{ action.select|add_label_class:"sr-only" }}
-              {{ action.select|add_class:"form-control" }}
+              {{ action.select|add_class:"form-control form-control-sm" }}
             </div>
-            <div class="col-auto my-1">
-              <button type="submit" class="btn btn-primary">Go</button>
-              <a class="btn btn-secondary" href="{% url 'tags_add' %}" role="button">Add tag</a>
+            <div class="col-auto my-2">
+              <button type="submit" class="btn btn-primary btn-sm">Go</button>
+              <a class="btn btn-secondary btn-sm" href="{% url 'tags_add' %}" role="button">Add tag</a>
             </div>
           </div>
         </div>
@@ -25,5 +24,4 @@
         </div>
       </form>
     </div>
-  </div>
 {% endblock content %}

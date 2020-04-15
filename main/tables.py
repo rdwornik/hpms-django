@@ -9,11 +9,15 @@ from django.db.models import Q
 
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn(
-        '<a href="..{% url "transactions" %}?ip={{ record.value_id }}"> \
+        '<a href="../..{% url "transactions" %}?ip={{ record.value_id }}"> \
         {{ record.value__header_value }} \
         </a>',
         verbose_name="Visitors IP")
     visits = tables.Column(empty_values=(), verbose_name="Visits")
+    class Meta:
+        attrs = {
+            "class": "table table-striped"
+        }
 
 class TransactionsDetailTable(tables.Table):
     class Meta:
