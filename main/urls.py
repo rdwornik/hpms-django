@@ -17,6 +17,7 @@ urlpatterns = [
         path(
                 "",
                 views.VisitorsTablesView.as_view(),
+                name="home"
         ),
         path(
                 "visitors/",

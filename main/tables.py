@@ -9,7 +9,7 @@ from django.db.models import Q
 
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn(
-        '<a href="../..{% url "transactions" %}?ip={{ record.value_id }}"> \
+        '<a href="{% url "transactions" %}?ip={{ record.value_id }}"> \
         {{ record.value__header_value }} \
         </a>',
         verbose_name="Visitors IP")
