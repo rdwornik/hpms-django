@@ -134,8 +134,8 @@ LOGIN_REDIRECT_URL = '/hpms/visitors/'
 LOGIN_URL = '/hpms/login/'
 
 LOGIN_EXEMPT_URLS = (
-    r'^logout/$',
-    r'^api/logslogs/$',
+    r'^hpms/logout/$',
+    r'^hpms/api/logslogs/$',
 )
 
 REQUEST_METHOD = "REQUEST_METHOD"
