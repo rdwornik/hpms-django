@@ -22,11 +22,9 @@ class HoneypotRequestSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         http_headers = validated_data.pop("headers")
         headers = [
-            (
-            HeaderName.objects.get_or_create(header_name=header["name"]),
-            HeaderValue.objects.get_or_create(header_value=header["value"])
-            )
-            for header in http_headers
+                (HeaderName.objects.get_or_create(header_name=header["name"]),
+                HeaderValue.objects.get_or_create(header_value=header["value"]))
+                for header in http_headers
             ]
         try:
             with transaction.atomic():

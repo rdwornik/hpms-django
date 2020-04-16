@@ -53,10 +53,10 @@ class TestEndpoints(APITestCase):
          value_cryteria = "127.*"
       )
       
-      response = self.client.post("/api/logslogs/",data=data1,format="json")
+      response = self.client.post("/hpms/api/logslogs/",data=data1,format="json")
       self.assertEqual(response.status_code, 201)
       self.assertEqual(models.LogsLog.objects.count(),2)
-      response = self.client.post("/api/logslogs/",data=data2,format="json")
+      response = self.client.post("/hpms/api/logslogs/",data=data2,format="json")
       self.assertEqual(response.status_code, 201)
       self.assertEqual(models.LogsLog.objects.count(),4)
       self.assertEqual(models.LogsTagAssign.objects.count(),1)

@@ -64,13 +64,13 @@ urlpatterns = [
                 views.tags_view,
                 name="tags"
         ),
-        url(
-                r'^tags-autocomplete/$',
+        path(
+                "tags-autocomplete/",
                 views.TagsAutocomplete.as_view(),
                 name='tags-autocomplete',
         ),
-        url(
-                r'^visitors-ip-list-autocomplete/$',
+        path(
+                "visitors-ip-list-autocomplete/",
                 views.VisitorsIPAutocompleteFromList.as_view(),
                 name='visitors-ip-list-autocomplete',
         ),

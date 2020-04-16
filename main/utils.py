@@ -5,6 +5,7 @@ methods = {
     "POST" : ("P","0000FF"),
     "HEAD" : ("H", "FFFF00")
 }
+
 def get_or_create_methods_tag(request_method):
     if request_method not in methods:
         i = 0
