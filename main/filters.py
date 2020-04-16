@@ -11,19 +11,19 @@ from dal import autocomplete
 from main import models, views
 from urllib.request import urlopen
 from .forms import get_choice_list
-v                    
+
 SERVER_CHOICES = [(id, server) for id, server in enumerate(
     models.LogsLog.objects.values_list("server",flat=True).distinct())]
 VISITOR_IP_CHOICES = [(id, value) for value, id in get_choice_list()]
 
 class TransactionsFilter(django_filters.FilterSet):
     time = django_filters.NumberFilter(method="time_filter",
-                                       widget=NumberInput(attrs={"placeholder": "Select hours from now"}))
+                                       widget=NumberInput(attrs={"placeholder": "Hours from now"}))
     
     ip = django_filters.ChoiceFilter(method="ip_filter",
                                      choices=VISITOR_IP_CHOICES,
                                      widget=autocomplete.ListSelect2(url="visitors-ip-list-autocomplete",
-                                                                     attrs={"data-placeholder" : "Select Visitor IP"}))
+                                                                     attrs={"data-placeholder" : "Filter Visitor IP"}))
 
     server = django_filters.ChoiceFilter(method="server_filter",
                                          choices=SERVER_CHOICES,
@@ -32,7 +32,7 @@ class TransactionsFilter(django_filters.FilterSet):
     tags = django_filters.ModelChoiceFilter(method="tags_filter",
                                             queryset=models.LogsTag.objects.all(),
                                             widget=autocomplete.ModelSelect2(url="tags-autocomplete", 
-                                                                      attrs={"data-placeholder" : "Select Tag"}))
+                                                                             attrs={"data-placeholder" : "Filter Tag"}))
     class Meta:
         model = models.LogsLog
         fields = ["time","server","tags"]
