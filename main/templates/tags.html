@@ -10,11 +10,10 @@
           <div class="form-row align-items-center">
             {% load widget_tweaks %}
             {% csrf_token %}
-            
+            {{ field.errors }}
+            {{ field|add_label_class:"sr-only" }}
             {% for field in form %}
               <div class="col-auto my-1">
-                {{ field.errors }}
-                {{ field|add_label_class:"sr-only" }}
                 {{ field|add_class:"form-control form-control-sm mb-2" }}
               </div>
             {% endfor %}

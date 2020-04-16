@@ -13,15 +13,13 @@
             {% load widget_tweaks %}
             {% for field in filter.form %}
             <div class="col-auto">
-                {% if field.name == "tags" or field.name == "ip"  %}
-                  {{ field.errors }}
-                  {{ field|add_label_class:"sr-only" }}
-                  {{ field|add_class:"mb-2"}}
-                {% else %}
-                  {{ field.errors }}
-                  {{ field|add_label_class:"sr-only" }}
-                  {{ field|add_class:"form-control form-control-sm mb-2" }}
-                {% endif %}
+              {{ field.errors }}
+              {{ field|add_label_class:"sr-only" }}
+              {% if field.name == "tags" or field.name == "ip"  %}
+                {{ field|add_class:"mb-2"}}
+              {% else %}
+                {{ field|add_class:"form-control form-control-sm mb-2" }}
+              {% endif %}
             </div>
             {% endfor %}
             <div class="col-auto">
