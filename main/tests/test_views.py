@@ -46,6 +46,7 @@ class TestPage(TestCase):
         response = self.client.get(reverse("tags_add"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "tags_form.html")
+        self.assertContains(response, "Tag Form")
         self.assertIsInstance(
             response.context["form"], forms.TagForm
         )
@@ -56,6 +57,7 @@ class TestPage(TestCase):
         response = self.client.get(reverse("tags_edit",args=[tag.id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "tags_form.html")
+        self.assertContains(response, "Tag Form")
         self.assertIsInstance(
             response.context["form"], forms.TagForm
         )
