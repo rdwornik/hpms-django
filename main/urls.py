@@ -61,7 +61,7 @@ urlpatterns = [
         ),
         path(
                 "tags/",
-                views.FilteredTagsListView.as_view(template_name="tags.html"),
+                views.tags_view,
                 name="tags"
         ),
         url(

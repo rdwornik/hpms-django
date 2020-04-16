@@ -13,15 +13,12 @@ logger = logging.getLogger(__name__)
 
 class TagsActionSelectForm(ModelForm):
     ACTIONS = (
-        ("delete_selected","Deleted selected Tags"),
-        ("empty","---------------")
+        ("delete_selected","Deleted selected tags"),
+        ("search","Search tags"),
+        ("empty","Select Action")
         )
     select = forms.TypedChoiceField(choices=ACTIONS)
-    
-    tags = forms.ModelChoiceField(
-        queryset=models.LogsTag.objects.all(),
-        widget=autocomplete.ModelSelect2(url='tags-autocomplete'),
-    )
+    tags = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Search'}))
     
     class Meta:
         model = models.LogsTag
