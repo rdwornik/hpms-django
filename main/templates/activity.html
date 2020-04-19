@@ -1,19 +1,18 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
   <h2>Activity</h2>
-  <p>this will be the content of activity</p>
-  <canvas id="myChart" width="900" height="400"></canvas>
+  <div url-endpoint="{% url 'logslog-list' %}">
+    <canvas id="myChart"></canvas>
+  </div>
+</div>
 {% endblock content %}
 {% block js %}
-  <!-- <script>
-    var ctx = document.getElementById("myChart");
-    var myChart = new Chart(ctx. {
-      type: 'bar',
-      data: {
-        labals: {{ labels|safe },
-      d}
-      }
-    })
-  </script> -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="//code.jQuery.com/jQuery-1.11.0.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<script src="{% static "js/chart.js" %}"></script>
+<script src="{% static "js/script.js" %}"></script>
+
 {% endblock js %}

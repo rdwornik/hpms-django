@@ -80,4 +80,8 @@ class LogsLogViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         serializer = LogsLogSerializer(self.get_queryset().order_by("transaction").reverse(),many=True)
+        return Response(serializer.data)   
+    def get(self,request, *args, **kwargs):
+        serializer = LogsLogSerializer(self.get_queryset().order_by("transaction").reverse(),many=True)
+        print("hello")
         return Response(serializer.data)

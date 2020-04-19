@@ -16,12 +16,12 @@ from main import models, tables, filters, forms, signals
 # Create your views here.
 from django.views.generic import View
 from django.http import JsonResponse
-class ActivityView(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, "activity.html",{})
+# class ActivityView(View):
+#     def get(self, request, *args, **kwargs):
+#         return render(request, "activity.html",{})
     
-def get_data(request,*args, **kwargs):
-    pass
+# def get_data(request,*args, **kwargs):
+#     pass
 
 def transactions_detail_view(request, transaction=1):
     table = tables.TransactionsDetailTable(models.LogsLog.objects.filter(Q(transaction = transaction)))    
@@ -68,6 +68,9 @@ def tags_view(request):
         "form" : form,
         "table": table
     })
+    
+
+    
 class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     table_class = tables.TransactionsTable
     filterset_class = filters.TransactionsFilter
@@ -78,13 +81,6 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     table_pagination = {
         "per_page": 10
     }
-    
-    def get(self, request, *args, **kwargs):
-        self.table_pagination = {
-            "per_page" : 5
-        }
-        return super().get(request, *args, **kwargs)
-    
 class VisitorsTablesView(SingleTableView):
     template_name = "visitors.html"
     table_class = tables.VisitorTable
