@@ -14,6 +14,14 @@ from django.urls import reverse
 from dal import autocomplete
 from main import models, tables, filters, forms, signals
 # Create your views here.
+from django.views.generic import View
+from django.http import JsonResponse
+class ActivityView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, "activity.html",{})
+    
+def get_data(request,*args, **kwargs):
+    pass
 
 def transactions_detail_view(request, transaction=1):
     table = tables.TransactionsDetailTable(models.LogsLog.objects.filter(Q(transaction = transaction)))    
