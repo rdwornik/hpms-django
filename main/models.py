@@ -20,6 +20,7 @@ class LogsLog(models.Model):
     name = models.ForeignKey(HeaderName,on_delete=models.CASCADE)
     value = models.ForeignKey(HeaderValue,on_delete=models.CASCADE)
     server = models.TextField()
+    
     objects = managers.LogsLogManager()
 
     class Meta:
