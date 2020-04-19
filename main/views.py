@@ -79,6 +79,12 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
         "per_page": 10
     }
     
+    def get(self, request, *args, **kwargs):
+        self.table_pagination = {
+            "per_page" : 5
+        }
+        return super().get(request, *args, **kwargs)
+    
 class VisitorsTablesView(SingleTableView):
     template_name = "visitors.html"
     table_class = tables.VisitorTable
@@ -105,6 +111,4 @@ class VisitorsIPAutocompleteFromList(autocomplete.Select2ListView):
         return [(x,y) for x, y in results if self.q.lower() in x.lower()]
   
     def results(self, results):
-        return [dict(id=id, text=value) for value, id in results]
-
-        
+        return [dict(id=id, text=value) for value, id in results]        

@@ -2,7 +2,11 @@
 {% load render_table from django_tables2 %}
 {% load static %} 
 {% block css %}
+<<<<<<< HEAD
   <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+=======
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+>>>>>>> master
 {% endblock css %}
 {% block content %}
 <h2>Transactions</h2>
@@ -35,11 +39,15 @@
       </div>
     </form>
 {% endblock content %}
+<<<<<<< HEAD
 {% block script %}
+=======
+{% block js %}
+>>>>>>> master
   <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
   <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
   {{ form.media }}
-{% endblock script %}
+{% endblock js %}
 
 
 

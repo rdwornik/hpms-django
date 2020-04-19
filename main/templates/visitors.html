@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 {% load django_tables2 %}
+{% load static %}
 {% block content %}
   <h2>Visitors</h2>
     {% render_table table "tables/visitors_table.html" %}
 {% endblock content %}
+{% block js %}
+  <script src="{% static "js/utils.js" %}"></script>
+{% endblock js %}
 
 
