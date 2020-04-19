@@ -24,6 +24,15 @@ class TagsActionSelectForm(ModelForm):
         model = models.LogsTag
         fields = ['tags']
 
+class PaginationSelectForm(forms.Form):
+    ACTIONS = (
+        ("5", "5"),
+        ("10", "10"),
+        ("20", "20"),
+        ("50", "50")
+    )
+    per_page = forms.TypedChoiceField(choices=ACTIONS)
+
 class TagForm(ModelForm):
     class Meta:
         model = models.LogsTag

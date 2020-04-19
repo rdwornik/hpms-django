@@ -2,8 +2,6 @@
 {% load render_table from django_tables2  %}
 {% load static %} 
 {% block content %}
-<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
   <h2>Tags</h2>
       <form method="post">
         <div class="action">
@@ -30,7 +28,7 @@
         </div>
       </form>
 {% endblock content %}
-{% block script %}
+{% block js %}
   <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
   {{ form.media }}
-{% endblock script %}
+{% endblock js %}
