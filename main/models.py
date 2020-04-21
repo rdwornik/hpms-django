@@ -48,7 +48,7 @@ class LogsTag(models.Model):
         return "{0}".format(self.tag)
     
 class LogsTagAssign(models.Model):
-    transaction = models.IntegerField()
+    transaction = models.ForeignKey(LogsLog,on_delete=models.CASCADE,to_field="transaction")
     tag = models.ForeignKey(LogsTag,on_delete=models.CASCADE)
     
     objects = managers.LogsTagAssignManager()
