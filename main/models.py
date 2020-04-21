@@ -14,25 +14,25 @@ class HeaderValue(models.Model):
 
     def __str__(self):
         return "{0}".format(self.header_value)
-    
-class LogsLog(models.Model):
-    transaction = models.BigIntegerField(default=1)
+
+class Transaction(models.Model):
+    transaction = models.BigAutoField(primary_key=True)
     time = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name ="Transaction"
+        verbose_name_plural = "Transactions"
+
+class LogsLog(models.Model):
     name = models.ForeignKey(HeaderName,on_delete=models.CASCADE)
     value = models.ForeignKey(HeaderValue,on_delete=models.CASCADE)
-        
-    objects = managers.LogsLogManager()
-
+    transaction = models.ForeignKey(Transaction,on_delete=models.CASCADE)
+    # objects = managers.LogsLogManager()
+    
     class Meta:
-        verbose_name = "Logs Log"
-        verbose_name_plural = "Logs Log"
-        get_latest_by = "transaction"
-    def __str__(self):
-        return "{0} | {1} | {2} | {3}".format(self.transaction,
-                                                    self.name, 
-                                                    self.value,
-                                                    self.time)
-      
+        verbose_name = "LogsLog"
+        verbose_name_plural = "LogsLogs"
+        
 class LogsTag(models.Model):
     name_cryteria = models.ForeignKey(HeaderName, on_delete=models.CASCADE)
     value_cryteria = models.TextField()
@@ -48,14 +48,14 @@ class LogsTag(models.Model):
         return "{0}".format(self.tag)
     
 class LogsTagAssign(models.Model):
-    transaction = models.ForeignKey(LogsLog,on_delete=models.CASCADE,to_field="transaction")
+    transaction = models.ForeignKey(Transaction,on_delete=models.CASCADE,to_field="transaction")
     tag = models.ForeignKey(LogsTag,on_delete=models.CASCADE)
     
-    objects = managers.LogsTagAssignManager()
+    # objects = managers.LogsTagAssignManager()
 
     class Meta:
-        verbose_name = "Logs Tag Assign"
-        verbose_name_plural = "Logs Tags Assign"
+        verbose_name = "Log Tag Assignment"
+        verbose_name_plural = "Log Tag Assignments"
 
     def __str__(self):
         return "{0} {1}".format(self.transaction, self.tag)
