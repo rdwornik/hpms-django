@@ -1,4 +1,5 @@
 from django.shortcuts import render
+
 from django.views.generic.base import TemplateView
 from django.db.models import Q, Count, Sum
 from django_filters.views import FilterView
@@ -8,7 +9,7 @@ from django_tables2.views import (
 )
 from django.conf import settings
 from django_tables2.paginators import LazyPaginator
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.views.generic.edit import FormView
 from django.urls import reverse
 from dal import autocomplete
@@ -16,6 +17,8 @@ from main import models, tables, filters, forms, signals
 # Create your views here.
 from django.views.generic import View
 from django.http import JsonResponse
+from rest_framework import status
+
 # class ActivityView(View):
 #     def get(self, request, *args, **kwargs):
 #         return render(request, "activity.html",{})
@@ -35,7 +38,10 @@ def tags_form_view(request, id=None):
         if not id:
             form = forms.TagForm()
         else:
-            tag = models.LogsTag.objects.get(pk=id)
+            try:
+                tag = models.LogsTag.objects.get(pk=id)
+            except models.LogsTag.DoesNotExist:
+                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
             form = forms.TagForm(instance=tag)
         return render(request, "tags_form.html", { "form" : form })
 
@@ -44,7 +50,10 @@ def tags_form_view(request, id=None):
             tag = models.LogsTag()
             edited = False
         else:
-            tag = models.LogsTag.objects.get(pk=id)
+            try:
+                tag = models.LogsTag.objects.get(pk=id)
+            except models.LogsTag.DoesNotExist:
+                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
             edited = True
         form = forms.TagForm(request.POST, instance=tag)
         if form.has_changed() and form.is_valid():

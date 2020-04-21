@@ -12,8 +12,6 @@ from django.contrib.auth.models import User
 # Create your tests here.
 
 data1 = {
-   "time":"2020-03-01 10:36:00",
-   "server":"127.0.0.1:36969",
    "headers":[
       {
          "name":"VISITORS_IP",
@@ -25,8 +23,6 @@ data1 = {
       }]
 }
 data2 = {
-   "time":"2020-03-01 10:36:00",
-   "server":"127.0.0.1:36969",
    "headers":[
       {
          "name":"VISITORS_IP",

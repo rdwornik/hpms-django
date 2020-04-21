@@ -3,6 +3,7 @@ from rest_framework.response import Response
 
 from main import serializers, models
 
+
 class LogsLogViewSet(viewsets.ModelViewSet):
     queryset = models.LogsLog.objects.all()
     serializer_class = serializers.HoneypotRequestSerializer

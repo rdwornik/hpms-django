@@ -138,9 +138,11 @@ LOGIN_EXEMPT_URLS = (
     r'^hpms/api/logslogs/$',
 )
 
+#Constraints
 REQUEST_METHOD = "REQUEST_METHOD"
 REQUEST_URI = "REQUEST_URI"
 VISITORS_IP = "VISITORS_IP"
+SERVER_NAME = "SERVER_NAME"
 
 DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap.html'
 

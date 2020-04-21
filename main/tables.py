@@ -22,7 +22,7 @@ class VisitorTable(tables.Table):
 class TransactionsDetailTable(tables.Table):
     class Meta:
         model = models.LogsLog
-        exclude = ["server","transaction","id","time"]
+        exclude = ["transaction","id","time"]
         attrs = {
             "class": "table table-striped"
         }
@@ -56,6 +56,7 @@ class TransactionsTable(tables.Table):
             }
         })
     server = tables.Column(
+        empty_values=(),
         orderable=False,
         attrs={
             "td":{
@@ -118,6 +119,9 @@ class TransactionsTable(tables.Table):
         return self.data.model.objects.get_header_value(record.transaction,settings.REQUEST_URI)
     def render_visitor_ip(self,record):
         return self.data.model.objects.get_header_value(record.transaction,settings.VISITORS_IP)
+    def render_server(self, record):
+        return self.data.model.objects.get_header_value(record.transaction,settings.SERVER_NAME)
+
     def render_transaction(self, value):
         request_method = self.data.model.objects.get_header_value(value,settings.REQUEST_METHOD)
         tag = utils.get_or_create_methods_tag(request_method)

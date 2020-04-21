@@ -1,5 +1,6 @@
 
 from django.db import models
+from  django.utils import timezone
 from main import utils, managers
 # Create your models here.
 class HeaderName(models.Model):
@@ -16,11 +17,10 @@ class HeaderValue(models.Model):
     
 class LogsLog(models.Model):
     transaction = models.BigIntegerField(default=1)
-    time = models.DateTimeField()
+    time = models.DateTimeField(auto_now_add=True)
     name = models.ForeignKey(HeaderName,on_delete=models.CASCADE)
     value = models.ForeignKey(HeaderValue,on_delete=models.CASCADE)
-    server = models.TextField()
-    
+        
     objects = managers.LogsLogManager()
 
     class Meta:
@@ -28,11 +28,10 @@ class LogsLog(models.Model):
         verbose_name_plural = "Logs Log"
         get_latest_by = "transaction"
     def __str__(self):
-        return "{0} | {1} | {2} | {3} | {4}".format(self.transaction,
+        return "{0} | {1} | {2} | {3}".format(self.transaction,
                                                     self.name, 
                                                     self.value,
-                                                    self.time,
-                                                    self.server)
+                                                    self.time)
       
 class LogsTag(models.Model):
     name_cryteria = models.ForeignKey(HeaderName, on_delete=models.CASCADE)

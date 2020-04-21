@@ -11,9 +11,8 @@ from dal import autocomplete
 from main import models, views
 from urllib.request import urlopen
 from .forms import get_choice_list
-
 SERVER_CHOICES = [(id, server) for id, server in enumerate(
-    models.LogsLog.objects.values_list("server",flat=True).distinct())]
+    models.LogsLog.objects.filter(Q(name__header_name=settings.SERVER_NAME)).values_list("value__header_value",flat=True).distinct())]
 VISITOR_IP_CHOICES = [(id, value) for value, id in get_choice_list()]
 
 class TransactionsFilter(django_filters.FilterSet):
@@ -35,18 +34,14 @@ class TransactionsFilter(django_filters.FilterSet):
                                                                              attrs={"data-placeholder" : "Filter Tag"}))
     class Meta:
         model = models.LogsLog
-        fields = ["time","server","tags"]
-    
+        fields = ["time","server","ip","tags"]    
     def time_filter(self, queryset, name, value):
         time_threshold = datetime.now() - timedelta(hours=int(value))
         return queryset.filter(time__gt=time_threshold)
-
     def ip_filter(self, queryset, name, value):
         return queryset.exclude(Q(name__header_name=settings.VISITORS_IP) & ~Q(value_id=value))
-    
     def server_filter(self, queryset, name, value):
-        server = next(iter([s[1] for s in SERVER_CHOICES if int(value) == s[0]] or []), None)
-        return queryset.filter(Q(server=server))
+        return queryset.exclude(Q(name__header_name=settings.SERVER_NAME) & ~Q(value_id=value))
 
     def tags_filter(self,queryset, name, value):
         transaction = models.LogsTagAssign.objects.filter(Q(tag=value)).values_list("transaction", flat=True)
