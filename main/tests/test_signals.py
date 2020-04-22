@@ -5,14 +5,19 @@ class TestSignal(TestCase):
     def setUp(self):
         self.n1 = factories.HeaderNameFactory(header_name="VISITORS_IP")
         self.n2 = factories.HeaderNameFactory(header_name="REQUEST_METHOD")
+        
 
         self.v1 = factories.HeaderValueFactory(header_value="127.0.0.1")
         self.v2 = factories.HeaderValueFactory(header_value="127.0.1.2")
         self.v3 = factories.HeaderValueFactory(header_value="GET")
         
-        self.l1 =factories.LogsLogFactory(name=self.n1, value=self.v1)
-        self.l2 =factories.LogsLogFactory(name=self.n1, value=self.v2)
-        self.l3 =factories.LogsLogFactory(name=self.n2, value=self.v3)
+        self.t1=factories.TransactionFactory()
+        self.t2=factories.TransactionFactory()
+
+        self.l1 =factories.LogsLogFactory(name=self.n1,transaction=self.t1, value=self.v1)
+        
+        self.l2 =factories.LogsLogFactory(name=self.n1,transaction=self.t2,value=self.v2)
+        self.l3 =factories.LogsLogFactory(name=self.n2,transaction=self.t1, value=self.v3)
         
         self.tag1 = factories.LogsTagFactory(name_cryteria=self.n1,
                                             value_cryteria="127.*")

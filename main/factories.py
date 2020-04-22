@@ -8,10 +8,14 @@ class TransactionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Transaction
     time = datetime.now()
+    # transaction=factory.fuzzy.FuzzyInteger(0,5000)
+    transaction = factory.Sequence(int)
+
 
 class LogsLogFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.LogsLog
+    # transaction = TransactionFactory()
 
 class HeaderNameFactory(factory.django.DjangoModelFactory):
     class Meta:

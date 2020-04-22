@@ -18,9 +18,13 @@ class TestPage(TestCase):
         self.v1 = factories.HeaderValueFactory(header_value="127.0.0.1")
         self.v2 = factories.HeaderValueFactory(header_value="127.0.1.2")
         self.v3 = factories.HeaderValueFactory(header_value="128.0.0.1")
-        self.l1 =factories.LogsLogFactory(name=self.n1, value=self.v1)
-        self.l2 =factories.LogsLogFactory(name=self.n1, value=self.v2)
-        self.l3 =factories.LogsLogFactory(name=self.n1, value=self.v3)
+        self.t1=factories.TransactionFactory()
+        self.t2=factories.TransactionFactory()
+        self.t3=factories.TransactionFactory()
+
+        self.l1 =factories.LogsLogFactory(name=self.n1,transaction=self.t1, value=self.v1)
+        self.l2 =factories.LogsLogFactory(name=self.n1,transaction=self.t2,value=self.v2)
+        self.l3 =factories.LogsLogFactory(name=self.n1,transaction=self.t3, value=self.v3)
         
     def test_transactions_page_works(self):
         response = self.client.get(reverse("transactions"))
@@ -29,10 +33,10 @@ class TestPage(TestCase):
         self.assertContains(response, "Transactions")
       
     def test_transactions_detail_page_works(self):
-        response = self.client.get(reverse("transactions_detail",args=[self.l1.transaction]))
+        response = self.client.get(reverse("transactions_detail",args=[self.l1.transaction_id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "transactions_detail.html")
-        self.assertContains(response, "Transaction {}".format(self.l1.transaction))
+        self.assertContains(response, "Transaction {}".format(self.l1.transaction_id))
     
     def test_tags_page_works(self):
         tag = factories.LogsTagFactory(name_cryteria=self.n1,

@@ -23,7 +23,7 @@ def assign_tag_on_submit(sender, **kwargs):
         tags_assigned = [
             sender(
                 tag=tag,
-                transaction=transaction[0]
+                transaction=models.Transaction.objects.get(transaction=transaction[0])
             ) for transaction in logs_to_tag
         ]
         sender.objects.bulk_create(tags_assigned)

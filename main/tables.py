@@ -67,7 +67,7 @@ class TransactionsTable(tables.Table):
             }
         })
     transaction = tables.Column(
-        linkify=lambda value: value,
+        linkify=lambda value: value.transaction,
         attrs={
                 "td" : { 
                     "scope" : "row",
@@ -127,7 +127,7 @@ class TransactionsTable(tables.Table):
         request_method = self.data.model.objects.get_header_value(value,settings.REQUEST_METHOD)
         tag = utils.get_or_create_methods_tag(request_method)
         color, letter = tag[1], tag[0]
-        return format_html("{}<b><font color={}> {}</font></b>".format(value, color, letter))
+        return format_html("{}<b><font color={}> {}</font></b>".format(value.transaction, color, letter))
     def render_tags(self, record):
         assigned_tags = models.LogsTagAssign.objects.filter(Q(transaction=record.transaction)).values("tag_id")
         tags = {}
@@ -135,7 +135,7 @@ class TransactionsTable(tables.Table):
             tags[num] = models.LogsTag.objects.get(pk=t["tag_id"]).tag
         return format_html("".join("<b>{}</b> : {} <br/>".format(k, v) for k, v in tags.items()))
     def render_time(self,record):
-        return models.Transaction.objects.filter(Q(transaction=record.transaction)).time
+        return models.Transaction.objects.get(Q(transaction=record.transaction.transaction)).time
     def order_time(self, queryset, is_descending):
         queryset = queryset.order_by(
                                     ("-" if is_descending else "") + 
