@@ -10,15 +10,30 @@ from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 
 # Create your tests here.
+from main import serializers
+
+data3 = [
+      {
+         "header_names":"VISIsadTORS_IP",
+         "header_value":"127.0.0.1"
+      },
+      {
+         "header_names":"REDIasdRECT_STATUS",
+         "header_value":"403"
+      }
+   ]
+
+s = serializers.HeaderValueSerializer(data=data3,many=True)
+
 
 data1 = {
    "headers":[
       {
-         "name":"VISITORS_IP",
+         "name":"VISITscORS_IP",
          "value":"127.0.0.1"
       },
       {
-         "name":"REDIRECT_STATUS",
+         "name":"REscDIRECT_STATUS",
          "value":"403"
       }]
 }

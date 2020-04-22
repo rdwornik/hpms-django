@@ -20,6 +20,7 @@ werkzeug = "*"
 django-widget-tweaks = "*"
 factory-boy = "*"
 django-autocomplete-light = "*"
+drf-writable-nested = "*"
 
 [requires]
 python_version = "3.7"

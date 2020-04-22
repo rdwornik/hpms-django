@@ -22,8 +22,7 @@ class Transaction(models.Model):
     class Meta:
         verbose_name ="Transaction"
         verbose_name_plural = "Transactions"
-
-class LogsLog(models.Model):
+                class LogsLog(models.Model):
     name = models.ForeignKey(HeaderName,on_delete=models.CASCADE)
     value = models.ForeignKey(HeaderValue,on_delete=models.CASCADE)
     transaction = models.ForeignKey(Transaction,on_delete=models.CASCADE)
@@ -32,7 +31,9 @@ class LogsLog(models.Model):
     class Meta:
         verbose_name = "LogsLog"
         verbose_name_plural = "LogsLogs"
-        
+    def __str__(self):
+         return "{0} {1} {2}".format(self.name, self.value,self.transaction)
+
 class LogsTag(models.Model):
     name_cryteria = models.ForeignKey(HeaderName, on_delete=models.CASCADE)
     value_cryteria = models.TextField()
