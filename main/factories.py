@@ -16,7 +16,6 @@ class LogsLogFactory(factory.django.DjangoModelFactory):
 class HeaderNameFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.HeaderName
-
 class HeaderValueFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.HeaderValue

@@ -22,15 +22,20 @@ class Transaction(models.Model):
     class Meta:
         verbose_name ="Transaction"
         verbose_name_plural = "Transactions"
-                class LogsLog(models.Model):
+    def __str__(self):
+        return "{} {}".format(self.transaction, self.time)
+class LogsLog(models.Model):
     name = models.ForeignKey(HeaderName,on_delete=models.CASCADE)
     value = models.ForeignKey(HeaderValue,on_delete=models.CASCADE)
     transaction = models.ForeignKey(Transaction,on_delete=models.CASCADE)
-    # objects = managers.LogsLogManager()
+    
+    objects = managers.LogsLogManager()
     
     class Meta:
         verbose_name = "LogsLog"
         verbose_name_plural = "LogsLogs"
+        unique_together = (("transaction","name"),)
+        
     def __str__(self):
          return "{0} {1} {2}".format(self.name, self.value,self.transaction)
 
@@ -52,7 +57,7 @@ class LogsTagAssign(models.Model):
     transaction = models.ForeignKey(Transaction,on_delete=models.CASCADE,to_field="transaction")
     tag = models.ForeignKey(LogsTag,on_delete=models.CASCADE)
     
-    # objects = managers.LogsTagAssignManager()
+    objects = managers.LogsTagAssignManager()
 
     class Meta:
         verbose_name = "Log Tag Assignment"

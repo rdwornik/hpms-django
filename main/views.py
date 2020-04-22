@@ -77,9 +77,7 @@ def tags_view(request):
         "form" : form,
         "table": table
     })
-    
 
-    
 class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     table_class = tables.TransactionsTable
     filterset_class = filters.TransactionsFilter

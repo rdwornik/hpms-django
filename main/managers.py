@@ -8,7 +8,7 @@ class LogsLogManager(Manager):
         # TODO : crete logger for multpleobjects returned
         try:
             return self.get(
-                Q(transaction = transaction) &
+                Q(transaction_id = transaction) &
                 Q(name__header_name = name)
                 ).value.header_value
         except models.LogsLog.DoesNotExist as e:

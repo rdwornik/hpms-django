@@ -22,7 +22,7 @@ class VisitorTable(tables.Table):
 class TransactionsDetailTable(tables.Table):
     class Meta:
         model = models.LogsLog
-        exclude = ["transaction","id","time"]
+        exclude = ["transaction","id"]
         attrs = {
             "class": "table table-striped"
         }
@@ -79,6 +79,7 @@ class TransactionsTable(tables.Table):
                 "a" : { "class" :  "stretched-link" }
         })
     time = tables.DateTimeColumn(
+        empty_values=(),
         format="d F Y H:i:s",
         attrs={
             "td":{
@@ -133,6 +134,8 @@ class TransactionsTable(tables.Table):
         for num, t in enumerate(assigned_tags, start=1):
             tags[num] = models.LogsTag.objects.get(pk=t["tag_id"]).tag
         return format_html("".join("<b>{}</b> : {} <br/>".format(k, v) for k, v in tags.items()))
+    def render_time(self,record):
+        return models.Transaction.objects.filter(Q(transaction=record.transaction)).time
     def order_time(self, queryset, is_descending):
         queryset = queryset.order_by(
                                     ("-" if is_descending else "") + 

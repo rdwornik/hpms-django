@@ -37,6 +37,7 @@ class TransactionsFilter(django_filters.FilterSet):
         fields = ["time","server","ip","tags"]    
     def time_filter(self, queryset, name, value):
         time_threshold = datetime.now() - timedelta(hours=int(value))
+        transaction = models.Transaction.objects.filter(time_id__time=time_threshold)
         return queryset.filter(time__gt=time_threshold)
     def ip_filter(self, queryset, name, value):
         return queryset.exclude(Q(name__header_name=settings.VISITORS_IP) & ~Q(value_id=value))
