@@ -21,6 +21,9 @@ django-widget-tweaks = "*"
 factory-boy = "*"
 django-autocomplete-light = "*"
 drf-writable-nested = "*"
+pyparsing = "*"
+pydot = "*"
+pydotplus = "*"
 
 [requires]
 python_version = "3.7"

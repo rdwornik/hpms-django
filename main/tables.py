@@ -26,6 +26,7 @@ class TransactionsDetailTable(tables.Table):
         attrs = {
             "class": "table table-striped"
         }
+        
 class TransactionsTable(tables.Table):
     id = tables.Column(
         orderable=False,
@@ -67,7 +68,7 @@ class TransactionsTable(tables.Table):
             }
         })
     transaction = tables.Column(
-        linkify=lambda value: value.transaction,
+        linkify=lambda value: value,
         attrs={
                 "td" : { 
                     "scope" : "row",
@@ -79,8 +80,8 @@ class TransactionsTable(tables.Table):
                 "a" : { "class" :  "stretched-link" }
         })
     time = tables.DateTimeColumn(
-        empty_values=(),
         format="d F Y H:i:s",
+        orderable=False,
         attrs={
             "td":{
                 "style":"word-break: break-all",
@@ -101,8 +102,8 @@ class TransactionsTable(tables.Table):
             }
         })
     class Meta:
-        model = models.LogsLog
-        exclude = ("name","value")
+        model = models.Transaction
+        exclude = ("assigned_tags",)
         sequence =("id",
                    "transaction",
                    "time",
@@ -116,32 +117,23 @@ class TransactionsTable(tables.Table):
         row_attrs = {
             "style": "transform: rotate(0);"
         }
-    def render_request_uri(self, record):
-        return self.data.model.objects.get_header_value(record.transaction,settings.REQUEST_URI)
+    def render_request_uri(self, record):  
+        return models.LogsLog.objects.get_header_value(record.transaction,settings.REQUEST_URI)
     def render_visitor_ip(self,record):
-        return self.data.model.objects.get_header_value(record.transaction,settings.VISITORS_IP)
+        return models.LogsLog.objects.get_header_value(record.transaction,settings.VISITORS_IP)
     def render_server(self, record):
-        return self.data.model.objects.get_header_value(record.transaction,settings.SERVER_NAME)
-
+        return models.LogsLog.objects.get_header_value(record.transaction,settings.SERVER_NAME)
     def render_transaction(self, value):
-        request_method = self.data.model.objects.get_header_value(value,settings.REQUEST_METHOD)
-        tag = utils.get_or_create_methods_tag(request_method)
-        color, letter = tag[1], tag[0]
-        return format_html("{}<b><font color={}> {}</font></b>".format(value.transaction, color, letter))
+        request_method = models.LogsLog.objects.get_header_value(value,settings.REQUEST_METHOD)
+        letter, color = utils.get_or_create_methods_tag(request_method)
+        return format_html("{}<b><font color={}> {}</font></b>".format(value, color, letter))
     def render_tags(self, record):
-        assigned_tags = models.LogsTagAssign.objects.filter(Q(transaction=record.transaction)).values("tag_id")
-        tags = {}
-        for num, t in enumerate(assigned_tags, start=1):
-            tags[num] = models.LogsTag.objects.get(pk=t["tag_id"]).tag
-        return format_html("".join("<b>{}</b> : {} <br/>".format(k, v) for k, v in tags.items()))
-    def render_time(self,record):
-        return models.Transaction.objects.get(Q(transaction=record.transaction.transaction)).time
-    def order_time(self, queryset, is_descending):
-        queryset = queryset.order_by(
-                                    ("-" if is_descending else "") + 
-                                     "transaction",("-" if is_descending else "") + 
-                                     "time").distinct("transaction")
-        return (queryset,True)
+        assigned_tags = models.LogsTagAssign.objects.filter(Q(transaction=record.transaction))
+        return format_html("".join("<b>{}</b> : {} <br/>"
+                             .format(num, t.tag.tag) for num, t in enumerate(assigned_tags, start=1)))
+    # def render_time(self,record):
+    #     return record.transaction.time.strftime("%d %b %Y %H:%M:%S")
+    
 class TagsTable(tables.Table):
     id = tables.Column(visible=False)
     tag = tables.LinkColumn(

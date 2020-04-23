@@ -8,11 +8,11 @@ from django.db.models import Q
 from django.urls import reverse
 from django.http import HttpRequest
 from dal import autocomplete
-from main import models, views
+from main import models
 from urllib.request import urlopen
 from .forms import get_choice_list
-SERVER_CHOICES = [(id, server) for id, server in enumerate(
-    models.LogsLog.objects.filter(Q(name__header_name=settings.SERVER_NAME)).values_list("value__header_value",flat=True).distinct())]
+SERVER_CHOICES = [(id, server) for id, server in 
+                  models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
 VISITOR_IP_CHOICES = [(id, value) for value, id in get_choice_list()]
 
 class TransactionsFilter(django_filters.FilterSet):
@@ -33,23 +33,16 @@ class TransactionsFilter(django_filters.FilterSet):
                                             widget=autocomplete.ModelSelect2(url="tags-autocomplete", 
                                                                              attrs={"data-placeholder" : "Filter Tag"}))
     class Meta:
-        model = models.LogsLog
+        model = models.Transaction
         fields = ["time","server","ip","tags"]    
     def time_filter(self, queryset, name, value):
         time_threshold = datetime.now() - timedelta(hours=int(value))
-        transaction = models.Transaction.objects.filter(time_id__time=time_threshold)
         return queryset.filter(time__gt=time_threshold)
     def ip_filter(self, queryset, name, value):
-        return queryset.exclude(Q(name__header_name=settings.VISITORS_IP) & ~Q(value_id=value))
+        return queryset.filter(Q(name__header_name=settings.VISITORS_IP) & Q(value=value))
     def server_filter(self, queryset, name, value):
-        return queryset.exclude(Q(name__header_name=settings.SERVER_NAME) & ~Q(value_id=value))
-
+        return queryset.filter(Q(name__header_name=settings.SERVER_NAME) & Q(value=value))
     def tags_filter(self,queryset, name, value):
-        transaction = models.LogsTagAssign.objects.filter(Q(tag=value)).values_list("transaction", flat=True)
-        return queryset.filter(transaction__in=transaction)
-    
-    @property
-    def qs(self):
-        parent = super().qs
-        return parent.order_by("-transaction").distinct("transaction")
+        return queryset.filter(assigned_tags=value)
+
     

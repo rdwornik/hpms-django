@@ -63,7 +63,6 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'hpmsDjango.wsgi.application'
 
 # Database
@@ -145,10 +144,3 @@ VISITORS_IP = "VISITORS_IP"
 SERVER_NAME = "SERVER_NAME"
 
 DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap.html'
-
-
-import warnings
-warnings.filterwarnings(u'ignore',
-        message=u'DateTimeField LogsLog.time received a naive datetime',
-        category=RuntimeWarning,
-        )

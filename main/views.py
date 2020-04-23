@@ -82,7 +82,7 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     table_class = tables.TransactionsTable
     filterset_class = filters.TransactionsFilter
     model = models.LogsLog
-    queryset = models.LogsLog.objects.all()
+    queryset = models.Transaction.objects.all()
     paginator_class = LazyPaginator
     form_class = forms.TransactionsAutocompleteForm
     table_pagination = {

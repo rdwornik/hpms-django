@@ -14,31 +14,7 @@ class HeaderValue(models.Model):
 
     def __str__(self):
         return "{0}".format(self.header_value)
-
-class Transaction(models.Model):
-    transaction = models.BigAutoField(primary_key=True)
-    time = models.DateTimeField(auto_now_add=True)
     
-    class Meta:
-        verbose_name ="Transaction"
-        verbose_name_plural = "Transactions"
-    def __str__(self):
-        return "{} {}".format(self.transaction, self.time)
-class LogsLog(models.Model):
-    name = models.ForeignKey(HeaderName,on_delete=models.CASCADE)
-    value = models.ForeignKey(HeaderValue,on_delete=models.CASCADE)
-    transaction = models.ForeignKey(Transaction,on_delete=models.CASCADE)
-    
-    objects = managers.LogsLogManager()
-    
-    class Meta:
-        verbose_name = "LogsLog"
-        verbose_name_plural = "LogsLogs"
-        unique_together = (("transaction","name"),)
-        
-    def __str__(self):
-         return "{0} {1} {2}".format(self.name, self.value,self.transaction)
-
 class LogsTag(models.Model):
     name_cryteria = models.ForeignKey(HeaderName, on_delete=models.CASCADE)
     value_cryteria = models.TextField()
@@ -52,9 +28,39 @@ class LogsTag(models.Model):
 
     def __str__(self):
         return "{0}".format(self.tag)
+
+class Transaction(models.Model):
+    transaction = models.BigAutoField(primary_key=True)
+    time = models.DateTimeField(auto_now_add=True)
+    assigned_tags = models.ManyToManyField(LogsTag, through="LogsTagAssign")
+    name = models.ManyToManyField(HeaderName,through="LogsLog")
+    value = models.ManyToManyField(HeaderValue,through="LogsLog")
+
+    class Meta:
+        verbose_name ="Transaction"
+        verbose_name_plural = "Transactions"
+        ordering = ['-transaction']
+        
+    def __str__(self):
+        return "{}".format(self.time)
     
+class LogsLog(models.Model):
+    name = models.ForeignKey(HeaderName,on_delete=models.CASCADE)
+    value = models.ForeignKey(HeaderValue,on_delete=models.CASCADE)
+    transaction = models.ForeignKey(Transaction,on_delete=models.CASCADE)
+
+    objects = managers.LogsLogManager()
+    
+    class Meta:
+        verbose_name = "LogsLog"
+        verbose_name_plural = "LogsLogs"
+        unique_together = (("transaction","name"),)
+        
+    def __str__(self):
+         return "{0} {1} {2}".format(self.name, self.value,self.transaction)
+
 class LogsTagAssign(models.Model):
-    transaction = models.ForeignKey(Transaction,on_delete=models.CASCADE,to_field="transaction")
+    transaction = models.ForeignKey(Transaction,on_delete=models.CASCADE)
     tag = models.ForeignKey(LogsTag,on_delete=models.CASCADE)
     
     objects = managers.LogsTagAssignManager()
