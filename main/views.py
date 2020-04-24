@@ -1,7 +1,6 @@
 from django.shortcuts import render
 
-from django.views.generic.base import TemplateView
-from django.db.models import Q, Count, Sum
+from django.db.models import Q, Count
 from django_filters.views import FilterView
 from django_tables2.views import (
     SingleTableMixin,
@@ -12,12 +11,12 @@ from django_tables2.paginators import LazyPaginator
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.generic.edit import FormView
 from django.urls import reverse
-from dal import autocomplete
-from main import models, tables, filters, forms, signals
-# Create your views here.
 from django.views.generic import View
-from django.http import JsonResponse
 from rest_framework import status
+from dal import autocomplete
+from main import models, tables, filters, forms
+# Create your views here.
+
 
 # class ActivityView(View):
 #     def get(self, request, *args, **kwargs):
@@ -27,7 +26,7 @@ from rest_framework import status
 #     pass
 
 def transactions_detail_view(request, transaction=1):
-    table = tables.TransactionsDetailTable(models.LogsLog.objects.filter(Q(transaction = transaction)))    
+    table = tables.TransactionsDetailTable(models.Transaction.objects.get(pk=transaction).logslog_set.all())    
     return render(request, "transactions_detail.html", {
         "table":table,
         "transaction": transaction
@@ -58,7 +57,7 @@ def tags_form_view(request, id=None):
         form = forms.TagForm(request.POST, instance=tag)
         if form.has_changed() and form.is_valid():
             tag = form.save()
-            signals.tag_submited.send(sender=models.LogsTagAssign , tag=tag, edited=edited)
+            models.LogsTagAssign.objects.assign_tags_on_tags_created_or_updated(tag,edited)
         return HttpResponseRedirect(reverse("tags"))
 
 def tags_view(request):
@@ -81,7 +80,7 @@ def tags_view(request):
 class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     table_class = tables.TransactionsTable
     filterset_class = filters.TransactionsFilter
-    model = models.LogsLog
+    model = models.Transaction
     queryset = models.Transaction.objects.all()
     paginator_class = LazyPaginator
     form_class = forms.TransactionsAutocompleteForm
@@ -91,7 +90,7 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
 class VisitorsTablesView(SingleTableView):
     template_name = "visitors.html"
     table_class = tables.VisitorTable
-    queryset = models.LogsLog.objects.filter(Q(name__header_name=settings.VISITORS_IP)).values("value__header_value","value_id").annotate(visits = Count("value__header_value"))
+    queryset = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).values("header_value","id",visits=Count("id")) 
     paginator_class = LazyPaginator
     table_pagination = {
         "per_page": 10
@@ -108,10 +107,10 @@ class TagsAutocomplete(autocomplete.Select2QuerySetView):
 
 class VisitorsIPAutocompleteFromList(autocomplete.Select2ListView):
     def get_list(self):
-        return  forms.get_choice_list()
+        return  forms.get_visitor_ip_choice_list()
     
     def autocomplete_results(self, results):
         return [(x,y) for x, y in results if self.q.lower() in x.lower()]
   
     def results(self, results):
-        return [dict(id=id, text=value) for value, id in results]        
+        return [dict(id=id, text=value) for value, id in results]

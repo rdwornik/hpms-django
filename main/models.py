@@ -48,8 +48,6 @@ class LogsLog(models.Model):
     name = models.ForeignKey(HeaderName,on_delete=models.CASCADE)
     value = models.ForeignKey(HeaderValue,on_delete=models.CASCADE)
     transaction = models.ForeignKey(Transaction,on_delete=models.CASCADE)
-
-    objects = managers.LogsLogManager()
     
     class Meta:
         verbose_name = "LogsLog"

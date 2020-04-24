@@ -1,16 +1,17 @@
 import django_tables2 as tables
-import json
-from main import models
-from main import utils
+
 from django.conf import settings
 from django.utils.html import format_html
 from django_tables2.utils import A  # alias for Accessor
 from django.db.models import Q
 
+from main import models
+from main import utils
+
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn(
-        '<a href="{% url "transactions" %}?ip={{ record.value_id }}"> \
-        {{ record.value__header_value }} \
+        '<a href="{% url "transactions" %}?ip={{ record.id }}"> \
+        {{ record.header_value}} \
         </a>',
         verbose_name="Visitors IP")
     visits = tables.Column(empty_values=(), verbose_name="Visits")
@@ -18,15 +19,13 @@ class VisitorTable(tables.Table):
         attrs = {
             "class": "table table-striped"
         }
-
 class TransactionsDetailTable(tables.Table):
     class Meta:
         model = models.LogsLog
         exclude = ["transaction","id"]
         attrs = {
             "class": "table table-striped"
-        }
-        
+        }       
 class TransactionsTable(tables.Table):
     id = tables.Column(
         orderable=False,
@@ -117,23 +116,19 @@ class TransactionsTable(tables.Table):
         row_attrs = {
             "style": "transform: rotate(0);"
         }
-    def render_request_uri(self, record):  
-        return models.LogsLog.objects.get_header_value(record.transaction,settings.REQUEST_URI)
+    def render_request_uri(self, record):
+        return record.logslog_set.get(Q(name__header_name=settings.REQUEST_URI)).value.header_value        
     def render_visitor_ip(self,record):
-        return models.LogsLog.objects.get_header_value(record.transaction,settings.VISITORS_IP)
+        return record.logslog_set.get(Q(name__header_name=settings.VISITORS_IP)).value.header_value        
     def render_server(self, record):
-        return models.LogsLog.objects.get_header_value(record.transaction,settings.SERVER_NAME)
-    def render_transaction(self, value):
-        request_method = models.LogsLog.objects.get_header_value(value,settings.REQUEST_METHOD)
+        return record.logslog_set.get(Q(name__header_name=settings.SERVER_NAME)).value.header_value        
+    def render_transaction(self, value,record):
+        request_method = record.logslog_set.get(Q(name__header_name=settings.REQUEST_METHOD)).value.header_value 
         letter, color = utils.get_or_create_methods_tag(request_method)
         return format_html("{}<b><font color={}> {}</font></b>".format(value, color, letter))
     def render_tags(self, record):
-        assigned_tags = models.LogsTagAssign.objects.filter(Q(transaction=record.transaction))
         return format_html("".join("<b>{}</b> : {} <br/>"
-                             .format(num, t.tag.tag) for num, t in enumerate(assigned_tags, start=1)))
-    # def render_time(self,record):
-    #     return record.transaction.time.strftime("%d %b %Y %H:%M:%S")
-    
+                             .format(num, t.tag.tag) for num, t in enumerate(record.logstagassign_set.all(), start=1)))
 class TagsTable(tables.Table):
     id = tables.Column(visible=False)
     tag = tables.LinkColumn(

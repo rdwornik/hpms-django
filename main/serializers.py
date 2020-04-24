@@ -37,7 +37,6 @@ class HoneypotRequestSerializer(serializers.Serializer):
     headers = LogsLogSerializer(many=True)
     def save(self):
         t = models.Transaction.objects.create()
-        headers = self.validated_data['headers']
-        logs = [ models.LogsLog(transaction=t, **h) for h in headers ]
+        logs = [ models.LogsLog(transaction=t, **h) for h in self.validated_data['headers'] ]
         logs_created = models.LogsLog.objects.bulk_create(logs,ignore_conflicts=True)
-        models.LogsTagAssign.objects.assign_tags(logs_created)
+        models.LogsTagAssign.objects.assign_tags_on_logs_created(logs_created)

@@ -10,10 +10,10 @@ from django.http import HttpRequest
 from dal import autocomplete
 from main import models
 from urllib.request import urlopen
-from .forms import get_choice_list
+from .forms import get_visitor_ip_choice_list
 SERVER_CHOICES = [(id, server) for id, server in 
-                  models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
-VISITOR_IP_CHOICES = [(id, value) for value, id in get_choice_list()]
+                models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
+VISITOR_IP_CHOICES = [(value, id) for id, value in get_visitor_ip_choice_list()]
 
 class TransactionsFilter(django_filters.FilterSet):
     time = django_filters.NumberFilter(method="time_filter",

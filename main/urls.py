@@ -12,7 +12,6 @@ from .endpoints import LogsLogViewSet
 router = routers.DefaultRouter(trailing_slash=True)
 router.register(r"logslogs", LogsLogViewSet)
 
-
 urlpatterns = [
         path(
                 "",

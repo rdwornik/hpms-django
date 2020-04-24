@@ -1,5 +1,3 @@
-import logging
-
 from django import forms
 from django.views.generic.edit import FormView
 from django.forms import ModelForm, TextInput
@@ -9,7 +7,9 @@ from django.conf import settings
 from dal import autocomplete
 from main import models
 
-logger = logging.getLogger(__name__)
+
+def get_visitor_ip_choice_list():
+    return  models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct().values_list('header_value','id') 
 
 class TagsActionSelectForm(ModelForm):
     ACTIONS = (
@@ -24,15 +24,6 @@ class TagsActionSelectForm(ModelForm):
         model = models.LogsTag
         fields = ['tags']
 
-class PaginationSelectForm(forms.Form):
-    ACTIONS = (
-        ("5", "5"),
-        ("10", "10"),
-        ("20", "20"),
-        ("50", "50")
-    )
-    per_page = forms.TypedChoiceField(choices=ACTIONS)
-
 class TagForm(ModelForm):
     class Meta:
         model = models.LogsTag
@@ -42,14 +33,7 @@ class TagForm(ModelForm):
             "tag": TextInput(),
             "value_cryteria" : TextInput()
         }
-        
-def get_choice_list():
-    return  models.LogsLog.objects.filter(
-                                        Q(name__header_name=settings.VISITORS_IP)
-                                     ).values_list(
-                                        "value__header_value","value_id"
-                                     ).distinct()
-                                    
+
 class TransactionsAutocompleteForm(forms.ModelForm):
     tags = forms.ModelChoiceField(
         queryset=models.LogsTag.objects.all(),
@@ -57,7 +41,7 @@ class TransactionsAutocompleteForm(forms.ModelForm):
     )
     
     visitors_ip = autocomplete.Select2ListChoiceField(
-        choice_list=get_choice_list,
+        choice_list=get_visitor_ip_choice_list,
         widget=autocomplete.ListSelect2(url="visitors-ip-list-autocomplete"),
     )
 
