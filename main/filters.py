@@ -1,7 +1,7 @@
 import django_filters
 
 from datetime import datetime, timedelta
-from django.forms.widgets import NumberInput, HiddenInput, TextInput
+from django.forms.widgets import NumberInput, HiddenInput, TextInput, DateTimeInput
 from django import forms as django_forms
 from django.conf import settings
 from django.db.models import Q
@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.http import HttpRequest
 from dal import autocomplete
 from main import models
+from .widgets import DateTimePickerInput
 from urllib.request import urlopen
 from .forms import get_visitor_ip_choice_list
 SERVER_CHOICES = [(id, server) for id, server in 
@@ -32,6 +33,11 @@ class TransactionsFilter(django_filters.FilterSet):
                                             queryset=models.LogsTag.objects.all(),
                                             widget=autocomplete.ModelSelect2(url="tags-autocomplete", 
                                                                              attrs={"data-placeholder" : "Filter Tag"}))
+    date= django_filters.DateTimeFilter(
+            widget=DateTimeInput(attrs={
+            'id': 'datepicker',
+        })
+    )
     class Meta:
         model = models.Transaction
         fields = ["time","server","ip","tags"]    
