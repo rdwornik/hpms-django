@@ -9,7 +9,6 @@ from django.urls import reverse
 from django.http import HttpRequest
 from dal import autocomplete
 from main import models
-from .widgets import DateTimePickerInput
 from urllib.request import urlopen
 from .forms import get_visitor_ip_choice_list
 SERVER_CHOICES = [(id, server) for id, server in 
