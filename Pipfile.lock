@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ca461ec4a05a878c61bd0c90218a43840ca8d2b90eb3fd7a4d1915afa9e57641"
+            "sha256": "5da12bed0bf19549396a45ecca247f56179f07b7d77026d50217a28cd7b5ab7a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -82,6 +82,14 @@
             ],
             "index": "pypi",
             "version": "==2.3.1"
+        },
+        "django-tempus-dominus": {
+            "hashes": [
+                "sha256:6a44c3d55c82680a133867b6ad8d727213282eab681441e0ba3b5639740847f7",
+                "sha256:b0edf8a5b4f919192ef4ca0f40c9e0ebe35604323037990e8d97b583e589e99b"
+            ],
+            "index": "pypi",
+            "version": "==5.1.2.13"
         },
         "django-widget-tweaks": {
             "hashes": [

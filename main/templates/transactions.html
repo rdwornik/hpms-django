@@ -2,7 +2,21 @@
 {% load render_table from django_tables2 %}
 {% load static %} 
 {% block css %}
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.slim.min.js"></script>
+
+<style>
+  .select2-selection__rendered {
+    line-height: 32px !important;
+}
+.select2-container .select2-selection--single {
+    height: 37px !important;
+}
+.select2-selection__arrow {
+    height: 36px !important;
+}
+</style>
+
 {% endblock css %}
 {% block content %}
 <h2>Transactions</h2>
@@ -17,16 +31,20 @@
               {{ field|add_label_class:"sr-only" }}
               {% if field.name == "tags" or field.name == "ip"  %}
                 {{ field|add_class:"mb-2"}}
+              {% elif field.name == "date" %}
+              <div class="row">
+                {{ field }}
+              </div>
               {% else %}
-                {{ field|add_class:"form-control form-control-sm mb-2" }}
+                {{ field|add_class:"form-control mb-2" }}
               {% endif %}
             </div>
             {% endfor %}
             <div class="col-auto">
-              <button class="btn btn-primary btn-sm mb-2" type="submit">Submit</button>
+              <button class="btn btn-primary btn mb-2" type="submit">Submit</button>
             </div>
             <div class="col-auto">
-              <a class="btn btn-primary btn-sm mb-2" href="{% url 'transactions' %}">Reset</a>
+              <a class="btn btn-primary btn mb-2" href="{% url 'transactions' %}">Reset</a>
             </div>
         </div>
       </div>
@@ -36,9 +54,17 @@
     </form>
 {% endblock content %}
 {% block js %}
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-  <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
-  {{ form.media }}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+{{ form.media }}
+    
 {% endblock js %}
 
 

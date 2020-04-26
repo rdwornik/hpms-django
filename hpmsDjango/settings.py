@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_tables2',
     'django_extensions',
+    'tempus_dominus',
     'widget_tweaks',
     'main.apps.MainConfig',
 ]

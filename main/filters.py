@@ -11,9 +11,14 @@ from dal import autocomplete
 from main import models
 from urllib.request import urlopen
 from .forms import get_visitor_ip_choice_list
+from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
+from . import widgets
+
 SERVER_CHOICES = [(id, server) for id, server in 
                 models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
 VISITOR_IP_CHOICES = [(value, id) for id, value in get_visitor_ip_choice_list()]
+
+from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
 
 class TransactionsFilter(django_filters.FilterSet):
     time = django_filters.NumberFilter(method="time_filter",
@@ -32,14 +37,10 @@ class TransactionsFilter(django_filters.FilterSet):
                                             queryset=models.LogsTag.objects.all(),
                                             widget=autocomplete.ModelSelect2(url="tags-autocomplete", 
                                                                              attrs={"data-placeholder" : "Filter Tag"}))
-    date= django_filters.DateTimeFilter(
-            widget=DateTimeInput(attrs={
-            'id': 'datepicker',
-        })
-    )
+    date = django_filters.DateTimeFromToRangeFilter(method="date_filter",widget=RangeWidget(base_widget=widgets.DateTimePickerInput()))
     class Meta:
         model = models.Transaction
-        fields = ["time","server","ip","tags"]    
+        fields = ["time","server","ip","tags","date"]    
     def time_filter(self, queryset, name, value):
         time_threshold = datetime.now() - timedelta(hours=int(value))
         return queryset.filter(time__gt=time_threshold)
@@ -49,5 +50,9 @@ class TransactionsFilter(django_filters.FilterSet):
         return queryset.filter(Q(name__header_name=settings.SERVER_NAME) & Q(value=value))
     def tags_filter(self,queryset, name, value):
         return queryset.filter(assigned_tags=value)
-
+    def date_filter(self,queryset, name, value):
+        print("hello")
+        print(value)
+        print(type(value))
+        return queryset
     

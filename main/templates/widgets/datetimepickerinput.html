@@ -1,0 +1,35 @@
+<div class="col-md-6 col-sm-6 col-xs-6">
+<div
+class="input-group mb-2"
+id="div_id_{{ widget.name}}"
+data-target-input="nearest"
+>
+<input
+type="text"
+name="{{ widget.name }}"
+class="form-control datetimepicker-input"
+data-toggle="datetimepicker"
+data-target="#id_{{ widget.name}}"
+placeholder="
+{% if widget.name == 'date_0' %}
+From                
+{% else %}
+To
+{% endif %}
+"
+{% include "django/forms/widgets/attrs.html" %}>
+    <div
+    class="input-group-append"
+    data-target="#id_{{ widget.name}}"
+    data-toggle="datetimepicker">
+        <div class="input-group-text">
+            <i class="fa fa-calendar"></i>
+        </div>
+    </div>
+</div>
+<script >
+    jQuery( document ).ready(function() {
+        $('#id_{{ widget.name }}').datetimepicker({"format": "YYYY-MM-DD HH:mm", "icons": {"time": "fa fa-clock-o"}, "useCurrent": true});
+    });
+</script>
+</div>
