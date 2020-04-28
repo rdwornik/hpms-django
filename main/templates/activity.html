@@ -1,18 +1,57 @@
 {% extends "base.html" %}
 {% load static %}
+{% block css %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.slim.min.js"></script>
+{% endblock css %}
 {% block content %}
   <h2>Activity</h2>
-  <div url-endpoint="{% url 'logslog-list' %}">
-    <canvas id="myChart"></canvas>
-  </div>
+  <form method="get" id="myForm">
+    <div class="action">
+      <div class="form-row align-items-center">
+          {% load widget_tweaks %}
+          {{ form.tags.label_tag }}
+          {% for field in form %}
+          <div class="col-auto">
+            {{ field.errors }}
+            {{ field|add_label_class:"sr-only" }}
+            {% if field.name == "assigned_tags" %}
+              {{ field|add_class:"mb-2"}}
+            {% else %}
+            <div class="row">
+              {{ field }}
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+          <div class="col-auto">
+            <button class="btn btn-primary btn mb-2" type="submit">Submit</button>
+          </div>
+      </div>
+    </div>
+    <div class="result">
+      <div url-endpoint="{% url 'transaction-list' %}">
+        <canvas id="myChart">
+        </canvas>
+      </div>
+    </div>
+  </form>
+
 </div>
 {% endblock content %}
 {% block js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-<script src="//code.jQuery.com/jQuery-1.11.0.min.js"></script>
-<script src="http://d3js.org/d3.v3.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+{{ form.media }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script src="{% static "js/chart.js" %}"></script>
-<script src="{% static "js/script.js" %}"></script>
 
 {% endblock js %}

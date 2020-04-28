@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'django_tables2',
     'django_extensions',
     'tempus_dominus',
@@ -136,6 +137,8 @@ LOGIN_URL = '/hpms/login/'
 LOGIN_EXEMPT_URLS = (
     r'^hpms/logout/$',
     r'^hpms/api/logslogs/$',
+    r'^hpms/api/charts/$',
+    r'^hpms/api/charts$'
 )
 
 #Constraints

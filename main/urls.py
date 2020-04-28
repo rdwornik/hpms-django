@@ -7,10 +7,11 @@ from django.contrib.auth.forms import AuthenticationForm
 from django_filters.views import FilterView
 
 from main import views
-from .endpoints import LogsLogViewSet
+from .endpoints import LogsLogViewSet, ChartViewSet
 
 router = routers.DefaultRouter(trailing_slash=True)
 router.register(r"logslogs", LogsLogViewSet)
+router.register(r"charts", ChartViewSet)
 
 urlpatterns = [
         path(
@@ -35,7 +36,7 @@ urlpatterns = [
         ),
         path(
                 "activity/",
-                TemplateView.as_view(template_name="activity.html"),
+                views.activity_view,
                 name="activity"
         ),
         path(

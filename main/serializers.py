@@ -1,7 +1,20 @@
+import datetime
+
 from rest_framework import serializers
 from main import models
 
-        
+class DaysSerializer(serializers.Serializer):
+    x = serializers.DateField()
+    y = serializers.IntegerField()
+
+    
+class HoursSerializer(serializers.Serializer):
+    x = serializers.TimeField()
+    y = serializers.IntegerField()
+class TransactionModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Transaction
+        fields = '__all__'
 class ValueSerializer(serializers.RelatedField):
     def to_representation(self, value):
         return value.header_value

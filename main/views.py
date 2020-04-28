@@ -25,6 +25,12 @@ from main import models, tables, filters, forms
 # def get_data(request,*args, **kwargs):
 #     pass
 
+def activity_view(request):
+    form = forms.ActivityForm()
+    return render(request, "activity.html",  {
+        "form" : form
+    })
+
 def transactions_detail_view(request, transaction=1):
     table = tables.TransactionsDetailTable(models.Transaction.objects.get(pk=transaction).logslog_set.all())    
     return render(request, "transactions_detail.html", {

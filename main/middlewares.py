@@ -24,7 +24,7 @@ class LoginRequiredMiddleware:
 
         url_is_exempt = any(url.match(path) for url in EXEMPT_URLS)
         if request.user.is_authenticated and url_is_exempt:
-            if path == reverse("logslog-list").lstrip("/"):
+            if path == reverse("logslog-list").lstrip("/") or path == reverse("transaction-list").lstrip("/"):
                 return None
             return redirect(settings.LOGIN_REDIRECT_URL)
         elif request.user.is_authenticated or url_is_exempt:

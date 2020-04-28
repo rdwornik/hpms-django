@@ -13,6 +13,7 @@ from urllib.request import urlopen
 from .forms import get_visitor_ip_choice_list
 from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
 from . import widgets
+from django_filters import rest_framework as rest_filters
 
 SERVER_CHOICES = [(id, server) for id, server in 
                 models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
@@ -44,3 +45,12 @@ class TransactionsFilter(django_filters.FilterSet):
         return queryset.filter(Q(name__header_name=settings.SERVER_NAME) & Q(value=value))
     def tags_filter(self,queryset, name, value):
         return queryset.filter(assigned_tags=value)
+
+class ChartFilter(rest_filters.FilterSet):
+    time = rest_filters.DateTimeFromToRangeFilter(widget=RangeWidget(base_widget=DateTimeInput()))
+    class Meta:
+        model = models.Transaction
+        fields = ["time","assigned_tags"]
+
+        
+    
