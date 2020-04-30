@@ -48,9 +48,16 @@ class TransactionsFilter(django_filters.FilterSet):
 
 class ChartFilter(rest_filters.FilterSet):
     time = rest_filters.DateTimeFromToRangeFilter(widget=RangeWidget(base_widget=DateTimeInput()))
+    assigned_tags = rest_filters.ModelChoiceFilter(method="tags_filter",
+                                                   queryset=models.LogsTag.objects.all(),
+                                                   widget=autocomplete.ModelSelect2(url="tags-autocomplete", 
+                                                                                    attrs={"data-placeholder" : "Filter Tag"}))
     class Meta:
         model = models.Transaction
         fields = ["time","assigned_tags"]
+    
+    def tags_filter(self,queryset, name, value):
+        return queryset.filter(assigned_tags=value)
 
         
     

@@ -1,7 +1,7 @@
 
 from django.db import models
 from  django.utils import timezone
-from main import utils, managers
+from main import managers
 # Create your models here.
 class HeaderName(models.Model):
     header_name = models.TextField(unique=True)

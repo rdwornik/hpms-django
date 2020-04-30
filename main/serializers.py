@@ -3,13 +3,12 @@ import datetime
 from rest_framework import serializers
 from main import models
 
-class DaysSerializer(serializers.Serializer):
-    x = serializers.DateField()
+class DateTimeFieldSerializer(serializers.Serializer):
+    x = serializers.DateTimeField()
     y = serializers.IntegerField()
-
     
-class HoursSerializer(serializers.Serializer):
-    x = serializers.TimeField()
+class DateFieldSerializer(serializers.Serializer):
+    x = serializers.DateField()
     y = serializers.IntegerField()
 class TransactionModelSerializer(serializers.ModelSerializer):
     class Meta:

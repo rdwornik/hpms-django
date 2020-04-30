@@ -3,51 +3,61 @@ var API_URL = document
                     .attributes
                     .getNamedItem("url-endpoint")
                     .value;
-console.log(API_URL);
+var QUERY_PARAMS = window.location.search;
+URL = "".concat(API_URL,QUERY_PARAMS)
 
-const myForm = document.getElementById("myForm");
-
-// myForm.addEventListener('submit',function(e){
-//     e.preventDefault();
-
-// });
-
-const data3 = [
-    {
-        "hour": "13:00:00",
-        "y": 2
-    },
-    {
-        "hour": "12:00:00",
-        "y": 6
-    }
-]
-const data2 = [{
-    hour: 10,
-    y: 20
-}, {
-    hour: 15,
-    y: 10
-}]
 $.ajax({
     method:"GET",
-    url: API_URL,
+    url: URL,
     success: function(data){
         console.log(data)
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                datasets: [{
-                    label: '# of Votes',
-                    data: data3,
-                }]
-            },
-            options:{}
-        });
+        setChart(data)
     },
     error: function(error_data){
         console.log("error")
         console.log(error_data)
     }
 })
+
+function setChart(data){
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Number of transactions',
+                data: data.data,
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    distribution: 'series',
+                    time: {
+                        unit: data.label,
+                        displayFormats: data.displayFormats
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                    }
+                }]
+            },
+            animation: {
+                duration: 0 // general animation time
+            },
+            hover: {
+                animationDuration: 0 // duration of animations when hovering an item
+            },
+            responsiveAnimationDuration: 0, // animation duration after a resize
+            elements: {
+                line: {
+                    tension: 0 // disables bezier curves
+                }
+            },
+            showLines: true // disable for all datasets
+        }
+    });
+}

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+import datetime
 from django.db.models import Q, Count
 from django_filters.views import FilterView
 from django_tables2.views import (
@@ -16,7 +16,8 @@ from rest_framework import status
 from dal import autocomplete
 from main import models, tables, filters, forms
 # Create your views here.
-
+from dateutil.relativedelta import relativedelta
+import datetime
 
 # class ActivityView(View):
 #     def get(self, request, *args, **kwargs):
@@ -27,8 +28,14 @@ from main import models, tables, filters, forms
 
 def activity_view(request):
     form = forms.ActivityForm()
+    time_0 = (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_0') is None else request.GET.get('time_0')
+    time_1 =  datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get('time_1') is None else request.GET.get('time_1')
+    form.fields['time'].widget.widgets[0].attrs = {
+        "time_0" : time_0,
+        "time_1" : time_1
+    }
     return render(request, "activity.html",  {
-        "form" : form
+        "form" : form,
     })
 
 def transactions_detail_view(request, transaction=1):

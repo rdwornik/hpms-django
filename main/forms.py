@@ -13,10 +13,10 @@ def get_visitor_ip_choice_list():
     return  models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct().values_list('header_value','id') 
 
 class ActivityForm(forms.Form):
-    assigned_tags = forms.ModelChoiceField(queryset=models.LogsTag.objects.all(),
+    assigned_tags = forms.ModelChoiceField(required=False,queryset=models.LogsTag.objects.all(),
                                   widget=autocomplete.ModelSelect2(url="tags-autocomplete", 
                                                                    attrs={"data-placeholder" : "Filter Tag"}))
-    time = DateTimeRangeField(widget=RangeWidget(base_widget=widgets.DateTimePickerInput()))
+    time = DateTimeRangeField(required=False,widget=RangeWidget(base_widget=widgets.DateTimePickerInput()))
 class TagsActionSelectForm(ModelForm):
     ACTIONS = (
         ("delete_selected","Deleted selected tags"),

@@ -1,7 +1,7 @@
 from rest_framework import viewsets, generics
 from rest_framework.response import Response
 
-from main import serializers, models, filters
+from main import  models, filters,utils, serializers
 
 from django.db.models import Count, DateTimeField, TimeField, DateField
 from django.db.models.functions import TruncDay, TruncHour
@@ -14,19 +14,21 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Transaction.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_class  = filters.ChartFilter
-
+    
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        timedelta = queryset.first().time - queryset.last().time
-        if timedelta.days == 0:
-            queryset = queryset.annotate(x=TruncHour('time', output_field=TimeField())).values('x').order_by().annotate(y=Count('x')).distinct() 
-            s = serializers.HoursSerializer(queryset,many=True)
-        else:
-            queryset = queryset.annotate(x=TruncDay('time', output_field=DateField())).values('x').order_by().annotate(y=Count('x')).distinct() 
-            s = serializers.DaysSerializer(queryset,many=True)
+        ###TODO handle empty query set request on submit make filtr transactions time on id rather than on time
+        date1, date2 = utils.date_order(queryset.first().time, queryset.last().time)
+        td = date2 - date1  
+        range = [key for key, value in utils.range.items() if value(td) == True][0]                                                
+        trunc_func, field_type, serializer = utils.trunc_methods[range]
+        label_type = range
+        queryset = queryset.annotate(x=trunc_func('time', output_field=field_type())).values('x').order_by().annotate(y=Count('pk')) 
+        data = serializer(queryset,many=True).data
         data = {
-            'data':s.data,
-            'label' : [1,2,3]
+            'data':data,
+            'label' : label_type,
+            'displayFormats' : utils.display_format
         }
         return Response(data)
 class LogsLogViewSet(viewsets.ModelViewSet):

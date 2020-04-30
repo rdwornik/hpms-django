@@ -29,7 +29,12 @@ To
 </div>
 <script >
     jQuery( document ).ready(function() {
-        $('#id_{{ widget.name }}').datetimepicker({"format": "YYYY-MM-DD HH:mm", "icons": {"time": "fa fa-clock-o"}, "useCurrent": true});
+        $('#id_{{ widget.name }}').datetimepicker({
+            "format": "YYYY-MM-DD HH:mm", 
+            "icons": {"time": "fa fa-clock-o"}, 
+            "useCurrent" : true,
+            defaultDate : "{% for key, value in widget.attrs.items %}{% if key == widget.name %}{{ value }}{% endif %}{% endfor %}"
+        });
     });
 </script>
 </div>
