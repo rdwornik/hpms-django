@@ -65,8 +65,8 @@ trunc_methods = {
     "minute" : (TruncMinute, DateTimeField, DateTimeFieldSerializer),
     "hour": (TruncHour, DateTimeField, DateTimeFieldSerializer),
     "day": (TruncDay, DateField, DateFieldSerializer),
-    "month": (TruncMonth, DateField, DateFieldSerializer),
-    "year": (TruncYear, DateField, DateFieldSerializer),
+    "month": (TruncDay, DateField, DateFieldSerializer),
+    "year": (TruncDay, DateField, DateFieldSerializer),
 }
 
 date_order = lambda date1, date2: (date1, date2) if date1 < date2 else (date2,date1) 

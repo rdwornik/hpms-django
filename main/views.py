@@ -19,13 +19,6 @@ from main import models, tables, filters, forms
 from dateutil.relativedelta import relativedelta
 import datetime
 
-# class ActivityView(View):
-#     def get(self, request, *args, **kwargs):
-#         return render(request, "activity.html",{})
-    
-# def get_data(request,*args, **kwargs):
-#     pass
-
 def activity_view(request):
     form = forms.ActivityForm()
     time_0 = (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_0') is None else request.GET.get('time_0')

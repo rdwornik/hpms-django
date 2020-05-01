@@ -8,7 +8,9 @@ data-target-input="nearest"
 type="text"
 name="{{ widget.name }}"
 class="form-control datetimepicker-input"
-data-toggle="datetimepicker"
+data-toggle="datetimepic 
+
+  o      ker"
 data-target="#id_{{ widget.name}}"
 placeholder="
 {% if widget.name == 'time_0' %}
@@ -27,6 +29,7 @@ To
         </div>
     </div>
 </div>
+
 <script >
     jQuery( document ).ready(function() {
         $('#id_{{ widget.name }}').datetimepicker({

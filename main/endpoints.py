@@ -9,6 +9,8 @@ from django.db.models.functions import TruncDay, TruncHour
 from django_filters.rest_framework import DjangoFilterBackend
 from django.forms.widgets import NumberInput, HiddenInput, TextInput, DateTimeInput
 from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
+from dateutil.relativedelta import relativedelta
+import datetime
 
 class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Transaction.objects.all()
@@ -17,8 +19,9 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        ###TODO handle empty query set request on submit make filtr transactions time on id rather than on time
-        date1, date2 = utils.date_order(queryset.first().time, queryset.last().time)
+        time_0 = (datetime.datetime.now() + relativedelta(years=-1)) if request.GET.get('time_0') is None else datetime.datetime.fromisoformat(request.GET.get('time_0'))
+        time_1 =  datetime.datetime.now() if request.GET.get('time_1') is None else datetime.datetime.fromisoformat(request.GET.get('time_1'))
+        date1, date2 = utils.date_order(time_0, time_1)
         td = date2 - date1  
         range = [key for key, value in utils.range.items() if value(td) == True][0]                                                
         trunc_func, field_type, serializer = utils.trunc_methods[range]
@@ -34,7 +37,6 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
 class LogsLogViewSet(viewsets.ModelViewSet):
     queryset = models.LogsLog.objects.all()
     serializer_class = serializers.HoneypotRequestSerializer
-
     def list(self, request, *args, **kwargs):
         serializer = serializers.LogsLogSerializer(self.get_queryset().order_by("transaction").reverse(),many=True)
         return Response(serializer.data)   
