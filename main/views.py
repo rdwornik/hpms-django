@@ -21,11 +21,14 @@ import datetime
 
 def activity_view(request):
     form = forms.ActivityForm()
-    time_0 = (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_0') is None else request.GET.get('time_0')
-    time_1 =  datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get('time_1') is None else request.GET.get('time_1')
-    form.fields['time'].widget.widgets[0].attrs = {
-        "time_0" : time_0,
-        "time_1" : time_1
+    tags, time = form.fields.keys() 
+    time0 = time + "_0"
+    time1 = time + "_1"
+    time_0 = (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get(time0) is None else request.GET.get(time0)
+    time_1 =  datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get(time1) is None else request.GET.get(time1)
+    form.fields[time].widget.widgets[0].attrs = {
+        time0 : time_0,
+        time1 : time_1
     }
     return render(request, "activity.html",  {
         "form" : form,
