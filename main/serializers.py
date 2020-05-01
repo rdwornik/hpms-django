@@ -3,13 +3,10 @@ import datetime
 from rest_framework import serializers
 from main import models
 
-class DateTimeFieldSerializer(serializers.Serializer):
-    x = serializers.DateTimeField()
+class ChartSerializer(serializers.Serializer):
+    x = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
     y = serializers.IntegerField()
-    
-class DateFieldSerializer(serializers.Serializer):
-    x = serializers.DateField()
-    y = serializers.IntegerField()
+
 class TransactionModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Transaction

@@ -21,7 +21,7 @@ import datetime
 
 def activity_view(request):
     form = forms.ActivityForm()
-    tags, time = form.fields.keys() 
+    tag, time = form.fields.keys() 
     time0 = time + "_0"
     time1 = time + "_1"
     time_0 = (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get(time0) is None else request.GET.get(time0)
@@ -32,6 +32,9 @@ def activity_view(request):
     }
     return render(request, "activity.html",  {
         "form" : form,
+        "tag_field" : tag,
+        "time_0_field" : time0,
+        "time_1_field" : time1,
     })
 
 def transactions_detail_view(request, transaction=1):

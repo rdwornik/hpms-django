@@ -24,10 +24,10 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
         date1, date2 = utils.date_order(time_0, time_1)
         td = date2 - date1  
         range = [key for key, value in utils.range.items() if value(td) == True][0]                                                
-        trunc_func, field_type, serializer = utils.trunc_methods[range]
+        trunc_func = utils.trunc_methods[range]
         label_type = range
-        queryset = queryset.annotate(x=trunc_func('time', output_field=field_type())).values('x').order_by().annotate(y=Count('pk')) 
-        data = serializer(queryset,many=True).data
+        queryset = queryset.annotate(x=trunc_func('time', output_field=DateTimeField())).values('x').order_by().annotate(y=Count('pk')) 
+        data = serializers.ChartSerializer(queryset,many=True).data
         data = {
             'data':data,
             'label' : label_type,

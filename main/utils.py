@@ -1,6 +1,5 @@
 from dateutil.relativedelta import relativedelta
 import datetime
-from main.serializers import DateTimeFieldSerializer, DateFieldSerializer
 import random 
 from django.db.models.functions import TruncDay, TruncHour, TruncYear, TruncMonth, TruncMinute, TruncSecond
 from django.db.models import Count, DateTimeField, TimeField, DateField
@@ -61,12 +60,12 @@ select_trunc_method = {
 }
 
 trunc_methods = {
-    "second" : (TruncSecond, DateTimeField, DateTimeFieldSerializer),
-    "minute" : (TruncMinute, DateTimeField, DateTimeFieldSerializer),
-    "hour": (TruncHour, DateTimeField, DateTimeFieldSerializer),
-    "day": (TruncDay, DateField, DateFieldSerializer),
-    "month": (TruncDay, DateField, DateFieldSerializer),
-    "year": (TruncDay, DateField, DateFieldSerializer),
+    "second" : TruncSecond,
+    "minute" : TruncMinute,
+    "hour": TruncHour,
+    "day": TruncDay,
+    "month": TruncDay,
+    "year": TruncDay,
 }
 
 date_order = lambda date1, date2: (date1, date2) if date1 < date2 else (date2,date1) 
