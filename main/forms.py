@@ -1,9 +1,8 @@
 from django import forms
 from django.views.generic.edit import FormView
-from django.forms import ModelForm, TextInput
+from django.forms import ModelForm, TextInput, SelectMultiple
 from django.db.models import Q
 from django.conf import settings
-
 from dal import autocomplete
 from main import models, widgets
 
@@ -11,12 +10,22 @@ from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
 
 def get_visitor_ip_choice_list():
     return  models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct().values_list('header_value','id') 
+SERVER_CHOICES = [(id, server) for id, server in 
+                models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
 
 class ActivityForm(forms.Form):
     assigned_tags = forms.ModelChoiceField(required=False,queryset=models.LogsTag.objects.all(),
                                   widget=autocomplete.ModelSelect2(url="tags-autocomplete", 
                                                                    attrs={"data-placeholder" : "Filter Tag"}))
-    time = DateTimeRangeField(required=False,widget=RangeWidget(base_widget=widgets.DateTimePickerInput()))
+    time = DateTimeRangeField(required=False,
+                              widget=RangeWidget(
+                                  base_widget=widgets.DateTimePickerInput()))
+    test = forms.ModelChoiceField(required=False,
+                                  queryset=models.LogsTag.objects.all(),
+                                  widget=SelectMultiple(attrs={
+                                    "multiple":"multiple"
+                                  }))
+    server = forms.ChoiceField(choices=SERVER_CHOICES)
 class TagsActionSelectForm(ModelForm):
     ACTIONS = (
         ("delete_selected","Deleted selected tags"),

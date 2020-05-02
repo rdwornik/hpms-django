@@ -21,7 +21,7 @@ import datetime
 
 def activity_view(request):
     form = forms.ActivityForm()
-    tag, time = form.fields.keys() 
+    tag, time, test, server = form.fields.keys() 
     time0 = time + "_0"
     time1 = time + "_1"
     time_0 = (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get(time0) is None else request.GET.get(time0)
