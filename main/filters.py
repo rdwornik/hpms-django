@@ -31,21 +31,18 @@ class TransactionsFilter(django_filters.FilterSet):
                                          choices=SERVER_CHOICES,
                                          empty_label="Select Server")
     
-    tags = django_filters.ModelChoiceFilter(method="tags_filter",
+    assigned_tags = django_filters.ModelChoiceFilter(
                                             queryset=models.LogsTag.objects.all(),
                                             widget=autocomplete.ModelSelect2(url="tags-autocomplete", 
                                                                              attrs={"data-placeholder" : "Filter Tag"}))
     time = django_filters.DateTimeFromToRangeFilter(widget=RangeWidget(base_widget=widgets.DateTimePickerInput()))
     class Meta:
         model = models.Transaction
-        fields = ["time","server","ip","tags"]    
+        fields = ["time","server","ip","assigned_tags"]    
     def ip_filter(self, queryset, name, value):
         return queryset.filter(Q(name__header_name=settings.VISITORS_IP) & Q(value=value))
     def server_filter(self, queryset, name, value):
         return queryset.filter(Q(name__header_name=settings.SERVER_NAME) & Q(value=value))
-    def tags_filter(self,queryset, name, value):
-        return queryset.filter(assigned_tags=value)
-
 class ChartFilter(rest_filters.FilterSet):
     time = rest_filters.DateTimeFromToRangeFilter(widget=RangeWidget(base_widget=DateTimeInput()))
     assigned_tags = rest_filters.ModelChoiceFilter(method="tags_filter",

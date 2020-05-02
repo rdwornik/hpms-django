@@ -31,11 +31,6 @@
           </div>
       </div>
     </div>
-    <p>
-      {% for field in form  %}
-        {{ field.name }}
-      {% endfor %}
-    </p>
     <div class="result">
         <canvas id="myChart">
           <script>
@@ -46,7 +41,6 @@
                   url: "{% url 'transaction-list' %}?{{ request.GET.urlencode }}",
                   success: function(data)
                   {
-                      console.log(data)
                       setChart(data)
                   },     
                   error: function(error_data)
@@ -57,7 +51,7 @@
               })
               function setChart(data)
               {
-                var ctx = document.getElementById('myChart').getContext('2d');
+                var ctx = document.getElementById('myChart').getContext('2d')
                 var myChart = new Chart(ctx, 
                 {
                     type: 'line',
@@ -110,21 +104,21 @@
                       showLines: true // disable for all datasets
                     }
                 });
-                var canvas = document.getElementById("myChart");
+                canvas = document.getElementById("myChart")
                 canvas.onclick = function(evt) 
                 {
                   var activePoints = myChart.getElementsAtEvent(evt);
                   if (activePoints[0]) 
                   {
-                      var chartData = activePoints[0]['_chart'].config.data;
-                      var idx = activePoints[0]['_index'];
-                      var value = chartData.datasets[0].data[idx];
+                      chartData = activePoints[0]['_chart'].config.data
+                      idx = activePoints[0]['_index']
+                      value = chartData.datasets[0].data[idx]
                       time_0 = encodeURIComponent(value['x'])
                       time_1 = encodeURIComponent(value['x'].substring(0,10).concat(" 23:59"))
-                      assigned_tags = new URLSearchParams(window.location.search).get("{{ tag_field }}")                      
-                      let url = "{% url 'transactions' %}?".concat("{{ tag_field }}=",assigned_tags,"&{{ time_0_field }}=",time_0,"&&{{ time_1_field }}=",time_1)
-                      console.log(url);
-                      window.location.href = url;
+                      params = new URLSearchParams(window.location.search)
+                      assigned_tags = params.has("{{ tag_field }}") ? params.get("{{ tag_field }}") : ""
+                      url = "{% url 'transactions' %}?".concat("{{ tag_field }}=",assigned_tags,"&{{ time_0_field }}=",time_0,"&&{{ time_1_field }}=",time_1)
+                      window.location.href = url
                     }
                 };
               }
@@ -136,7 +130,6 @@
 </div>
 {% endblock content %}
 {% block js %}
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js"></script>
@@ -145,8 +138,4 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
 {{ form.media }}
-
-
-
-
 {% endblock js %}
