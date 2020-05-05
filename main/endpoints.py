@@ -5,12 +5,52 @@ from main import  models, filters,utils, serializers
 
 from django.db.models import Count, DateTimeField, TimeField, DateField
 from django.db.models.functions import TruncDay, TruncHour
+from django.conf import settings
+from django.db.models import Q
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django.forms.widgets import NumberInput, HiddenInput, TextInput, DateTimeInput
 from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
 from dateutil.relativedelta import relativedelta
 import datetime
+
+class VisitorList(viewsets.ReadOnlyModelViewSet):
+    serializer_class = serializers.HeaderValueModelSerializer  
+    class Meta:
+        model = models.HeaderValue
+    def get_queryset(self):
+        qs = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct() 
+        q = self.request.query_params.get('q', None)
+        if q is not None:
+            qs = qs.filter(header_value__istartswith=q)
+        return qs
+    
+class LogsTagList(viewsets.ReadOnlyModelViewSet):
+    serializer_class = serializers.LogsTagModelSerializer  
+    class Meta:
+        model = models.LogsTag
+    def get_queryset(self):
+        qs = models.LogsTag.objects.all()
+        q = self.request.query_params.get('q', None)
+        if q is not None:
+            qs = qs.filter(tag__istartswith=q)
+        return qs
+    # def list(self, request, *args, **kwargs):
+    #     qs = self.get_queryset()
+    #     data = serializers.LogsTagModelSerializer(qs,many=True).data
+    #     return Response(data)
+    
+class TagsList(viewsets.ReadOnlyModelViewSet):
+    serializer_class = serializers.HeaderValueModelSerializer  
+    class Meta:
+        model = models.HeaderValue
+    def get_queryset(self):
+        qs = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct() 
+        q = self.request.query_params.get('q', None)
+        if q:
+            qs = qs.filter(header_value__istartswith=q)
+        return qs
+
 
 class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Transaction.objects.all()

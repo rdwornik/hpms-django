@@ -1,0 +1,47 @@
+#group_time_0, #group_time_1 {
+  width: 50%;
+  float: left;
+}
+
+#time_group {
+  margin-right: 0.5rem !important;
+}
+
+#group_time_0 {
+  padding-right: 0.25rem !important;
+}
+
+#group_time_1 {
+  padding-left: 0.25rem !important;
+}
+
+#id_assigned_tags {
+  width: 35%;
+}
+
+#id_ip {
+  width: 10%;
+}
+
+span.select2-selection__rendered {
+  line-height: 32px !important;
+}
+
+.select2-container .select2-selection--single {
+  height: 36px !important;
+}
+
+.select2-container {
+  height: auto !important;
+}
+
+span.select2-container {
+  margin-right: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  display: inline-block;
+}
+
+.select2-selection__arrow b {
+  display: none !important;
+}
+/*# sourceMappingURL=style.css.map */

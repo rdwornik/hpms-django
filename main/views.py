@@ -13,28 +13,25 @@ from django.views.generic.edit import FormView
 from django.urls import reverse
 from django.views.generic import View
 from rest_framework import status
-from dal import autocomplete
 from main import models, tables, filters, forms
 # Create your views here.
 from dateutil.relativedelta import relativedelta
 import datetime
-
+from main import forms
 def activity_view(request):
     form = forms.ActivityForm()
-    tag, time, test, server = form.fields.keys() 
-    time0 = time + "_0"
-    time1 = time + "_1"
-    time_0 = (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get(time0) is None else request.GET.get(time0)
-    time_1 =  datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get(time1) is None else request.GET.get(time1)
-    form.fields[time].widget.widgets[0].attrs = {
-        time0 : time_0,
-        time1 : time_1
-    }
+    tag, time = form.fields.keys() 
+    # time0 = time + "_0"
+    # time1 = time + "_1"
+    # time_0 = (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get(time0) is None else request.GET.get(time0)
+    # time_1 =  datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get(time1) is None else request.GET.get(time1)
+    # form.fields[time].widget.widgets[0].attrs = {
+    #     time0 : time_0,
+    #     time1 : time_1
+    # }
     return render(request, "activity.html",  {
         "form" : form,
         "tag_field" : tag,
-        "time_0_field" : time0,
-        "time_1_field" : time1,
     })
 
 def transactions_detail_view(request, transaction=1):
@@ -93,9 +90,9 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     table_class = tables.TransactionsTable
     filterset_class = filters.TransactionsFilter
     model = models.Transaction
+    form_class = forms.ActivityForm
     queryset = models.Transaction.objects.all()
     paginator_class = LazyPaginator
-    form_class = forms.TransactionsAutocompleteForm
     table_pagination = {
         "per_page": 10
     }
@@ -108,21 +105,3 @@ class VisitorsTablesView(SingleTableView):
         "per_page": 10
     }
 
-class TagsAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return models.LogsTag.objects.none()
-        qs = models.LogsTag.objects.all()
-        if self.q:
-            qs = qs.filter(tag__istartswith=self.q)
-        return qs
-
-class VisitorsIPAutocompleteFromList(autocomplete.Select2ListView):
-    def get_list(self):
-        return  forms.get_visitor_ip_choice_list()
-    
-    def autocomplete_results(self, results):
-        return [(x,y) for x, y in results if self.q.lower() in x.lower()]
-  
-    def results(self, results):
-        return [dict(id=id, text=value) for value, id in results]

@@ -3,6 +3,17 @@ import datetime
 from rest_framework import serializers
 from main import models
 
+class HeaderValueModelSerializer(serializers.ModelSerializer):
+    text = serializers.CharField(source="header_value")
+    class Meta:
+        model = models.HeaderValue
+        fields = ['id','text']
+        
+class LogsTagModelSerializer(serializers.ModelSerializer):
+    text = serializers.CharField(source="tag")
+    class Meta:
+        model = models.LogsTag
+        fields = ['id','text']
 class ChartSerializer(serializers.Serializer):
     x = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
     y = serializers.IntegerField()

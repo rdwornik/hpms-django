@@ -7,11 +7,13 @@ from django.contrib.auth.forms import AuthenticationForm
 from django_filters.views import FilterView
 
 from main import views
-from .endpoints import LogsLogViewSet, ChartViewSet
+from .endpoints import LogsLogViewSet, ChartViewSet, VisitorList, LogsTagList
 
 router = routers.DefaultRouter(trailing_slash=True)
 router.register(r"logslogs", LogsLogViewSet)
 router.register(r"charts", ChartViewSet)
+router.register(r"ip", VisitorList, basename="visitor")
+router.register(r"tags", LogsTagList, basename="tag")
 
 urlpatterns = [
         path(
@@ -63,16 +65,6 @@ urlpatterns = [
                 "tags/",
                 views.tags_view,
                 name="tags"
-        ),
-        path(
-                "tags-autocomplete/",
-                views.TagsAutocomplete.as_view(),
-                name='tags-autocomplete',
-        ),
-        path(
-                "visitors-ip-list-autocomplete/",
-                views.VisitorsIPAutocompleteFromList.as_view(),
-                name='visitors-ip-list-autocomplete',
         ),
         path(
                 "login/",

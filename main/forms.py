@@ -3,29 +3,33 @@ from django.views.generic.edit import FormView
 from django.forms import ModelForm, TextInput, SelectMultiple
 from django.db.models import Q
 from django.conf import settings
-from dal import autocomplete
 from main import models, widgets
+from django.forms.widgets import DateTimeInput, SplitDateTimeWidget
 
 from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
-
+from main import widgets
 def get_visitor_ip_choice_list():
     return  models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct().values_list('header_value','id') 
 SERVER_CHOICES = [(id, server) for id, server in 
                 models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
 
+class CustomWidget(SplitDateTimeWidget):
+    def decompress(self, value):
+        print("hello")
+        print(value)
+        if value:
+            return [value.date(), value.time()]
+        return [None, None]
 class ActivityForm(forms.Form):
-    assigned_tags = forms.ModelChoiceField(required=False,queryset=models.LogsTag.objects.all(),
-                                  widget=autocomplete.ModelSelect2(url="tags-autocomplete", 
-                                                                   attrs={"data-placeholder" : "Filter Tag"}))
-    time = DateTimeRangeField(required=False,
-                              widget=RangeWidget(
-                                  base_widget=widgets.DateTimePickerInput()))
-    test = forms.ModelChoiceField(required=False,
-                                  queryset=models.LogsTag.objects.all(),
-                                  widget=SelectMultiple(attrs={
-                                    "multiple":"multiple"
-                                  }))
-    server = forms.ChoiceField(choices=SERVER_CHOICES)
+    time = forms.SplitDateTimeField(required=False,
+                                    widget=widgets.DateTimePickerInput(
+                                        attrs={'class':'form-control datetimepicker-input mb-2',
+                                                'data-toggle': "datetimepicker",},))
+    assigned_tags = forms.ModelChoiceField(required=False,
+                                          queryset=models.LogsTag.objects.all(),
+                                          widget=SelectMultiple(attrs={"multiple":"multiple"}))
+
+    
 class TagsActionSelectForm(ModelForm):
     ACTIONS = (
         ("delete_selected","Deleted selected tags"),
@@ -48,18 +52,3 @@ class TagForm(ModelForm):
             "tag": TextInput(),
             "value_cryteria" : TextInput()
         }
-
-class TransactionsAutocompleteForm(forms.ModelForm):
-    tags = forms.ModelChoiceField(
-        queryset=models.LogsTag.objects.all(),
-        widget=autocomplete.ModelSelect2(url='tags-autocomplete'),
-    )
-    
-    visitors_ip = autocomplete.Select2ListChoiceField(
-        choice_list=get_visitor_ip_choice_list,
-        widget=autocomplete.ListSelect2(url="visitors-ip-list-autocomplete"),
-    )
-
-    class Meta:
-        model = models.LogsTag
-        fields = ['tags']

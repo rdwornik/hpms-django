@@ -1,8 +1,18 @@
 from django.forms.widgets import DateTimeInput
 from dateutil.relativedelta import relativedelta
+from django.forms.widgets import DateTimeInput, SplitDateTimeWidget
+
 import datetime
-class DateTimePickerInput(DateTimeInput):
+class DateTimePickerInput(SplitDateTimeWidget):
     template_name = 'widgets/datetimepickerinput.html'
+    
+    
+    def decompress(self, value):
+        print("hello")
+        print(value)
+        if value:
+            return [value.date(), value.time()]
+        return [None, None]
     
     # def __init__(self, *args, **kwargs):
     #     print(kwargs['attrs'])
