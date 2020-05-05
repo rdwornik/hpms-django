@@ -12,7 +12,7 @@ from .endpoints import LogsLogViewSet, ChartViewSet, VisitorList, LogsTagList
 router = routers.DefaultRouter(trailing_slash=True)
 router.register(r"logslogs", LogsLogViewSet)
 router.register(r"charts", ChartViewSet)
-router.register(r"ip", VisitorList, basename="visitor")
+router.register(r"ip", VisitorList, basename="ip")
 router.register(r"tags", LogsTagList, basename="tag")
 
 urlpatterns = [

@@ -22,9 +22,7 @@ class CustomWidget(SplitDateTimeWidget):
         return [None, None]
 class ActivityForm(forms.Form):
     time = forms.SplitDateTimeField(required=False,
-                                    widget=widgets.DateTimePickerInput(
-                                        attrs={'class':'form-control datetimepicker-input mb-2',
-                                                'data-toggle': "datetimepicker",},))
+                                    widget=widgets.DateTimePickerInput())
     assigned_tags = forms.ModelChoiceField(required=False,
                                           queryset=models.LogsTag.objects.all(),
                                           widget=SelectMultiple(attrs={"multiple":"multiple"}))

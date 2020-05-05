@@ -2,15 +2,9 @@
   width: 50%;
   float: left;
 }
-
-#time_group {
-  margin-right: 0.5rem !important;
-}
-
 #group_time_0 {
   padding-right: 0.25rem !important;
 }
-
 #group_time_1 {
   padding-left: 0.25rem !important;
 }

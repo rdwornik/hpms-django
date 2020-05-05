@@ -17,9 +17,9 @@
       {% if field.name == "ip"  %}
         {{ field }}
       {% elif field.name == "assigned_tags" %}
-        {{form.assigned_tags|add_class:"form-control"}}
+        {{ form.assigned_tags }}
       {% elif field.name == "time" %}
-        <div class="form-group" id="time_group">
+        <div class="form-group mr-2 mb-2" id="time_group">
           {{ form.time }}
         </div>  
       {% else %}
@@ -38,47 +38,36 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
   $(document).ready(function() {
-    $('.datetimepicker-input').val('');
-    datepicker = document.querySelectorAll(".datetimepicker-input");
-    
-    [].forEach.call(datepicker, function(datepicker){
-      datepicker.setAttribute("data-target","#".concat(datepicker.id))
-    })
-    $('.datetimepicker-input').datetimepicker({
-      format:'DD/MM/YYYY HH:mm',
+    $(".datetimepicker-input").val("");
+    $(".datetimepicker-input").datetimepicker({
+      format:"DD/MM/YYYY HH:mm",
       defaultDate: new Date("2019/11/11 13:34"),
       pick12HourFormat: false            
     });
-  });
-
-  
-  $("#id_assigned_tags").select2({
-    ajax:{
-      url: "/hpms/api/tags/",
-      data: function(params){
-        var query = {
-          q: params.term,
+    $("#id_{{form.assigned_tags.name}}").select2({
+      ajax:{
+        url: "{% url 'tag-list' %}",
+        data: function(params){
+          var query = {
+            q: params.term,
+          }
+          return query;
         }
-        return query;
       }
-    }
-  });
-
-    
-  $("#id_ip").select2({
-    ajax:{
-      url: "/hpms/api/ip/",
-      data: function(params){
-        var query = {
-          q: params.term,
+    });
+    $("#id_{{filter.form.ip.name}}").select2({
+      ajax:{
+        url: "{% url 'ip-list' %}",
+        data: function(params){
+          var query = {
+            q: params.term,
+          }
+          return query;
         }
-        return query;
       }
-    }
+    });
   });
 </script>
-
-
 {% endblock js %}
 
 
