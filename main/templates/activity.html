@@ -14,10 +14,10 @@
       {{ field.errors }}
       {{ field|add_label_class:"sr-only" }}
       {% if field.name == "assigned_tags" %}
-        {{ field|add_class:"form-control"}}
+        {{ field }}
       {% else %}
-      <div class="form-group" id="time_group">
-      {{ field }}
+      <div class="form-group mr-2 mb-2" id="time_group">
+        {{ field }}
       </div>        
       {% endif %}
     {% endfor %}
@@ -33,19 +33,103 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 <script type="text/javascript">
-  
 $(document).ready(function() {
-  $('.datetimepicker-input').val('');
-  datepicker = document.querySelectorAll(".datetimepicker-input");
-  
-  [].forEach.call(datepicker, function(datepicker){
-    datepicker.setAttribute("data-target","#".concat(datepicker.id))
+  $.ajax({
+    method:"GET",
+    url: "{% url 'transaction-list' %}?{{ request.GET.urlencode }}",
+    success: function(data)
+    {
+        setChart(data)
+    },     
+    error: function(error_data)
+    {
+        console.log("error")
+        console.log(error_data)
+    }
   })
+  function setChart(data)
+  {
+    var ctx = document.getElementById('myChart').getContext('2d')
+    var myChart = new Chart(ctx, 
+    {
+        type: 'line',
+        data: 
+          {
+            datasets: 
+              [{
+                  label: 'Number of transactions',
+                  data: data.data,
+              }]
+          },
+        options: 
+        {
+          scales: 
+            {
+              xAxes: 
+                [{
+                    type: 'time',
+                    distribution: 'series',
+                    time: 
+                        {
+                            unit: data.label,
+                            displayFormats: data.displayFormats
+                        }
+                }],
+              yAxes: 
+                [{
+                    ticks: 
+                    {
+                        beginAtZero: true,
+                    }
+                }]
+            },
+          animation: 
+            {
+              duration: 0 // general animation time
+            },
+          hover: 
+            {
+              animationDuration: 0 // duration of animations when hovering an item
+            },
+          responsiveAnimationDuration: 0, // animation duration after a resize
+          elements: 
+          {
+            line: 
+              {
+                tension: 0 // disables bezier curves
+              }
+          },
+          showLines: true // disable for all datasets
+        }
+    });
+    canvas = document.getElementById("myChart")
+    canvas.onclick = function(evt) 
+    {
+      var activePoints = myChart.getElementsAtEvent(evt);
+      if (activePoints[0]) 
+      {
+          chartData = activePoints[0]['_chart'].config.data
+          idx = activePoints[0]['_index']
+          value = chartData.datasets[0].data[idx]
+          time_0 = encodeURIComponent(value['x'])
+          time_1 = encodeURIComponent(value['x'].substring(0,10).concat(" 23:59"))
+          params = new URLSearchParams(window.location.search)
+          assigned_tags = params.has("{{ tag_field }}") ? params.get("{{ tag_field }}") : ""
+          url = "{% url 'transactions' %}?".concat("{{ tag_field }}=",assigned_tags,"&{{ time_0_field }}=",time_0,"&&{{ time_1_field }}=",time_1)
+          window.location.href = url
+        }
+    };
+  }
 
-
-  $("#id_assigned_tags").select2({
+  $(".datetimepicker-input").val("");
+  $(".datetimepicker-input").datetimepicker({
+    format:"DD/MM/YYYY HH:mm",
+    defaultDate: new Date("2019/11/11 13:34"),
+    pick12HourFormat: false      
+  });
+  $("#id_{{form.assigned_tags.name}}").select2({
     ajax:{
-      url: "/hpms/api/tags/",
+      url: "{% url 'tag-list' %}",
       data: function(params){
         var query = {
           q: params.term,
@@ -54,102 +138,6 @@ $(document).ready(function() {
       }
     }
   });
-
-  $('.datetimepicker-input').datetimepicker({
-    defaultDate: new Date("2019/11/11 13:34"),
-  });
 });
-
-$( document ).ready(function() 
-            {
-              $.ajax({
-                  method:"GET",
-                  url: "{% url 'transaction-list' %}?{{ request.GET.urlencode }}",
-                  success: function(data)
-                  {
-                      setChart(data)
-                  },     
-                  error: function(error_data)
-                  {
-                      console.log("error")
-                      console.log(error_data)
-                  }
-              })
-              function setChart(data)
-              {
-                console.log(data)
-                var ctx = document.getElementById('myChart').getContext('2d')
-                var myChart = new Chart(ctx, 
-                {
-                    type: 'line',
-                    data: 
-                      {
-                        datasets: 
-                          [{
-                              label: 'Number of transactions',
-                              data: data.data,
-                          }]
-                      },
-                    options: 
-                    {
-                      scales: 
-                        {
-                          xAxes: 
-                            [{
-                                type: 'time',
-                                distribution: 'series',
-                                time: 
-                                    {
-                                        unit: data.label,
-                                        displayFormats: data.displayFormats
-                                    }
-                            }],
-                          yAxes: 
-                            [{
-                                ticks: 
-                                {
-                                    beginAtZero: true,
-                                }
-                            }]
-                        },
-                      animation: 
-                        {
-                          duration: 0 // general animation time
-                        },
-                      hover: 
-                        {
-                          animationDuration: 0 // duration of animations when hovering an item
-                        },
-                      responsiveAnimationDuration: 0, // animation duration after a resize
-                      elements: 
-                      {
-                        line: 
-                          {
-                            tension: 0 // disables bezier curves
-                          }
-                      },
-                      showLines: true // disable for all datasets
-                    }
-                });
-                canvas = document.getElementById("myChart")
-                canvas.onclick = function(evt) 
-                {
-                  var activePoints = myChart.getElementsAtEvent(evt);
-                  if (activePoints[0]) 
-                  {
-                      chartData = activePoints[0]['_chart'].config.data
-                      idx = activePoints[0]['_index']
-                      value = chartData.datasets[0].data[idx]
-                      time_0 = encodeURIComponent(value['x'])
-                      time_1 = encodeURIComponent(value['x'].substring(0,10).concat(" 23:59"))
-                      params = new URLSearchParams(window.location.search)
-                      assigned_tags = params.has("{{ tag_field }}") ? params.get("{{ tag_field }}") : ""
-                      url = "{% url 'transactions' %}?".concat("{{ tag_field }}=",assigned_tags,"&{{ time_0_field }}=",time_0,"&&{{ time_1_field }}=",time_1)
-                      window.location.href = url
-                    }
-                };
-              }
-            });
-
 </script>
 {% endblock js %}
