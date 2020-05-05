@@ -36,38 +36,7 @@
 {% endblock content %}
 {% block js %}
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-<script>
-  $(document).ready(function() {
-    $(".datetimepicker-input").val("");
-    $(".datetimepicker-input").datetimepicker({
-      format:"DD/MM/YYYY HH:mm",
-      defaultDate: new Date("2019/11/11 13:34"),
-      pick12HourFormat: false            
-    });
-    $("#id_{{form.assigned_tags.name}}").select2({
-      ajax:{
-        url: "{% url 'tag-list' %}",
-        data: function(params){
-          var query = {
-            q: params.term,
-          }
-          return query;
-        }
-      }
-    });
-    $("#id_{{filter.form.ip.name}}").select2({
-      ajax:{
-        url: "{% url 'ip-list' %}",
-        data: function(params){
-          var query = {
-            q: params.term,
-          }
-          return query;
-        }
-      }
-    });
-  });
-</script>
+<script src="/static/js/select.js"></script>
 {% endblock js %}
 
 

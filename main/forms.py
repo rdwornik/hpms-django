@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.conf import settings
 from main import models, widgets
 from django.forms.widgets import DateTimeInput, SplitDateTimeWidget
+from django.urls import reverse_lazy
 
 from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
 from main import widgets
@@ -25,7 +26,8 @@ class ActivityForm(forms.Form):
                                     widget=widgets.DateTimePickerInput())
     assigned_tags = forms.ModelChoiceField(required=False,
                                           queryset=models.LogsTag.objects.all(),
-                                          widget=SelectMultiple(attrs={"multiple":"multiple"}))
+                                          widget=SelectMultiple(attrs={"multiple":"multiple",
+                                                                       "url-endpoint":reverse_lazy("tag-list")}))
 
     
 class TagsActionSelectForm(ModelForm):

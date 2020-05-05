@@ -14,7 +14,7 @@
       {{ field.errors }}
       {{ field|add_label_class:"sr-only" }}
       {% if field.name == "assigned_tags" %}
-        {{ field }}
+        {{ field}}
       {% else %}
       <div class="form-group mr-2 mb-2" id="time_group">
         {{ field }}
@@ -32,9 +32,8 @@
 {% block js %}
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-{% if form %}
-  {{ form.media }}
-{% endif %} 
+{{ form.media }}
+<script src="/static/js/select.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
   $.ajax({
@@ -42,6 +41,7 @@ $(document).ready(function() {
     url: "{% url 'transaction-list' %}?{{ request.GET.urlencode }}",
     success: function(data)
     {
+      console.log(data)
         setChart(data)
     },     
     error: function(error_data)
@@ -123,20 +123,6 @@ $(document).ready(function() {
         }
     };
   }
-
-
-
-  $("#id_{{form.assigned_tags.name}}").select2({
-    ajax:{
-      url: "{% url 'tag-list' %}",
-      data: function(params){
-        var query = {
-          q: params.term,
-        }
-        return query;
-      }
-    }
-  });
 });
 </script>
 {% endblock js %}

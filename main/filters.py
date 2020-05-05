@@ -20,10 +20,12 @@ VISITOR_IP_CHOICES = [(value, id) for id, value in get_visitor_ip_choice_list()]
 
 from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
 from django.forms import Select
+from django.urls import reverse_lazy
 class TransactionsFilter(django_filters.FilterSet):
     ip = django_filters.ChoiceFilter(method="ip_filter",
                                      choices=VISITOR_IP_CHOICES,
-                                     empty_label="Select Visitors IP")
+                                     empty_label="Select Visitors IP",
+                                     widget=Select(attrs={"url-endpoint":reverse_lazy("ip-list")}))
     
 
     server = django_filters.ChoiceFilter(method="server_filter",
