@@ -13,7 +13,6 @@ from django.forms.widgets import NumberInput, HiddenInput, TextInput, DateTimeIn
 from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
 from dateutil.relativedelta import relativedelta
 import datetime
-
 class VisitorList(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.HeaderValueModelSerializer  
     class Meta:
@@ -35,10 +34,6 @@ class LogsTagList(viewsets.ReadOnlyModelViewSet):
         if q is not None:
             qs = qs.filter(tag__istartswith=q)
         return qs
-    # def list(self, request, *args, **kwargs):
-    #     qs = self.get_queryset()
-    #     data = serializers.LogsTagModelSerializer(qs,many=True).data
-    #     return Response(data)
     
 class TagsList(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.HeaderValueModelSerializer  
@@ -48,10 +43,10 @@ class TagsList(viewsets.ReadOnlyModelViewSet):
         qs = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct() 
         q = self.request.query_params.get('q', None)
         if q:
-            qs = qs.filter(header_value__istartswith=q)
+            qs = qs.filter(header_value__istartswith=q)     
         return qs
 
-
+#TODO Ogarnąć walidacje na on load
 class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Transaction.objects.all()
     filter_backends = [DjangoFilterBackend]

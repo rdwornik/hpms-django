@@ -27,7 +27,7 @@ class ActivityForm(forms.Form):
     assigned_tags = forms.ModelChoiceField(required=False,
                                           queryset=models.LogsTag.objects.all(),
                                           widget=SelectMultiple(attrs={"multiple":"multiple",
-                                                                       "url-endpoint":reverse_lazy("tag-list")}))
+                                                                       "url-endpoint-select":reverse_lazy("tag-list")}))
 
     
 class TagsActionSelectForm(ModelForm):

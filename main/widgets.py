@@ -9,7 +9,7 @@ class DateTimePickerInput(SplitDateTimeWidget):
             'all': ('css/datetimepickerinput.css',)
         }
         js = ('js/datetimepickerinput.js',)
-    
+    #TODO dodać inital value na wejściu
     def decompress(self, value):
         print("hello")
         print(value)

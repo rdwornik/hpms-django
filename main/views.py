@@ -18,17 +18,12 @@ from main import models, tables, filters, forms
 from dateutil.relativedelta import relativedelta
 import datetime
 from main import forms
+
+
+
 def activity_view(request):
     form = forms.ActivityForm()
-    tag, time = form.fields.keys() 
-    # time0 = time + "_0"
-    # time1 = time + "_1"
-    # time_0 = (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get(time0) is None else request.GET.get(time0)
-    # time_1 =  datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get(time1) is None else request.GET.get(time1)
-    # form.fields[time].widget.widgets[0].attrs = {
-    #     time0 : time_0,
-    #     time1 : time_1
-    # }
+    time, tag = form.fields.keys() 
     return render(request, "activity.html",  {
         "form" : form,
         "tag_field" : tag,
@@ -41,6 +36,8 @@ def transactions_detail_view(request, transaction=1):
         "transaction": transaction
     })
 
+
+#TODO Posprzątać ten widok
 def tags_form_view(request, id=None):
     if request.method == "GET":
         if not id:
@@ -69,6 +66,7 @@ def tags_form_view(request, id=None):
             models.LogsTagAssign.objects.assign_tags_on_tags_created_or_updated(tag,edited)
         return HttpResponseRedirect(reverse("tags"))
 
+#TODO posprzątać ten widok
 def tags_view(request):
     queryset = models.LogsTag.objects.all()
     if request.method == "POST":
@@ -86,6 +84,7 @@ def tags_view(request):
         "table": table
     })
 
+#TODO na gecie pass form field names
 class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     table_class = tables.TransactionsTable
     filterset_class = filters.TransactionsFilter
@@ -96,6 +95,8 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     table_pagination = {
         "per_page": 10
     }
+    
+#TODO dodać managera dla visitors
 class VisitorsTablesView(SingleTableView):
     template_name = "visitors.html"
     table_class = tables.VisitorTable

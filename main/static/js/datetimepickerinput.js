@@ -1,7 +1,7 @@
 $(function(){
     $('.datetimepicker-input').val("");
     $('.datetimepicker-input').datetimepicker({
-        format:"DD/MM/YYYY HH:mm",
+        format:"YYYY-MM-DD HH:mm",
         pick12HourFormat: false    
     });
 });
