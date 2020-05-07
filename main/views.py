@@ -24,7 +24,7 @@ def activity_view(request):
     initial = { 'time_after' : (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_after') is None else datetime.datetime.fromisoformat(request.GET.get('time_after')).strftime("%Y-%m-%d %H:%M"),
                 'time_before' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get('time_before') is None else datetime.datetime.fromisoformat(request.GET.get('time_before')).strftime("%Y-%m-%d %H:%M"),
                 'assigned_tags' : request.GET.getlist('assigned_tags')}
-    form = forms.ActivityForm(initial=initial)
+    form = forms.ActivityForm(initial)
     return render(request, "activity.html",  {
         "form" : form,
         "tag_field" : "assigned_tags",
@@ -86,7 +86,7 @@ def tags_view(request):
         "table": table
     })
 
-#TODO na gecie pass form field names
+#TODO zrobic z tego fbv
 class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     table_class = tables.TransactionsTable
     filterset_class = filters.TransactionsFilter
@@ -97,7 +97,22 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     table_pagination = {
         "per_page": 10
     }
-    
+    def get(self, request, *args, **kwargs):
+        initial = { 'time_after' : (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_after') is None else datetime.datetime.fromisoformat(request.GET.get('time_after')).strftime("%Y-%m-%d %H:%M"),
+                    'time_before' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get('time_before') is None else datetime.datetime.fromisoformat(request.GET.get('time_before')).strftime("%Y-%m-%d %H:%M"),
+                    'assigned_tags' : request.GET.getlist('assigned_tags')}
+        form = self.form_class(initial)
+        filter = self.filterset_class(request.GET,queryset=self.get_queryset())
+        table = self.table_class(filter.qs)    
+        table.paginate(page=request.GET.get("page", 1), per_page=10)
+        return render(request, "transactions.html",  {
+            "form" : form,
+            "tag_field" : "assigned_tags",
+            "table":table,
+            "filter" : filter,
+            "tag_field" : "assigned_tags",
+        })
+            
 #TODO dodać managera dla visitors
 class VisitorsTablesView(SingleTableView):
     template_name = "visitors.html"

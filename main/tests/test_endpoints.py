@@ -32,6 +32,13 @@ data2 = {
          "value":"403"
       }]
 }
+
+data3 = {"headers":[
+   {"name":"REQUEST_TIME","value":1588863521},
+   {"name":"[GET]","value":"key: name value: John"},
+   {"name":"[GET]","value":"key: name value: Matt"},
+   {"name":"[GET]","value":"key: second_name value: Tom"}]}
+
 class TestEndpoints(APITestCase):
    def setUp(self):
       self.user = User.objects.create_superuser(
@@ -55,3 +62,7 @@ class TestEndpoints(APITestCase):
       self.assertEqual(response.status_code, 201)
       self.assertEqual(models.LogsLog.objects.count(),4)
       self.assertEqual(models.LogsTagAssign.objects.count(),1)
+      
+   def test_create_object2(self):
+      response = self.client.post("/hpms/api/logslogs/",data=data3,format="json")
+      self.assertEqual(response.status_code, 201)

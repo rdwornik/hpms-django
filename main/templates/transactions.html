@@ -9,34 +9,33 @@
 <h2>Transactions</h2>
 <div class="action">
   <form method="get" id="myForm" class="form-inline">
+
     {% load widget_tweaks %}
     {% if form.errors %}
     {% for field in form %}
         {% for error in field.errors %}
-            <div class="alert alert-primary" role="alert">
-                <strong>{{ error|escape }}</strong>
+            <div class="alert alert-primary mb-2 mr-2" role="alert">
+                <strong>{{ field.name}}{{ error|escape }}</strong>
             </div>
         {% endfor %}
     {% endfor %}
     {% for error in form.non_field_errors %}
-        <div class="alert alert-primary" role="alert">
+        <div class="alert alert-primary mb-2 mr-2" role="alert">
             <strong>{{ error|escape }}</strong>
         </div>
     {% endfor %}
     {% endif %}
 
-    {% for field in filter.form %}
-      {{ field|add_label_class:"sr-only" }}
-      {% if field.name == "ip"  %}
-        {{ field }}
-      {% elif field.name == "assigned_tags" %}
-        {{ form.assigned_tags }}
-      {% elif field.name == "time" %}
-        <div class="form-group mr-2 mb-2" id="time_group">
-          {{ form.time }}
-        </div>  
-      {% else %}
-        {{ field|add_class:"form-control mb-2 mr-2"}}
+    {% for field in form %}
+      <div class="form-group mb-2 mr-2" id="{{field.name}}">
+        {{field}}
+      </div>
+    {% endfor %}
+    {% for field in filter.form %}  
+      {% if field.name == "ip" or field.name == "server"  %}
+        <div class="form-group mb-2 mr-2" id="{{field.name}}">
+          {{field|add_class:"form-control"}}
+        </div>
       {% endif %}
     {% endfor %}
     <button class="btn btn-primary btn mb-2 mr-2" type="submit">Submit</button>
@@ -50,4 +49,5 @@
 {% block js %}
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script src="/static/js/select.js"></script>
+{{ form.media }}
 {% endblock js %}

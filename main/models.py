@@ -14,7 +14,6 @@ class HeaderValue(models.Model):
 
     def __str__(self):
         return "{0}".format(self.header_value)
-    
 class LogsTag(models.Model):
     name_cryteria = models.ForeignKey(HeaderName, on_delete=models.CASCADE)
     value_cryteria = models.TextField()
@@ -52,7 +51,6 @@ class LogsLog(models.Model):
     class Meta:
         verbose_name = "LogsLog"
         verbose_name_plural = "LogsLogs"
-        unique_together = (("transaction","name"),)
         
     def __str__(self):
          return "{0} {1} {2}".format(self.name, self.value,self.transaction)

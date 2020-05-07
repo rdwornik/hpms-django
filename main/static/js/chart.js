@@ -1,13 +1,11 @@
 var canvas = document.getElementById("myChart")
 URL_ENDPOINT = canvas.attributes.getNamedItem("url-endpoint-chart").value;
-query = new URLSearchParams(window.location.search)
-assigned_tags = query.has("assigned_tags") ? query.get("assigned_tags") : ""
-var params = {
-  "assigned_tags":assigned_tags
-}
+var params ={}
 $('.datetimepicker-input').each(function(){ params[$(this).attr("name")] = $(this).attr("value")})
-QUERY_PARAMS = new URLSearchParams(params)
-URL = URL_ENDPOINT.concat("?",QUERY_PARAMS.toString())
+search = new URLSearchParams(params)
+QUERY_PARAMS = window.location.search == "" ? "".concat("?",search.toString()) : window.location.search
+console.log(QUERY_PARAMS)
+URL = URL_ENDPOINT.concat(QUERY_PARAMS)
 console.log(URL)
 $.ajax({
     method:"GET",
@@ -86,10 +84,17 @@ function setChart(data)
           tag_field = this.attributes.getNamedItem("tag-field").value
           query = new URLSearchParams(window.location.search)
           assigned_tags = query.has(tag_field) ? query.get(tag_field) : ""
+          if(assigned_tags != "")
+          {
           params = {
             [tag_field] : assigned_tags,
             "time_after" : value["x"],
-            "time_before" : value["x"].substring(0,10).concat(" 23:59"),
+            "time_before" : value["x"].substring(0,10).concat(" 23:59"),}
+          }
+          else{
+          params = {
+            "time_after" : value["x"],
+            "time_before" : value["x"].substring(0,10).concat(" 23:59"),}
           }
           search = new URLSearchParams(params)
           transactions = this.attributes.getNamedItem("transactions").value

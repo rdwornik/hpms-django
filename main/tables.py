@@ -117,13 +117,28 @@ class TransactionsTable(tables.Table):
             "style": "transform: rotate(0);"
         }
     def render_request_uri(self, record):
-        return record.logslog_set.get(Q(name__header_name=settings.REQUEST_URI)).value.header_value        
+        try:
+            uri = record.logslog_set.get(Q(name__header_name=settings.REQUEST_URI)).value.header_value
+        except models.LogsLog.DoesNotExist  as identifier:
+            uri = "none"
+        return uri
     def render_visitor_ip(self,record):
-        return record.logslog_set.get(Q(name__header_name=settings.VISITORS_IP)).value.header_value        
+        try:
+            visitor = record.logslog_set.get(Q(name__header_name=settings.VISITORS_IP)).value.header_value        
+        except models.LogsLog.DoesNotExist  as identifier:
+            visitor = "127.0.0.1"
+        return visitor
     def render_server(self, record):
-        return record.logslog_set.get(Q(name__header_name=settings.SERVER_NAME)).value.header_value        
+        try:
+            server = record.logslog_set.get(Q(name__header_name=settings.SERVER_NAME)).value.header_value 
+        except models.LogsLog.DoesNotExist  as identifier:
+            server = "hpmsphp.example.com"
+        return server
     def render_transaction(self, value,record):
-        request_method = record.logslog_set.get(Q(name__header_name=settings.REQUEST_METHOD)).value.header_value 
+        try:
+            request_method = record.logslog_set.get(Q(name__header_name=settings.REQUEST_METHOD)).value.header_value 
+        except models.LogsLog.DoesNotExist  as identifier:
+            request_method = "GET"
         letter, color = utils.get_or_create_methods_tag(request_method)
         return format_html("{}<b><font color={}> {}</font></b>".format(value, color, letter))
     def render_tags(self, record):

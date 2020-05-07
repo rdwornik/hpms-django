@@ -30,11 +30,9 @@ class TransactionsFilter(django_filters.FilterSet):
     server = django_filters.ChoiceFilter(method="server_filter",
                                          choices=SERVER_CHOICES,
                                          empty_label="Select Server")
-         
-         
-          
+       
     assigned_tags = django_filters.ModelMultipleChoiceFilter(required=False,queryset=models.LogsTag.objects.all())
-    time = rest_filters.DateTimeFromToRangeFilter(required=False)
+    time = django_filters.DateTimeFromToRangeFilter(required=False)
 
     class Meta:
         model = models.Transaction

@@ -13,16 +13,8 @@ def get_visitor_ip_choice_list():
     return  models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct().values_list('header_value','id') 
 SERVER_CHOICES = [(id, server) for id, server in 
                 models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
-
-TAGS_CHOICES = [(tag['id'], tag['tag']) for tag in models.LogsTag.objects.values('id','tag')] 
 import datetime
-class CustomWidget(SplitDateTimeWidget):
-    def decompress(self, value):
-        print("hello")
-        print(value)
-        if value:
-            return [value.date(), value.time()]
-        return [None, None]
+
 class ActivityForm(forms.Form):
     time_after = forms.DateTimeField(required=False,
                                      input_formats=["%Y-%m-%d %H:%M"],
