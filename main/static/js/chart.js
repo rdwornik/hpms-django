@@ -1,7 +1,14 @@
 var canvas = document.getElementById("myChart")
 URL_ENDPOINT = canvas.attributes.getNamedItem("url-endpoint-chart").value;
-QUERY_PARAMS = window.location.search;
-URL = "".concat(URL_ENDPOINT,QUERY_PARAMS)
+query = new URLSearchParams(window.location.search)
+assigned_tags = query.has("assigned_tags") ? query.get("assigned_tags") : ""
+var params = {
+  "assigned_tags":assigned_tags
+}
+$('.datetimepicker-input').each(function(){ params[$(this).attr("name")] = $(this).attr("value")})
+QUERY_PARAMS = new URLSearchParams(params)
+URL = URL_ENDPOINT.concat("?",QUERY_PARAMS.toString())
+console.log(URL)
 $.ajax({
     method:"GET",
     url: URL,
@@ -81,12 +88,12 @@ function setChart(data)
           assigned_tags = query.has(tag_field) ? query.get(tag_field) : ""
           params = {
             [tag_field] : assigned_tags,
-            "time_0" : value["x"],
-            "time_1" : value["x"].substring(0,10).concat(" 23:59"),
+            "time_after" : value["x"],
+            "time_before" : value["x"].substring(0,10).concat(" 23:59"),
           }
           search = new URLSearchParams(params)
           transactions = this.attributes.getNamedItem("transactions").value
-          url = transactions.concat("?", search)
+          url = transactions.concat("?", search.toString())
           window.location.href = url
         }
     };

@@ -17,17 +17,19 @@ from main import models, tables, filters, forms
 # Create your views here.
 from dateutil.relativedelta import relativedelta
 import datetime
-from main import forms
+from main import forms  
 
-
-
+#TODO php w gecie wyświetla się you don have perssiomo to this file a w tranasaction wyświetla się tylko jeden argument 
 def activity_view(request):
-    form = forms.ActivityForm()
-    time, tag = form.fields.keys() 
+    initial = { 'time_after' : (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_after') is None else datetime.datetime.fromisoformat(request.GET.get('time_after')).strftime("%Y-%m-%d %H:%M"),
+                'time_before' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get('time_before') is None else datetime.datetime.fromisoformat(request.GET.get('time_before')).strftime("%Y-%m-%d %H:%M"),
+                'assigned_tags' : request.GET.getlist('assigned_tags')}
+    form = forms.ActivityForm(initial=initial)
     return render(request, "activity.html",  {
         "form" : form,
-        "tag_field" : tag,
+        "tag_field" : "assigned_tags",
     })
+              
 
 def transactions_detail_view(request, transaction=1):
     table = tables.TransactionsDetailTable(models.Transaction.objects.get(pk=transaction).logslog_set.all())    

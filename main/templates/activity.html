@@ -4,22 +4,39 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css">
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+  #assigned_tags.form-group {
+    width: 40%;
+  }
+</style>
 {% endblock css %}
 {% block content %}
 <h2>Activity</h2>
 <div id="action">
   <form method="get" id="myForm"  class="form-inline" >
     {% load widget_tweaks %}
+    {% if form.errors %}
     {% for field in form %}
-      {{ field.errors }}
-      {{ field|add_label_class:"sr-only" }}
-      {% if field.name == tag_field %}
-        {{ field}}
-      {% else %}
-      <div class="form-group mr-2 mb-2" id="time_group">
-        {{ field }}
-      </div>        
+        {% for error in field.errors %}
+            <div class="alert alert-primary" role="alert">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-primary" role="alert">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+  {% endif %}
+  
+    {% for field in form %}
+    <div class="form-group mb-2 mr-2" id="{{field.name}}">
+      {% if field.name != tag_field %}
+        {{ field.label_tag }}
       {% endif %}
+      {{ field }}
+    </div>
     {% endfor %}
     <button class="btn btn-primary mb-2" type="submit">Submit</button>
   </form>
@@ -38,6 +55,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 {{ form.media }}
 <script src="/static/js/select.js"></script>
-<script src="/static/js/chart.js"></script>
-
+{% if not form.errors %}
+  <script src="/static/js/chart.js"></script>
+{% endif %}
 {% endblock js %} 

@@ -27,15 +27,14 @@ class TransactionsFilter(django_filters.FilterSet):
                                      empty_label="Select Visitors IP",
                                      widget=Select(attrs={"url-endpoint-select":reverse_lazy("ip-list")}))
     
-
     server = django_filters.ChoiceFilter(method="server_filter",
                                          choices=SERVER_CHOICES,
                                          empty_label="Select Server")
-    
-    assigned_tags = django_filters.ModelChoiceFilter(required=False,
-                                          queryset=models.LogsTag.objects.all())
-    time = rest_filters.DateTimeFromToRangeFilter(widget=RangeWidget(base_widget=DateTimeInput()))
-
+         
+         
+          
+    assigned_tags = django_filters.ModelMultipleChoiceFilter(required=False,queryset=models.LogsTag.objects.all())
+    time = rest_filters.DateTimeFromToRangeFilter(required=False)
 
     class Meta:
         model = models.Transaction
@@ -46,15 +45,11 @@ class TransactionsFilter(django_filters.FilterSet):
         return queryset.filter(Q(name__header_name=settings.SERVER_NAME) & Q(value=value))
     
 class ChartFilter(rest_filters.FilterSet):
-    time = rest_filters.DateTimeFromToRangeFilter(widget=RangeWidget(base_widget=DateTimeInput()))
-    assigned_tags = rest_filters.ModelChoiceFilter(method="tags_filter",
-                                                   queryset=models.LogsTag.objects.all())
+    time = rest_filters.DateTimeFromToRangeFilter(required=False)
+    assigned_tags = rest_filters.ModelMultipleChoiceFilter(required=False,queryset=models.LogsTag.objects.all())
     class Meta:
         model = models.Transaction
         fields = ["time","assigned_tags"]
-    
-    def tags_filter(self,queryset, name, value):
-        return queryset.filter(assigned_tags=value)
 
         
     

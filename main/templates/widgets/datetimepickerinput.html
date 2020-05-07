@@ -1,14 +1,10 @@
-{% spaceless %}
-{% for widget in widget.subwidgets %}
 <div class="input-group date" id="group_{{widget.name}}">
     <input
         {% include "django/forms/widgets/attrs.html" %}
         type="text"
+        value="{{ widget.value }}"
         name="{{ widget.name }}"
         class="form-control datetimepicker-input"
         data-toggle="datetimepicker"
         data-target="#id_{{ widget.name}}">
 </div>
-{% endfor %}
-{% endspaceless %}
-

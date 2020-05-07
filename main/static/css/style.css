@@ -1,13 +1,5 @@
-#group_time_0 {
-  padding-right: 0.25rem !important;
-}
-#group_time_1 {
-  padding-left: 0.25rem !important;
-}
+/* TODO zwróć uwage że width dla select2 dla activity and transactions różnij sie */
 
-#id_assigned_tags {
-  width: 35%;
-}
 
 #id_ip {
   width: 10%;
@@ -26,9 +18,8 @@ span.select2-selection__rendered {
 }
 
 span.select2-container {
-  margin-right: 0.5rem !important;
-  margin-bottom: 0.5rem !important;
   display: inline-block;
+  width: 100% !important;
 }
 
 .select2-selection__arrow b {

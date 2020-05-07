@@ -14,6 +14,8 @@ def get_visitor_ip_choice_list():
 SERVER_CHOICES = [(id, server) for id, server in 
                 models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
 
+TAGS_CHOICES = [(tag['id'], tag['tag']) for tag in models.LogsTag.objects.values('id','tag')] 
+import datetime
 class CustomWidget(SplitDateTimeWidget):
     def decompress(self, value):
         print("hello")
@@ -22,14 +24,24 @@ class CustomWidget(SplitDateTimeWidget):
             return [value.date(), value.time()]
         return [None, None]
 class ActivityForm(forms.Form):
-    time = forms.SplitDateTimeField(required=False,
+    time_after = forms.DateTimeField(required=False,
+                                     input_formats=["%Y-%m-%d %H:%M"],
                                     widget=widgets.DateTimePickerInput())
-    assigned_tags = forms.ModelChoiceField(required=False,
+    time_before = forms.DateTimeField(required=False,
+                                      input_formats=["%Y-%m-%d %H:%M"],
+                                    widget=widgets.DateTimePickerInput())
+    
+    assigned_tags = forms.ModelMultipleChoiceField(required=False,
                                           queryset=models.LogsTag.objects.all(),
                                           widget=SelectMultiple(attrs={"multiple":"multiple",
                                                                        "url-endpoint-select":reverse_lazy("tag-list")}))
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data.get("time_after") > cleaned_data.get("time_before"):
+            msg = "Time after can't be bigger then time before"
+            self.add_error('time_after',msg)
+        return self.cleaned_data
 
-    
 class TagsActionSelectForm(ModelForm):
     ACTIONS = (
         ("delete_selected","Deleted selected tags"),

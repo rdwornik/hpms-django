@@ -54,9 +54,10 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        time_0 = (datetime.datetime.now() + relativedelta(years=-1)) if request.GET.get('time_0') is None else datetime.datetime.fromisoformat(request.GET.get('time_0'))
-        time_1 =  datetime.datetime.now() if request.GET.get('time_1') is None else datetime.datetime.fromisoformat(request.GET.get('time_1'))
-        date1, date2 = utils.date_order(time_0, time_1)
+        # time_0 = (datetime.datetime.now() + relativedelta(years=-1)) if request.GET.get('time_0') is None else datetime.datetime.fromisoformat(request.GET.get('time_0'))
+        # time_1 =  datetime.datetime.now() if request.GET.get('time_1') is None else datetime.datetime.fromisoformat(request.GET.get('time_1'))
+        # print(request.GET['time_after'],request.GET['time_before'])
+        date1, date2 = utils.date_order(datetime.datetime.fromisoformat(request.GET['time_after']),datetime.datetime.fromisoformat(request.GET['time_before']))
         td = date2 - date1  
         range = [key for key, value in utils.range.items() if value(td) == True][0]                                                
         trunc_func = utils.trunc_methods[range]
