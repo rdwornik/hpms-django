@@ -7,7 +7,8 @@ from django.db.models import Count, DateTimeField, TimeField, DateField
 methods = {
     "GET" : ("G","008000"),
     "POST" : ("P","0000FF"),
-    "HEAD" : ("H", "FFFF00")
+    "HEAD" : ("H", "FFFF00"),
+    "None" : ("None","000000")
 }
 def get_or_create_methods_tag(request_method):
     if request_method not in methods:

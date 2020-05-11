@@ -22,12 +22,11 @@ from main import forms
 
 
 
-#TODO php w gecie wyświetla się you don have perssiomo to this file a w tranasaction wyświetla się tylko jeden argument 
 def activity_view(request):
     initial = { 'time_after' : (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_after') is None else datetime.datetime.fromisoformat(request.GET.get('time_after')).strftime("%Y-%m-%d %H:%M"),
                 'time_before' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get('time_before') is None else datetime.datetime.fromisoformat(request.GET.get('time_before')).strftime("%Y-%m-%d %H:%M"),
                 'assigned_tags' : request.GET.getlist('assigned_tags')}
-    form = forms.ActivityForm(initial)
+    form = forms.TransactionBasicForm(initial)
     return render(request, "activity.html",  {
         "form" : form,
         "tag_field" : "assigned_tags",
@@ -42,7 +41,6 @@ def transactions_detail_view(request, transaction=1):
     })
 
 
-#TODO Posprzątać ten widok
 def tags_form_view(request, id=None):
     if request.method == "GET":
         if not id:
@@ -71,7 +69,6 @@ def tags_form_view(request, id=None):
             models.LogsTagAssign.objects.assign_tags_on_tags_created_or_updated(tag,edited)
         return HttpResponseRedirect(reverse("tags"))
 
-#TODO posprzątać ten widok
 def tags_view(request):
     queryset = models.LogsTag.objects.all()
     if request.method == "POST":
@@ -89,12 +86,11 @@ def tags_view(request):
         "table": table
     })
 
-#TODO zrobic z tego fbv
 class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     table_class = tables.TransactionsTable
     filterset_class = filters.TransactionsFilter
     model = models.Transaction
-    form_class = forms.ActivityForm
+    form_class = forms.TransactionsForm
     queryset = models.Transaction.objects.all()
     table_pagination = {
         "per_page": 10

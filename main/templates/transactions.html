@@ -9,34 +9,19 @@
 <h2>Transactions</h2>
 <div class="action">
   <form method="get" id="myForm" class="form-inline">
-
     {% load widget_tweaks %}
-    {% if form.errors %}
-    {% for field in form %}
-        {% for error in field.errors %}
-            <div class="alert alert-primary mb-2 mr-2" role="alert">
-                <strong>{{ field.name}}{{ error|escape }}</strong>
-            </div>
-        {% endfor %}
-    {% endfor %}
-    {% for error in form.non_field_errors %}
-        <div class="alert alert-primary mb-2 mr-2" role="alert">
-            <strong>{{ error|escape }}</strong>
-        </div>
-    {% endfor %}
-    {% endif %}
+    {% block errors %}
+      {% include "extends/form_errors.html" %}
+    {% endblock errors %}
 
     {% for field in form %}
-      <div class="form-group mb-2 mr-2" id="{{field.name}}">
-        {{field}}
-      </div>
-    {% endfor %}
-    {% for field in filter.form %}  
-      {% if field.name == "ip" or field.name == "server"  %}
-        <div class="form-group mb-2 mr-2" id="{{field.name}}">
+      <div class="form-group mb-2 mr-2" id="{{field.name}}_group">
+        {% if field.name == "ip" or field.name == "server"  %}
           {{field|add_class:"form-control"}}
-        </div>
-      {% endif %}
+        {% else %}
+          {{ field }}
+        {% endif %}
+      </div>
     {% endfor %}
     <button class="btn btn-primary btn mb-2 mr-2" type="submit">Submit</button>
     <a class="btn btn-primary btn mb-2" href="{% url 'transactions' %}">Reset</a>

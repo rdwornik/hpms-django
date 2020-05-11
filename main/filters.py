@@ -22,10 +22,7 @@ from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
 from django.forms import Select
 from django.urls import reverse_lazy
 class TransactionsFilter(django_filters.FilterSet):
-    ip = django_filters.ChoiceFilter(method="ip_filter",
-                                     choices=VISITOR_IP_CHOICES,
-                                     empty_label="Select Visitors IP",
-                                     widget=Select(attrs={"url-endpoint-select":reverse_lazy("ip-list")}))
+    ip = django_filters.ChoiceFilter(method="ip_filter")
     
     server = django_filters.ChoiceFilter(method="server_filter",
                                          choices=SERVER_CHOICES,

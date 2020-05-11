@@ -7,7 +7,6 @@ from django.db.models import Q
 
 from main import models
 from main import utils
-#TODO Ogarnac htacces
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn(
         '<a href="{% url "transactions" %}?ip={{ record.id }}"> \
@@ -117,29 +116,18 @@ class TransactionsTable(tables.Table):
             "style": "transform: rotate(0);"
         }
     def render_request_uri(self, record):
-        try:
-            uri = record.logslog_set.get(Q(name__header_name=settings.REQUEST_URI)).value.header_value
-        except models.LogsLog.DoesNotExist  as identifier:
-            uri = "none"
-        return uri
+        uri = record.logslog_set.filter(Q(name__header_name=settings.REQUEST_URI)).first()
+        return uri.value.header_value  if uri else "None"
     def render_visitor_ip(self,record):
-        try:
-            visitor = record.logslog_set.get(Q(name__header_name=settings.VISITORS_IP)).value.header_value        
-        except models.LogsLog.DoesNotExist  as identifier:
-            visitor = "127.0.0.1"
-        return visitor
+        visitor = record.logslog_set.filter(Q(name__header_name=settings.VISITORS_IP)).first()
+        return visitor.value.header_value  if visitor else "None"
     def render_server(self, record):
-        try:
-            server = record.logslog_set.get(Q(name__header_name=settings.SERVER_NAME)).value.header_value 
-        except models.LogsLog.DoesNotExist  as identifier:
-            server = "hpmsphp.example.com"
-        return server
+        server = record.logslog_set.filter(Q(name__header_name=settings.SERVER_NAME)).first()
+        return server.value.header_value  if server else "None"
     def render_transaction(self, value,record):
-        try:
-            request_method = record.logslog_set.get(Q(name__header_name=settings.REQUEST_METHOD)).value.header_value 
-        except models.LogsLog.DoesNotExist  as identifier:
-            request_method = "GET"
-        letter, color = utils.get_or_create_methods_tag(request_method)
+        request_method = record.logslog_set.filter(Q(name__header_name=settings.REQUEST_METHOD)).first()
+        tag = request_method.value.header_value if request_method else "None"           
+        letter, color = utils.get_or_create_methods_tag(tag)
         return format_html("{}<b><font color={}> {}</font></b>".format(value, color, letter))
     def render_tags(self, record):
         return format_html("".join("<b>{}</b> : {} <br/>"

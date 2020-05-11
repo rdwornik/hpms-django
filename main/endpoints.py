@@ -15,7 +15,9 @@ from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
 from dateutil.relativedelta import relativedelta
 import datetime
 class VisitorList(viewsets.ReadOnlyModelViewSet):
-    serializer_class = serializers.HeaderValueModelSerializer  
+    serializer_class = serializers.HeaderValueModelSerializer
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = [IsAuthenticated]
     class Meta:
         model = models.HeaderValue
     def get_queryset(self):
@@ -27,6 +29,8 @@ class VisitorList(viewsets.ReadOnlyModelViewSet):
     
 class LogsTagList(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.LogsTagModelSerializer  
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = [IsAuthenticated] 
     class Meta:
         model = models.LogsTag
     def get_queryset(self):
@@ -34,17 +38,6 @@ class LogsTagList(viewsets.ReadOnlyModelViewSet):
         q = self.request.query_params.get('q', None)
         if q is not None:
             qs = qs.filter(tag__istartswith=q)
-        return qs
-    
-class TagsList(viewsets.ReadOnlyModelViewSet):
-    serializer_class = serializers.HeaderValueModelSerializer  
-    class Meta:
-        model = models.HeaderValue
-    def get_queryset(self):
-        qs = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct() 
-        q = self.request.query_params.get('q', None)
-        if q:
-            qs = qs.filter(header_value__istartswith=q)     
         return qs
 
 class ChartViewSet(viewsets.ReadOnlyModelViewSet):
