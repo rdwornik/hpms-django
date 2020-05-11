@@ -23,3 +23,4 @@ class LogsTagAssignManager(Manager):
 
         if logs_to_tag.exists():
             [ self.create(tag=tag, transaction=log.transaction) for log in logs_to_tag ]
+            

@@ -2,6 +2,7 @@ from rest_framework import viewsets, generics
 from rest_framework.response import Response
 
 from main import  models, filters,utils, serializers
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 from django.db.models import Count, DateTimeField, TimeField, DateField
 from django.db.models.functions import TruncDay, TruncHour
@@ -46,14 +47,13 @@ class TagsList(viewsets.ReadOnlyModelViewSet):
             qs = qs.filter(header_value__istartswith=q)     
         return qs
 
-#TODO Ogarnąć walidacje na on load
 class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Transaction.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_class  = filters.ChartFilter
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = [IsAuthenticated]
     def list(self, request, *args, **kwargs):
-        print(request.user.isA)
         queryset = self.filter_queryset(self.get_queryset())
         date1, date2 = utils.date_order(datetime.datetime.fromisoformat(request.GET['time_after']),datetime.datetime.fromisoformat(request.GET['time_before']))
         td = date2 - date1  

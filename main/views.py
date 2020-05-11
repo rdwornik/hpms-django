@@ -19,6 +19,9 @@ from dateutil.relativedelta import relativedelta
 import datetime
 from main import forms  
 
+
+
+
 #TODO php w gecie wyświetla się you don have perssiomo to this file a w tranasaction wyświetla się tylko jeden argument 
 def activity_view(request):
     initial = { 'time_after' : (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_after') is None else datetime.datetime.fromisoformat(request.GET.get('time_after')).strftime("%Y-%m-%d %H:%M"),
@@ -93,7 +96,6 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
     model = models.Transaction
     form_class = forms.ActivityForm
     queryset = models.Transaction.objects.all()
-    paginator_class = LazyPaginator
     table_pagination = {
         "per_page": 10
     }
@@ -104,7 +106,7 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
         form = self.form_class(initial)
         filter = self.filterset_class(request.GET,queryset=self.get_queryset())
         table = self.table_class(filter.qs)    
-        table.paginate(page=request.GET.get("page", 1), per_page=10)
+        table.paginate(page=request.GET.get("page", 1), per_page=10, paginator_class=LazyPaginator)
         return render(request, "transactions.html",  {
             "form" : form,
             "tag_field" : "assigned_tags",
@@ -113,7 +115,6 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
             "tag_field" : "assigned_tags",
         })
             
-#TODO dodać managera dla visitors
 class VisitorsTablesView(SingleTableView):
     template_name = "visitors.html"
     table_class = tables.VisitorTable
