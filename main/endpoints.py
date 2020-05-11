@@ -7,7 +7,7 @@ from django.db.models import Count, DateTimeField, TimeField, DateField
 from django.db.models.functions import TruncDay, TruncHour
 from django.conf import settings
 from django.db.models import Q
-
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.forms.widgets import NumberInput, HiddenInput, TextInput, DateTimeInput
 from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
@@ -51,9 +51,9 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Transaction.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_class  = filters.ChartFilter
-    # authentication_classes = []
-    # permission_classes = []
+    permission_classes = [IsAuthenticated]
     def list(self, request, *args, **kwargs):
+        print(request.user.isA)
         queryset = self.filter_queryset(self.get_queryset())
         date1, date2 = utils.date_order(datetime.datetime.fromisoformat(request.GET['time_after']),datetime.datetime.fromisoformat(request.GET['time_before']))
         td = date2 - date1  

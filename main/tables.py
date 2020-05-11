@@ -7,7 +7,7 @@ from django.db.models import Q
 
 from main import models
 from main import utils
-
+#TODO Ogarnac htacces
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn(
         '<a href="{% url "transactions" %}?ip={{ record.id }}"> \
