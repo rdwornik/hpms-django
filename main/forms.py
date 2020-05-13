@@ -25,6 +25,11 @@ from django.urls import reverse_lazy
 
 from django.forms import Select
 
+#TODO Clean modules and code review
+#TODO Regex validation in form
+#TODO write test with selenium and extra tests
+#TODO finsish this fucking project
+
 class TransactionBasicForm(forms.Form):
     time_after = forms.DateTimeField(required=False,
                                      input_formats=["%Y-%m-%d %H:%M"],
