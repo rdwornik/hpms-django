@@ -3,7 +3,9 @@
 {% block css %}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css">
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/select.css' %}">
+<link rel="stylesheet" href="{% static 'css/activity.css' %}">
+
 <style>
   #assigned_tags.form-group {
     width: 40%;
@@ -30,7 +32,7 @@
     {% endfor %}
   {% endif %}
     {% for field in form %}
-    <div class="form-group mb-2 mr-2" id="{{field.name}}">
+    <div class="form-group mb-2 mr-2" id="{{field.name}}_group">
       {% if field.name != tag_field %}
         {{ field.label_tag }}
       {% endif %}
