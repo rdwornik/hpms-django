@@ -6,7 +6,6 @@ from django.conf import settings
 from main import models, widgets
 from django.forms.widgets import DateTimeInput, SplitDateTimeWidget
 from django.urls import reverse_lazy
-
 from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
 from main import widgets
 def get_visitor_ip_choice_list():
@@ -21,6 +20,8 @@ VISITOR_IP_CHOICES = [(value, id) for id, value in get_visitor_ip_choice_list()]
 VISITOR_IP_CHOICES.insert(0, ('', '----'))
 SERVER_CHOICES.insert(0, ('', 'Select server'))
 
+
+
 from django.urls import reverse_lazy
 
 from django.forms import Select
@@ -29,6 +30,7 @@ from django.forms import Select
 #TODO Regex validation in form
 #TODO write test with selenium and extra tests
 #TODO finsish this fucking project
+
 
 class TransactionBasicForm(forms.Form):
     time_after = forms.DateTimeField(required=False,
@@ -71,7 +73,7 @@ class TagsActionSelectForm(ModelForm):
         model = models.LogsTag
         fields = ['tags']
 
-class TagForm(ModelForm):
+class TagForm(ModelForm):    
     class Meta:
         model = models.LogsTag
         fields = "__all__"

@@ -2,6 +2,21 @@
 from django.db import models
 from  django.utils import timezone
 from main import managers
+
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
+import re
+
+def validate_regex(value):
+    try:
+        re.compile(value)
+    except re.error:
+        raise ValidationError(
+        _('%(value)s is not an valid regular expression'),
+        params={'value': value},
+        )
+        
 # Create your models here.
 class HeaderName(models.Model):
     header_name = models.TextField(unique=True)
@@ -16,7 +31,7 @@ class HeaderValue(models.Model):
         return "{0}".format(self.header_value)
 class LogsTag(models.Model):
     name_cryteria = models.ForeignKey(HeaderName, on_delete=models.CASCADE)
-    value_cryteria = models.TextField()
+    value_cryteria = models.TextField(validators=[validate_regex])
     tag = models.TextField()
     description = models.TextField()
 
