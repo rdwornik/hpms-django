@@ -64,8 +64,10 @@ class TagsActionSelectForm(ModelForm):
         ("empty","Select Action")
         )
     select = forms.TypedChoiceField(choices=ACTIONS)
-    tags = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Search'}))
-    
+    # tags = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Search'}))
+    tags = forms.CharField( required=False,
+                            widget=Select(attrs={"display-name":"tags",
+                                                            "url-endpoint-select":reverse_lazy("tag-list")}))
     class Meta:
         model = models.LogsTag
         fields = ['tags']

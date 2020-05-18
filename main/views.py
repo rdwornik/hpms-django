@@ -28,7 +28,6 @@ def activity_view(request):
         "form" : form,
         "tag_field" : "assigned_tags",
     })
-              
 
 def transactions_detail_view(request, transaction=1):
     table = tables.TransactionsDetailTable(models.Transaction.objects.get(pk=transaction).logslog_set.all())    
@@ -36,7 +35,6 @@ def transactions_detail_view(request, transaction=1):
         "table":table,
         "transaction": transaction
     })
-
 
 def tags_form_view(request, id=None):
     if request.method == "GET":
@@ -70,6 +68,7 @@ def tags_form_view(request, id=None):
 
 def tags_view(request):
     queryset = models.LogsTag.objects.all()
+    print(request.POST)
     if request.method == "POST":
         if request.POST.get("select") == "delete_selected" \
         and request.POST.__contains__("selected_tags"):

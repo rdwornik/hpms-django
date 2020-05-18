@@ -56,11 +56,9 @@ class FrontendTests(StaticLiveServerTestCase):
     def tearDownClass(cls):
         cls.selenium.quit()
         super().tearDownClass()
-    
     def test_transaction_detail_loaded(self):
-        # self.selenium.find_element_by_css_selector("tbody > tr > td > a").click()
         self.login()
-        self.selenium.get('%s%s' % (self.live_server_url, reverse("transactions")))
+        self.selenium.get('%s%s' % (self.live_server_url, reverse("transactions")))          
         print(self.selenium.current_url)
     def test_visitor_link_loaded(self):
         self.login()
