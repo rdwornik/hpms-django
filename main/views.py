@@ -19,9 +19,6 @@ from dateutil.relativedelta import relativedelta
 import datetime
 from main import forms  
 
-
-
-
 def activity_view(request):
     initial = { 'time_after' : (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_after') is None else datetime.datetime.fromisoformat(request.GET.get('time_after')).strftime("%Y-%m-%d %H:%M"),
                 'time_before' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get('time_before') is None else datetime.datetime.fromisoformat(request.GET.get('time_before')).strftime("%Y-%m-%d %H:%M"),
@@ -67,7 +64,9 @@ def tags_form_view(request, id=None):
         if form.has_changed() and form.is_valid():
             tag = form.save()
             models.LogsTagAssign.objects.assign_tags_on_tags_created_or_updated(tag,edited)
-        return HttpResponseRedirect(reverse("tags"))
+            return HttpResponseRedirect(reverse("tags"))
+        return render(request, "tags_form.html", { "form" : form })
+
 
 def tags_view(request):
     queryset = models.LogsTag.objects.all()

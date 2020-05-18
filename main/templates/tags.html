@@ -15,14 +15,14 @@
               <div class="col-auto my-1">
                 {{ field.errors }}
                 {{ field|add_label_class:"sr-only" }}
-                {{ field|add_class:"form-control form-control-sm mb-2" }}
+                {{ field|add_class:"form-control form-control mb-2" }}
               </div>
             {% endfor %}
               <div class="col-auto mb-2">
-                <button type="submit" class="btn btn-primary btn-sm">Go</button>
+                <button type="submit" class="btn btn-primary">Go</button>
               </div>
               <div class="col-auto mb-2">
-                <a class="btn btn-secondary btn-sm" href="{% url 'tags_add' %}" role="button">Add tag</a>
+                <a class="btn btn-secondary" href="{% url 'tags_add' %}" role="button">Add tag</a>
               </div>
           </div>
         </div>
@@ -32,6 +32,4 @@
       </form>
 {% endblock content %}
 {% block js %}
-  <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
-  {{ form.media }}
 {% endblock js %}

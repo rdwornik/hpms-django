@@ -5,6 +5,7 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from django.urls import reverse
 from main import forms, models, factories
+from django.test import Client
 
 class TestPage(TestCase):
     def setUp(self):
@@ -13,6 +14,7 @@ class TestPage(TestCase):
             password="adminadmin",
             email="admin@example.com"
         )
+        self.client = Client()
         self.client.force_login(self.user)
         self.n1 = factories.HeaderNameFactory(header_name="VISITORS_IP")
         self.v1 = factories.HeaderValueFactory(header_value="127.0.0.1")
@@ -104,6 +106,7 @@ class TestPage(TestCase):
         response = self.client.post(
                 reverse("tags_add"), post_data
             )
+        print(response.content)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(
             models.LogsTag.objects.filter(

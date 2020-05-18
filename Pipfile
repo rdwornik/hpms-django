@@ -23,6 +23,7 @@ pyparsing = "*"
 pydot = "*"
 pydotplus = "*"
 django-tempus-dominus = "*"
+selenium = "*"
 
 [requires]
 python_version = "3.7"

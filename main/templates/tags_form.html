@@ -11,9 +11,11 @@
                     <form action="" method="POST">
                       {% csrf_token %}
                       {% load widget_tweaks %}
+                      {% block errors %}
+                      {% include "include/form_errors.html" %}
+                      {% endblock errors %}
                       {% for field in form  %}
                         <div class="form-group row">
-                          {{ field.errors }}
                           {{ field|add_label_class:"col-md-4 col-form-label text-md-right"}}
                           {% if field.name == "description" %}
                             <div class="col-6 text-truncate">
@@ -27,7 +29,7 @@
                         </div>
                       {% endfor %}
                       <div class="col-md-6 offset-md-4">
-                          <button type="submit" class="btn btn-primary btn-sm">
+                          <button type="submit" class="btn btn-primary">
                               Submit
                           </button>
                       </div>
