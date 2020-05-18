@@ -8,6 +8,9 @@
           <div class="form-row align-items-center">
             {% load widget_tweaks %}
             {% csrf_token %}
+            {% block errors %}
+            {% include "include/form_errors.html" %}
+            {% endblock errors %}
             {% for field in form %}
               <div class="col-auto my-1">
                 {{ field.errors }}

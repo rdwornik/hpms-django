@@ -27,7 +27,6 @@ from django.urls import reverse_lazy
 from django.forms import Select
 
 #TODO Clean modules and code review
-#TODO Regex validation in form
 #TODO write test with selenium and extra tests
 #TODO finsish this fucking project
 

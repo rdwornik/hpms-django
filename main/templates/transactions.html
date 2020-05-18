@@ -12,7 +12,7 @@
   <form method="get" id="myForm" class="form-inline">
     {% load widget_tweaks %}
     {% block errors %}
-      {% include "extends/form_errors.html" %}
+      {% include "include/form_errors.html" %}
     {% endblock errors %}
 
     {% for field in form %}

@@ -5,32 +5,15 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css">
 <link rel="stylesheet" href="{% static 'css/select.css' %}">
 <link rel="stylesheet" href="{% static 'css/activity.css' %}">
-
-<style>
-  #assigned_tags.form-group {
-    width: 40%;
-  }
-</style>
 {% endblock css %}
 {% block content %}
 <h2>Activity</h2>
 <div id="action">
   <form method="get" id="myForm"  class="form-inline" >
     {% load widget_tweaks %}
-    {% if form.errors %}
-    {% for field in form %}
-        {% for error in field.errors %}
-            <div class="alert alert-primary mb-2 mr-2" role="alert">
-                <strong>{{field.name}}{{error|escape }}</strong>
-            </div>
-        {% endfor %}
-    {% endfor %}
-    {% for error in form.non_field_errors %}
-        <div class="alert alert-primary mb-2 mr-2" role="alert">
-            <strong>{{ error|escape }}</strong>
-        </div>
-    {% endfor %}
-  {% endif %}
+    {% block errors %}
+    {% include "include/form_errors.html" %}
+    {% endblock errors %}
     {% for field in form %}
     <div class="form-group mb-2 mr-2" id="{{field.name}}_group">
       {% if field.name != tag_field %}
