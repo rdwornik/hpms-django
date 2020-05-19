@@ -1,3 +1,5 @@
+import datetime
+
 from django import forms
 from django.forms import ModelForm, TextInput, SelectMultiple, Select
 from django.db.models import Q
@@ -5,19 +7,11 @@ from django.conf import settings
 from django.urls import reverse_lazy
 from main import models, widgets
 
-def get_visitor_ip_choice_list():
-    return  models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct().values_list('header_value','id') 
-SERVER_CHOICES = [(id, server) for id, server in 
-                models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
-import datetime
-
-SERVER_CHOICES = [(id, server) for id, server in 
-                models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
-
-
-VISITOR_IP_CHOICES = [(value, id) for id, value in get_visitor_ip_choice_list()]
-VISITOR_IP_CHOICES.insert(0, ('', '----'))
+SERVER_CHOICES = [(id, server) for id, server in models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
 SERVER_CHOICES.insert(0, ('', 'Select server'))
+
+VISITOR_IP_CHOICES = [(value, id) for id, value in models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct().values_list('header_value','id')]
+VISITOR_IP_CHOICES.insert(0, ('', '----'))
 
 #TODO Clean modules and code review
 #TODO write test with selenium and extra tests
