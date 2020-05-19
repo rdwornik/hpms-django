@@ -7,13 +7,15 @@ from django.contrib.auth.forms import AuthenticationForm
 from django_filters.views import FilterView
 
 from main import views
-from .endpoints import LogsLogViewSet, ChartViewSet, VisitorList, LogsTagList
+from .endpoints import LogsLogViewSet, ChartViewSet, VisitorList, LogsTagList, LogsTagNamesList
 
 router = routers.DefaultRouter(trailing_slash=True)
 router.register(r"logslogs", LogsLogViewSet)
 router.register(r"charts", ChartViewSet)
 router.register(r"ip", VisitorList, basename="ip")
 router.register(r"tags", LogsTagList, basename="tag")
+router.register(r"tag-names", LogsTagNamesList, basename="tag-names")
+
 
 urlpatterns = [
         path(

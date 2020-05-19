@@ -39,7 +39,24 @@ class LogsTagList(viewsets.ReadOnlyModelViewSet):
         if q is not None:
             qs = qs.filter(tag__istartswith=q)
         return qs
-
+    
+class LogsTagNamesList(viewsets.ReadOnlyModelViewSet):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = [IsAuthenticated] 
+    class Meta:
+        model = models.LogsTag
+    def get_queryset(self):
+        qs = models.LogsTag.objects.all()
+        term = self.request.query_params.get('term', None)
+        if term is not None:
+            qs = qs.filter(tag__istartswith=term)
+        return qs
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        data = serializers.LogsTagNamesModelSerializer(queryset,many=True).data
+        names = [list(name.values())[0] for name in data]
+        return Response(names)
 class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Transaction.objects.all()
     filter_backends = [DjangoFilterBackend]

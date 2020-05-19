@@ -4,8 +4,8 @@ $("[url-endpoint-select]").each(function(){
     placeholder: "Select ".concat($this.attr("display-name")),
     allowClear : true,
     ajax:{
-      url:function(){return $(this).attr("url-endpoint-select")},
-      data: function(params){``
+      url: $this.attr("url-endpoint-select"),
+      data: function(params){
         var query = {
           q: params.term,
         }

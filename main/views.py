@@ -68,15 +68,14 @@ def tags_form_view(request, id=None):
 
 def tags_view(request):
     queryset = models.LogsTag.objects.all()
-    print(request.POST)
     if request.method == "POST":
         if request.POST.get("select") == "delete_selected" \
         and request.POST.__contains__("selected_tags"):
             tags_to_delete = request.POST.getlist("selected_tags")
             models.LogsTag.objects.filter(id__in=tags_to_delete).delete()
         elif request.POST.get("select") == "search" and request.POST.get("tags"):
-            queryset = models.LogsTag.objects.filter(tag__icontains=request.POST.get("tags"))
-    form = forms.TagsActionSelectForm(initial={"select":"empty"})
+            queryset = models.LogsTag.objects.filter(tag__istartswith=request.POST.get("tags"))
+    form = forms.TagsActionSelectForm(initial={"select":"search"})
     table = tables.TagsTable(queryset, order_by="-id") 
     table.paginate(page=request.GET.get("page", 1), per_page=5)
     return render(request, "tags.html",  {

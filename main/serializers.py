@@ -14,6 +14,12 @@ class LogsTagModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.LogsTag
         fields = ['id','text']
+
+class LogsTagNamesModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.LogsTag
+        fields = ['tag']
+    
 class ChartSerializer(serializers.Serializer):
     x = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
     y = serializers.IntegerField()
