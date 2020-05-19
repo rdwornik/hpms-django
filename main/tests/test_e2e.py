@@ -12,7 +12,8 @@ from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.support.wait import WebDriverWait
-
+from django.test import tag
+@tag('e2e')
 class FrontendTests(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
@@ -59,12 +60,11 @@ class FrontendTests(StaticLiveServerTestCase):
     def test_transaction_detail_loaded(self):
         self.login()
         self.selenium.get('%s%s' % (self.live_server_url, reverse("transactions")))          
-        print(self.selenium.current_url)
-    def test_visitor_link_loaded(self):
-        self.login()
-        self.selenium.get('%s%s' % (self.live_server_url, reverse("visitors")))
-        self.selenium.find_element_by_css_selector("tbody > tr > td > a").click()
-        WebDriverWait(self.selenium, self.timeout).until(
-        lambda driver: driver.find_element_by_tag_name('body'))
-        transaction_url = "{}{}?ip=1".format(self.live_server_url, reverse("transactions"))
-        self.assertEqual(transaction_url,self.selenium.current_url)
+    # def test_visitor_link_loaded(self):
+    #     self.login()
+    #     self.selenium.get('%s%s' % (self.live_server_url, reverse("visitors")))
+    #     self.selenium.find_element_by_css_selector("tbody > tr > td > a").click()
+    #     WebDriverWait(self.selenium, self.timeout).until(
+    #     lambda driver: driver.find_element_by_tag_name('body'))
+    #     transaction_url = "{}{}?ip=1".format(self.live_server_url, reverse("transactions"))
+    #     self.assertEqual(transaction_url,self.selenium.current_url)

@@ -67,14 +67,13 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         date1, date2 = utils.date_order(datetime.datetime.fromisoformat(request.GET['time_after']),datetime.datetime.fromisoformat(request.GET['time_before']))
         td = date2 - date1  
-        range = [key for key, value in utils.range.items() if value(td) == True][0]                                                
-        trunc_func = utils.trunc_methods[range]
-        label_type = range
+        time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
+        trunc_func = utils.trunc_methods[time_range]
         queryset = queryset.annotate(x=trunc_func('time', output_field=DateTimeField())).values('x').order_by().annotate(y=Count('pk')) 
         data = serializers.ChartSerializer(queryset,many=True).data
         data = {
             'data':data,
-            'label' : label_type,
+            'label' : time_range,
             'displayFormats' : utils.display_format
         }
         return Response(data)

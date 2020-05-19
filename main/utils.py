@@ -26,7 +26,7 @@ def get_or_create_methods_tag(request_method):
     return methods[request_method]
 
 
-range = {
+time_range = {
     "second" : lambda td: 0 < td.seconds < 60,
     "minute" : lambda td : td.days == 0 and 0 < (td.seconds)//60 % 60 != 0,
     "hour": lambda td :  td.days == 0 and 0 < (td.seconds)//3600 < 24 ,
@@ -35,25 +35,29 @@ range = {
     "month" : lambda td : 62 < td.days <= 450 ,
     "year" : lambda td :  450 < td.days,
 }
+'''
+Moment.js string format
+Name	     Default	      Example
+millisecond	'h:mm:ss.SSS a'	 '11:20:01.123 AM'
+second	    'h:mm:ss a'	     '11:20:01 AM'
+minute	    'h:mm a'	     '11:20 AM'
+hour	    'hA'	         '11AM'
+day	        'MMM D'	         'Sep 4'
+week	    'll'	         'Sep 4 2015'
+month	    'MMM YYYY'	     'Sep 2015'
+quarter	    '[Q]Q - YYYY'	 'Q3 - 2015'
+year	    'YYYY'	         '2015'
+'''
 
 display_format = {
-    "second" : "ss",
-    "minute" : "mm",
+    "second" : "HH:mm:ss",
+    "minute" : "HH:mm",
     "hour": "HH",
     "day":   "DD.MM",
-    "week" : "wo",
-    "month" : "MMM",
+    # "week" : "DD.MM.YY",
+    "month" : "MMM YY",
     "year" : "YYYY",
 }
-
-generate_label = {
-   "minute" : lambda date1, date2 : [(date1 + relativedelta(minutes=+x)).isoformat() for x in range(0,(date2 - date1).seconds//60 % 60 +1)],
-   "hour": lambda date1, date2 : [(date1 + relativedelta(hours=+x)).strftime("%H") for x in range(0,relativedelta(date1,date2).hours+1)],
-   "week" : lambda date1, date2 : [(date1 + relativedelta(weeks=+x)).strftime("%a") for x in range(0,relativedelta(date1,date2).weeks+1)], 
-   "month": lambda date1, date2 : [(date1 + relativedelta(months=+x)).strftime("%b") for x in range(0,relativedelta(date1,date2).months+1)],
-   "year": lambda date1, date2 : [(date1 + relativedelta(years=+x)).strftime("%Y") for x in range(0,relativedelta(date1,date2).years+1)],
-}
-
 
 select_trunc_method = {
     "hour": lambda td :  td.days == 0 and 0 < (td.seconds)//3600 < 24,
