@@ -22,7 +22,6 @@ factory-boy = "*"
 pyparsing = "*"
 pydot = "*"
 pydotplus = "*"
-django-tempus-dominus = "*"
 selenium = "*"
 
 [requires]
