@@ -1,8 +1,7 @@
-from dateutil.relativedelta import relativedelta
 import datetime
 import random 
-from django.db.models.functions import TruncDay, TruncHour, TruncYear, TruncMonth, TruncMinute, TruncSecond
-from django.db.models import Count, DateTimeField, TimeField, DateField
+
+from django.db.models.functions import TruncDay, TruncHour, TruncMinute, TruncSecond
 
 methods = {
     "GET" : ("G","008000"),
@@ -55,7 +54,7 @@ display_format = {
     "hour": "HH",
     "day":   "DD.MM",
     # "week" : "DD.MM.YY",
-    "month" : "MMM YY",
+    "month" : "MMM YYYY",
     "year" : "YYYY",
 }
 

@@ -1,11 +1,8 @@
 from rest_framework import routers
 from django.views.generic import TemplateView
-from django.urls import path, include, re_path
+from django.urls import path, include
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
-from django.contrib.auth.forms import AuthenticationForm
-from django_filters.views import FilterView
-
 from main import views
 from .endpoints import LogsLogViewSet, ChartViewSet, VisitorList, LogsTagList, LogsTagNamesList
 
@@ -70,16 +67,12 @@ urlpatterns = [
         ),
         path(
                 "login/",
-                auth_views.LoginView.as_view(
-                        template_name="login.html",
-                ),
+                auth_views.LoginView.as_view(template_name="login.html"),
                 name="login",
         ),
         path(
                 "logout/",
-                auth_views.LogoutView.as_view(
-                        template_name="logout.html",
-                ),
+                auth_views.LogoutView.as_view(template_name="logout.html"),
                 name="logout",
         ),
         path("api/", include(router.urls)),

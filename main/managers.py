@@ -1,6 +1,5 @@
 import re
 from django.db.models import Q, Manager
-
 from main import models
 
 class LogsTagAssignManager(Manager):

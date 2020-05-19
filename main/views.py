@@ -1,5 +1,6 @@
-from django.shortcuts import render
 import datetime
+
+from django.shortcuts import render
 from django.db.models import Q, Count
 from django_filters.views import FilterView
 from django_tables2.views import (
@@ -14,10 +15,7 @@ from django.urls import reverse
 from django.views.generic import View
 from rest_framework import status
 from main import models, tables, filters, forms
-# Create your views here.
 from dateutil.relativedelta import relativedelta
-import datetime
-from main import forms  
 
 def activity_view(request):
     initial = { 'time_after' : (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_after') is None else datetime.datetime.fromisoformat(request.GET.get('time_after')).strftime("%Y-%m-%d %H:%M"),

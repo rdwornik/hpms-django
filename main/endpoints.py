@@ -1,18 +1,13 @@
-from rest_framework import viewsets, generics
+from rest_framework import viewsets
 from rest_framework.response import Response
-
-from main import  models, filters,utils, serializers
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-
-from django.db.models import Count, DateTimeField, TimeField, DateField
-from django.db.models.functions import TruncDay, TruncHour
+from rest_framework.permissions import IsAuthenticated
+from django.db.models import Count, DateTimeField
 from django.conf import settings
 from django.db.models import Q
-from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from django.forms.widgets import NumberInput, HiddenInput, TextInput, DateTimeInput
-from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
-from dateutil.relativedelta import relativedelta
+from main import  models, filters,utils, serializers
+
 import datetime
 class VisitorList(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.HeaderValueModelSerializer
@@ -82,5 +77,4 @@ class LogsLogViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.HoneypotRequestSerializer
     def list(self, request, *args, **kwargs):
         serializer = serializers.LogsLogSerializer(self.get_queryset().order_by("transaction").reverse(),many=True)
-        return Response(serializer.data)   
-
+        return Response(serializer.data)

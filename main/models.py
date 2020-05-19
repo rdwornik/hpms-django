@@ -1,6 +1,5 @@
 
 from django.db import models
-from  django.utils import timezone
 from main import managers
 
 from django.core.exceptions import ValidationError

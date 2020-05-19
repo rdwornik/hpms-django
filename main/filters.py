@@ -16,18 +16,13 @@ from django_filters import rest_framework as rest_filters
 
 SERVER_CHOICES = [(id, server) for id, server in 
                 models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
-VISITOR_IP_CHOICES = [(value, id) for id, value in get_visitor_ip_choice_list()]
 
 from django.contrib.postgres.forms  import RangeWidget, DateTimeRangeField
 from django.forms import Select
 from django.urls import reverse_lazy
 class TransactionsFilter(django_filters.FilterSet):
     ip = django_filters.ChoiceFilter(method="ip_filter")
-    
-    server = django_filters.ChoiceFilter(method="server_filter",
-                                         choices=SERVER_CHOICES,
-                                         empty_label="Select Server")
-       
+    server = django_filters.ChoiceFilter(method="server_filter")
     assigned_tags = django_filters.ModelMultipleChoiceFilter(required=False,queryset=models.LogsTag.objects.all())
     time = django_filters.DateTimeFromToRangeFilter(required=False)
 

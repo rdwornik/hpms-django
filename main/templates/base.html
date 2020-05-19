@@ -9,8 +9,6 @@
       content="width=device-width, initial-scale=1, shrink-to-­fit=no">
 <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet" >
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" />
     {% block css %}
     {% endblock css %}
     <title>HPMS</title>
@@ -32,32 +30,32 @@
             <li
               {% url 'visitors' as visitor %}
               class="nav-item {% if request.path == visitor %} active {% endif %}">
-                <a id="id_visitor" class="nav-link" href="{{ visitor }}">Visitors</a>
+                <a id="visitor-button" class="nav-link" href="{{ visitor }}">Visitors</a>
             </li>
             <li
               {% url 'transactions' as transactions %}
               class="nav-item {% if request.path == transactions %} active {% endif %}">
-                <a id="id_transactions" class="nav-link" href="{{ transactions }}">Transactions</a>
+                <a id="transactions-button" class="nav-link" href="{{ transactions }}">Transactions</a>
             </li>
             <li
               {% url 'activity' as activity %}
               class="nav-item {% if request.path == activity %} active {% endif %}">
-                <a id="id_activity" class="nav-link" href="{{ activity }}" >Activity</a>
+                <a id="activity-button" class="nav-link" href="{{ activity }}" >Activity</a>
             </li>
             <li
               {% url 'search' as search %}
               class="nav-item {% if request.path == search %} active {% endif %}">
-                <a id="id_search" class="nav-link" href="{{ search }}" >Search</a>
+                <a id="search-button" class="nav-link" href="{{ search }}" >Search</a>
             </li>
             <li
               {% url 'all_notes' as all_notes %}
               class="nav-item {% if request.path == all_notes %} active {% endif %}">
-                <a id="id_all_notes" class="nav-link" href="{{ all_notes }}" >All notes</a>
+                <a id="all_notes-button" class="nav-link" href="{{ all_notes }}" >All notes</a>
             </li>
             <li
               {% url 'tags' as tags %}
               class="nav-item {% if request.path == tags %} active {% endif %}">
-                <a id="id_tags" class="nav-link" href="{{ tags }}" >Tags</a>
+                <a id="tags-button" class="nav-link" href="{{ tags }}" >Tags</a>
             </li>
           </ul>
           <ul class="navbar-nav ml-auto">
@@ -65,7 +63,7 @@
                 <li 
                 {% url 'logout' as logout %}
                 class="nav-item">
-                    <a id="id_logout" class="btn btn-primary btn-sm" href="{{ logout }}" >Logout</a>
+                    <a id="logout-button" class="btn btn-primary btn-sm" href="{{ logout }}" >Logout</a>
                 </li>
               {% endif %}
         </ul>
@@ -78,9 +76,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.4.0/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js"></script>
-
    {% block js %}
     {% endblock js %}
   </body>
