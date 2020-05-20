@@ -69,6 +69,19 @@ class LogsLog(models.Model):
     def __str__(self):
          return "{0} {1} {2}".format(self.name, self.value,self.transaction)
 
+class LogsNote(models.Model):
+    title = models.TextField()
+    content = models.TextField()
+    transaction = models.ForeignKey(Transaction, to_field="transaction", blank=True, null=True, on_delete=models.CASCADE)
+    ip = models.ForeignKey(HeaderValue, to_field="header_value", on_delete=models.CASCADE)
+    
+    class Meta:
+        verbose_name = "LogsNote"
+        verbose_name_plural = "LogsNotes"
+        
+    def __str__(self):
+         return "{0} {1} {2}".format(self.title, self.content, self.ip)
+        
 class LogsTagAssign(models.Model):
     transaction = models.ForeignKey(Transaction,on_delete=models.CASCADE)
     tag = models.ForeignKey(LogsTag,on_delete=models.CASCADE)

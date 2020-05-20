@@ -14,6 +14,7 @@ class VisitorTable(tables.Table):
         </a>',
         verbose_name="Visitors IP")
     visits = tables.Column(empty_values=(), verbose_name="Visits")
+    add_note = tables.TemplateColumn(template_name="tables/add_note_column.html")
     class Meta:
         attrs = {
             "class": "table table-striped"
