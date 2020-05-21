@@ -17,6 +17,33 @@ from rest_framework import status
 from main import models, tables, filters, forms
 from dateutil.relativedelta import relativedelta
 
+def all_notes_form_view(request,ip,transaction=None):
+    initial = {
+        "ip" : models.HeaderValue.objects.get(pk=ip),
+        "transaction" : models.Transaction.objects.get(pk=transaction)  if transaction else models.Transaction()
+    }
+    if request.method == "GET":
+        form = forms.NoteForm(initial=initial)
+        return render(request, "all_notes_form.html", { "form" : form })
+
+    if request.method == "POST":
+        note = models.LogsNote(title=request.POST['title'],content=request.POST['content'],transaction=initial['transaction'],ip=initial['ip'])
+        initial['title'] = request.POST["title"]
+        initial['content'] = request.POST['content']
+        form = forms.NoteForm(initial,instance=note)
+        print(form.is_valid())
+        print(form.errors)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse("all_notes"))
+        return render(request, "all_notes_form.html", { "form" : form })
+
+def all_notes_view(request):
+    table = tables.NotesTable(models.LogsNote.objects.all())    
+    return render(request, "all_notes.html", {
+        "table":table,
+    })
+
 def activity_view(request):
     initial = { 'time_after' : (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_after') is None else datetime.datetime.fromisoformat(request.GET.get('time_after')).strftime("%Y-%m-%d %H:%M"),
                 'time_before' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get('time_before') is None else datetime.datetime.fromisoformat(request.GET.get('time_before')).strftime("%Y-%m-%d %H:%M"),
@@ -27,11 +54,12 @@ def activity_view(request):
         "tag_field" : "assigned_tags",
     })
 
-def transactions_detail_view(request, transaction=1):
+def transactions_detail_view(request, transaction=1,ip=1):
     table = tables.TransactionsDetailTable(models.Transaction.objects.get(pk=transaction).logslog_set.all())    
     return render(request, "transactions_detail.html", {
         "table":table,
-        "transaction": transaction
+        "transaction": transaction,
+        "ip": ip
     })
 
 def tags_form_view(request, id=None):

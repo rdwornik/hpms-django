@@ -35,7 +35,6 @@ class TransactionBasicForm(forms.Form):
             msg = "Time after can't be bigger then time before"
             self.add_error('time_after',msg)
         return self.cleaned_data
-    
 class TransactionsForm(TransactionBasicForm):
     ip = forms.ChoiceField( required=False,
                             choices=VISITOR_IP_CHOICES,
@@ -43,7 +42,6 @@ class TransactionsForm(TransactionBasicForm):
                                                  "url-endpoint-select":reverse_lazy("ip-list")}))
     server = forms.ChoiceField(required=False,
                                choices=SERVER_CHOICES)
-
 class TagsActionSelectForm(ModelForm):
     ACTIONS = (
         ("delete_selected","Deleted selected tags"),
@@ -56,8 +54,7 @@ class TagsActionSelectForm(ModelForm):
     class Meta:
         model = models.LogsTag
         fields = ['tags']
-
-class TagForm(ModelForm):    
+class TagForm(ModelForm):     
     class Meta:
         model = models.LogsTag
         fields = "__all__"
@@ -66,3 +63,42 @@ class TagForm(ModelForm):
             "tag": TextInput(),
             "value_cryteria" : TextInput()
         }
+class NoteForm(ModelForm):
+    transaction = forms.ModelChoiceField(queryset=models.Transaction.objects.all(),disabled=True,required=False)
+    ip = forms.ModelChoiceField(queryset=models.HeaderValue.objects.all(),disabled=True,required=False)
+    
+    field_order=["ip","transaction","title","content"]
+    
+    class Meta:
+        model = models.LogsNote
+        fields = "__all__"
+        localized_fields = "__all__"
+        widgets = {
+            "title" : TextInput(),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super(NoteForm, self).__init__(*args, **kwargs)
+        self.fields['transaction'].label_from_instance = self.transaction_label_from_instance
+        self.fields['ip'].label_from_instance = self.ip_label_from_instance
+
+    @staticmethod
+    def transaction_label_from_instance(obj):
+        return "%s" % obj.pk
+    
+    @staticmethod
+    def ip_label_from_instance(obj):
+        return "%s" % obj.header_value
+    
+class NotesActionSelectForm(ModelForm):
+    ACTIONS = (
+        ("delete_selected","Deleted selected notes"),
+        ("search","Search notes"),
+        )
+    select = forms.TypedChoiceField(choices=ACTIONS)
+    title = forms.CharField(required=False,
+                            widget=forms.TextInput(attrs={"autocomplete":"off",
+                                                          "data-url": reverse_lazy("tag-names-list")}))
+    class Meta:
+        model = models.LogsNote
+        fields = ['title']

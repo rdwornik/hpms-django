@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<main class="tags-form">
+<main class="add-note-form">
   <div class="cotainer">
       <div class="row justify-content-center">
           <div class="col-md-8">
               <div class="card">
-                  <div class="card-header">Tags Form</div>
+                  <div class="card-header">Add Note Form</div>
                   <div class="card-body">
                     <form action="" method="POST">
                       {% csrf_token %}
@@ -16,7 +16,7 @@
                       {% for field in form  %}
                         <div class="form-group row">
                           {{ field|add_label_class:"col-md-4 col-form-label text-md-right"}}
-                          {% if field.name == "description" %}
+                          {% if field.name == "content" %}
                             <div class="col-6 text-truncate">
                               {{ field|add_class:"form-control" }}
                             </div>

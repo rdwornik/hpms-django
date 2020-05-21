@@ -1,5 +1,6 @@
 {% extends "base.html" %}
+{% load django_tables2 %}
 {% block content %}
   <h2>All notes</h2>
-  <p>this will be the content of all notes</p>
+  {% render_table table%}
 {% endblock content %}

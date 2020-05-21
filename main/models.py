@@ -66,14 +66,14 @@ class LogsLog(models.Model):
         verbose_name = "LogsLog"
         verbose_name_plural = "LogsLogs"
         
-    def __str__(self):
+    def __str__(self):    
          return "{0} {1} {2}".format(self.name, self.value,self.transaction)
 
 class LogsNote(models.Model):
     title = models.TextField()
     content = models.TextField()
-    transaction = models.ForeignKey(Transaction, to_field="transaction", blank=True, null=True, on_delete=models.CASCADE)
-    ip = models.ForeignKey(HeaderValue, to_field="header_value", on_delete=models.CASCADE)
+    transaction = models.ForeignKey(Transaction, blank=True, null=True, on_delete=models.CASCADE)
+    ip = models.ForeignKey(HeaderValue, on_delete=models.CASCADE)
     
     class Meta:
         verbose_name = "LogsNote"

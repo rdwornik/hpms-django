@@ -52,6 +52,8 @@ class LogsTagNamesList(viewsets.ReadOnlyModelViewSet):
         data = serializers.LogsTagNamesModelSerializer(queryset,many=True).data
         names = [list(name.values())[0] for name in data]
         return Response(names)
+    
+    
 class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Transaction.objects.all()
     filter_backends = [DjangoFilterBackend]

@@ -31,7 +31,7 @@ urlpatterns = [
                 name="transactions"
         ),
         path(
-                "transactions/<int:transaction>/",
+                "transactions/<int:ip>/<int:transaction>/",
                 views.transactions_detail_view,
                 name="transactions_detail"
         ),
@@ -47,8 +47,18 @@ urlpatterns = [
         ),
         path(
                 "all-notes/",
-                TemplateView.as_view(template_name="all_notes.html"),
+                views.all_notes_view,
                 name="all_notes"
+        ),
+        path(
+                "all-notes/add/<int:ip>/",
+                views.all_notes_form_view,
+                name="all_notes_add"
+        ),
+        path(
+                "all-notes/add/<int:ip>/<int:transaction>/",
+                views.all_notes_form_view,
+                name="all_notes_add"
         ),
         path(
                 "tags/add/",

@@ -4,9 +4,31 @@ from django.conf import settings
 from django.utils.html import format_html
 from django_tables2.utils import A  # alias for Accessor
 from django.db.models import Q
-
+from django.urls import reverse
 from main import models
 from main import utils
+
+class NotesTable(tables.Table):
+    selection = tables.CheckBoxColumn(
+        accessor="pk",
+        attrs={
+            "th":{
+                "style":"width: 2%"
+            },
+            "td__input":{
+                "name" : "selected_notes",
+            },
+            "th__input":{
+                "type" : "hidden"
+            }
+        })
+    class Meta:
+        model = models.LogsNote
+        exclude = ["id"]
+        sequence = ("selection","title","content","ip","transaction")
+        attrs = {
+            "class": "table table-striped"
+        }    
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn(
         '<a href="{% url "transactions" %}?ip={{ record.id }}"> \
@@ -67,7 +89,9 @@ class TransactionsTable(tables.Table):
             }
         })
     transaction = tables.Column(
-        linkify=lambda value: value,
+        linkify=lambda record: reverse("transactions_detail", kwargs={
+            "ip": record.logslog_set.filter(Q(name__header_name=settings.VISITORS_IP)).first().value_id,
+            "transaction": record.transaction}),
         attrs={
                 "td" : { 
                     "scope" : "row",
