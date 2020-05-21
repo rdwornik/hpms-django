@@ -35,13 +35,9 @@ class NotesTable(tables.Table):
             "class": "table table-striped"
         }    
 class VisitorTable(tables.Table):
-    visitor_ip = tables.TemplateColumn(
-        '<a href="{% url "transactions" %}?ip={{ record.id }}"> \
-        {{ record.header_value}} \
-        </a>',
-        verbose_name="Visitors IP")
+    visitor_ip = tables.TemplateColumn(template_name="tables/visitor_ip_column.html",orderable=False,verbose_name="Visitors IP")
     visits = tables.Column(empty_values=(), verbose_name="Visits")
-    add_note = tables.TemplateColumn(template_name="tables/add_note_column.html")
+    add_note = tables.TemplateColumn(template_name="tables/add_note_column.html",orderable=False)
     class Meta:
         attrs = {
             "class": "table table-striped"

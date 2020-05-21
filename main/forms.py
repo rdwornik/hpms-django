@@ -14,10 +14,9 @@ VISITOR_IP_CHOICES = [(value, id) for id, value in models.HeaderValue.objects.fi
 VISITOR_IP_CHOICES.insert(0, ('', '----'))
 
 #TODO Clean modules and code review
-#TODO write test with selenium and extra tests
+#TODO write extra tests
 #TODO sortowanie
 #TODO style tabel w oddzielnym pliku css
-#TODO jeden template dla tables
 
 class TransactionBasicForm(forms.Form):
     time_after = forms.DateTimeField(   required=False,
