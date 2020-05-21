@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="{% static 'css/activity.css' %}">
 {% endblock css %}
 {% block content %}
-<!-- TODO dodaj reset button -->
 <h2>Activity</h2>
 <div id="action">
   <form method="get" id="myForm"  class="form-inline" >
@@ -26,6 +25,7 @@
     </div>
     {% endfor %}
     <button class="btn btn-primary mb-2" type="submit">Submit</button>
+    <a class="btn btn-primary btn mb-2 ml-2" href="{% url 'activity' %}">Reset</a>
   </form>
 </div>
 <div class="result">
