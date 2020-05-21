@@ -1,7 +1,7 @@
 {% load django_tables2 %}
 {% load i18n %}
 {% block table-wrapper %}
-<div class="table-container">
+<div class="table-container table table-striped">
     {% block table %}
         <table {% render_attrs table.attrs %}>
             {% block table.thead %}

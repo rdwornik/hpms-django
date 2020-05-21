@@ -1,5 +1,4 @@
 import django_tables2 as tables
-
 from django.conf import settings
 from django.utils.html import format_html
 from django_tables2.utils import A  # alias for Accessor
@@ -23,25 +22,17 @@ class NotesTable(tables.Table):
             }
         })
     transaction = tables.Column(accessor="transaction.pk")
-    title = tables.LinkColumn(
-    "all_notes_edit",
-    text=lambda record: record.title, args=[A("pk")])
+    title = tables.LinkColumn("all_notes_edit", text=lambda record: record.title, args=[A("pk")])
     
     class Meta:
         model = models.LogsNote
         exclude = ["id"]
-        sequence = ("selection","title","content","ip","transaction")
-        attrs = {
-            "class": "table table-striped"
-        }    
+        sequence = ("selection","title","content","ip","transaction")  
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn(template_name="tables/visitor_ip_column.html",orderable=False,verbose_name="Visitors IP")
     visits = tables.Column(empty_values=(), verbose_name="Visits")
     add_note = tables.TemplateColumn(template_name="tables/add_note_column.html",orderable=False,verbose_name="")
-    class Meta:
-        attrs = {
-            "class": "table table-striped"
-        }
+    
 class TransactionsDetailTable(tables.Table):
     class Meta:
         model = models.LogsLog
@@ -50,10 +41,7 @@ class TransactionsDetailTable(tables.Table):
             "class": "table table-striped"
         }       
 class TransactionsTable(tables.Table):
-    id = tables.Column(
-        orderable=False,
-        visible=False
-        )
+    id = tables.Column(orderable=False, visible=False)
     visitor_ip = tables.Column(
         verbose_name="Visitor IP",
         empty_values=(),
@@ -90,9 +78,9 @@ class TransactionsTable(tables.Table):
             }
         })
     transaction = tables.Column(
-        linkify=lambda record: reverse("transactions_detail", kwargs={
-            "ip": record.logslog_set.filter(Q(name__header_name=settings.VISITORS_IP)).first().value_id,
-            "transaction": record.transaction}),
+        linkify=lambda record: reverse("transactions_detail", 
+                                       kwargs={"ip": record.logslog_set.filter(Q(name__header_name=settings.VISITORS_IP)).first().value_id,
+                                               "transaction": record.transaction}),
         attrs={
                 "td" : { 
                     "scope" : "row",
@@ -135,9 +123,6 @@ class TransactionsTable(tables.Table):
                    "server",
                    "request_uri",
                    "tags")
-        attrs = {
-            "class": "table  table-hover table-striped"
-        }
         row_attrs = {
             "style": "transform: rotate(0);"
         }
@@ -215,6 +200,3 @@ class TagsTable(tables.Table):
     class Meta:
         models = models.LogsTag
         sequence = ("id","selection", "tag", "name_cryteria", "value_cryteria", "description")
-        attrs = {
-            "class": "table table-striped",
-        }
