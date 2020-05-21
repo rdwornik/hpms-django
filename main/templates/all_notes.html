@@ -1,6 +1,39 @@
 {% extends "base.html" %}
-{% load django_tables2 %}
+{% load render_table from django_tables2  %}
+{% load static %} 
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+<link rel="stylesheet" href="{% static 'css/autocomplete.css' %}">
+{% endblock css %}
 {% block content %}
   <h2>All notes</h2>
-  {% render_table table%}
+  <form method="post">
+    <div class="action">
+      <div class="form-row align-items-center">
+        {% load widget_tweaks %}
+        {% csrf_token %}
+        {% block errors %}
+        {% include "include/form_errors.html" %}
+        {% endblock errors %}
+        {% for field in form %}
+          <div class="col-auto my-1">
+            {{ field|add_label_class:"sr-only" }}
+            {{ field|add_class:"form-control mb-2" }}
+          </div>
+        {% endfor %}
+          <div class="col-auto mb-2">
+            <button type="submit" class="btn btn-primary">Go</button>
+          </div>  
+      </div>
+    </div>
+    <div class="result">
+      {% render_table table "tables/all_notes_table.html"  %}
+    </div>
+  </form>
 {% endblock content %}
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.js"></script>
+<script src="/static/js/autocomplete.js"></script>
+{% endblock js %}

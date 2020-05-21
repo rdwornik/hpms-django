@@ -39,9 +39,23 @@ def all_notes_form_view(request,ip,transaction=None):
         return render(request, "all_notes_form.html", { "form" : form })
 
 def all_notes_view(request):
-    table = tables.NotesTable(models.LogsNote.objects.all())    
-    return render(request, "all_notes.html", {
-        "table":table,
+    queryset = models.LogsNote.objects.all()
+    initial = {"select":"search"}
+    if request.method == "POST":
+        if request.POST.get("select") == "delete_selected" \
+        and request.POST.__contains__("selected_notes"):
+            notes_to_delete = request.POST.getlist("selected_notes")
+            models.LogsNote.objects.filter(id__in=notes_to_delete).delete()
+        elif request.POST.get("select") == "search" and request.POST.get("title"):
+            queryset = models.LogsNote.objects.filter(title__istartswith=request.POST.get("title"))
+            initial["title"] = request.POST.get("title")
+    
+    form = forms.NotesActionSelectForm(initial=initial)
+    table = tables.NotesTable(queryset, order_by="-id") 
+    table.paginate(page=request.GET.get("page", 1), per_page=5)
+    return render(request, "all_notes.html",  {
+        "form" : form,
+        "table": table
     })
 
 def activity_view(request):
@@ -94,6 +108,7 @@ def tags_form_view(request, id=None):
 
 def tags_view(request):
     queryset = models.LogsTag.objects.all()
+    initial = {"select":"search"}
     if request.method == "POST":
         if request.POST.get("select") == "delete_selected" \
         and request.POST.__contains__("selected_tags"):
@@ -101,7 +116,9 @@ def tags_view(request):
             models.LogsTag.objects.filter(id__in=tags_to_delete).delete()
         elif request.POST.get("select") == "search" and request.POST.get("tags"):
             queryset = models.LogsTag.objects.filter(tag__istartswith=request.POST.get("tags"))
-    form = forms.TagsActionSelectForm(initial={"select":"search"})
+            initial["tags"] = request.POST.get("tags")
+
+    form = forms.TagsActionSelectForm(initial=initial)
     table = tables.TagsTable(queryset, order_by="-id") 
     table.paginate(page=request.GET.get("page", 1), per_page=5)
     return render(request, "tags.html",  {

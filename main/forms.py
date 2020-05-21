@@ -16,6 +16,12 @@ VISITOR_IP_CHOICES.insert(0, ('', '----'))
 #TODO Clean modules and code review
 #TODO write test with selenium and extra tests
 #TODO finsish this fucking project
+#TODO admin click
+#TODO sortowanie
+#TODO style tabel w oddzielnym pliku css
+#TODO php wywalic curla
+
+
 class TransactionBasicForm(forms.Form):
     time_after = forms.DateTimeField(   required=False,
                                         input_formats=["%Y-%m-%d %H:%M"],
@@ -98,7 +104,7 @@ class NotesActionSelectForm(ModelForm):
     select = forms.TypedChoiceField(choices=ACTIONS)
     title = forms.CharField(required=False,
                             widget=forms.TextInput(attrs={"autocomplete":"off",
-                                                          "data-url": reverse_lazy("tag-names-list")}))
+                                                          "data-url": reverse_lazy("note-titles-list")}))
     class Meta:
         model = models.LogsNote
         fields = ['title']

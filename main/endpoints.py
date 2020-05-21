@@ -52,7 +52,24 @@ class LogsTagNamesList(viewsets.ReadOnlyModelViewSet):
         data = serializers.LogsTagNamesModelSerializer(queryset,many=True).data
         names = [list(name.values())[0] for name in data]
         return Response(names)
+
+class LogsNotesTitleList(viewsets.ReadOnlyModelViewSet):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = [IsAuthenticated] 
+    class Meta:
+        model = models.LogsTag
+    def get_queryset(self):
+        qs = models.LogsNote.objects.all()
+        term = self.request.query_params.get('term', None)
+        if term is not None:
+            qs = qs.filter(title__istartswith=term)
+        return qs
     
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        data = serializers.LogsNotesTitleModelSerializer(queryset,many=True).data
+        names = [list(name.values())[0] for name in data]
+        return Response(names)
     
 class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Transaction.objects.all()

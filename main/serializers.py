@@ -20,6 +20,11 @@ class LogsTagNamesModelSerializer(serializers.ModelSerializer):
         model = models.LogsTag
         fields = ['tag']
     
+class LogsNotesTitleModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.LogsNote
+        fields = ['title']
+         
 class ChartSerializer(serializers.Serializer):
     x = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
     y = serializers.IntegerField()
@@ -28,6 +33,7 @@ class TransactionModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Transaction
         fields = '__all__'
+        
 class ValueSerializer(serializers.RelatedField):
     def to_representation(self, value):
         return value.header_value
@@ -39,7 +45,7 @@ class ValueSerializer(serializers.RelatedField):
 class NameSerializer(serializers.RelatedField):
     def to_representation(self, value):
         return value.header_name
-    def to_internal_value(self, data):
+    def to_internal_value(self, data):  
         return self.queryset.get_or_create(header_name=data)[0]
     class Meta:
         model = models.HeaderName
