@@ -22,18 +22,11 @@ class NotesTable(tables.Table):
                 "type" : "hidden"
             }
         })
-    transaction = tables.Column(accessor="pk")
-    # tag = tables.LinkColumn(
-    # "tags_edit",
-    # text=lambda value: value, args=[A("pk")],
-    # attrs={
-    #     "td":{
-    #         "style":"word-break: break-all",
-    #     },
-    #     "th":{
-    #         "style":"width: 13%"
-    #     }
-    # })
+    transaction = tables.Column(accessor="transaction.pk")
+    title = tables.LinkColumn(
+    "all_notes_edit",
+    text=lambda record: record.title, args=[A("pk")])
+    
     class Meta:
         model = models.LogsNote
         exclude = ["id"]

@@ -17,22 +17,38 @@ from rest_framework import status
 from main import models, tables, filters, forms
 from dateutil.relativedelta import relativedelta
 
-def all_notes_form_view(request,ip,transaction=None):
-    initial = {
-        "ip" : models.HeaderValue.objects.get(pk=ip),
-        "transaction" : models.Transaction.objects.get(pk=transaction)  if transaction else models.Transaction()
-    }
+def all_notes_form_view(request,id=None,ip=None,transaction=None):
     if request.method == "GET":
-        form = forms.NoteForm(initial=initial)
+        if not id:
+            initial = {
+                "ip" : models.HeaderValue.objects.get(pk=ip),
+                "transaction" : models.Transaction.objects.get(pk=transaction)  if transaction else models.Transaction()
+            }
+            form = forms.NoteForm(initial=initial)
+        else:
+            try:
+                note = models.LogsNote.objects.get(pk=id)
+            except models.LogsNote.DoesNotExist:
+                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+            form = forms.NoteForm(instance=note)
         return render(request, "all_notes_form.html", { "form" : form })
 
     if request.method == "POST":
-        note = models.LogsNote(title=request.POST['title'],content=request.POST['content'],transaction=initial['transaction'],ip=initial['ip'])
+        if not id:
+            initial = {
+                "ip" : models.HeaderValue.objects.get(pk=ip),
+                "transaction" : models.Transaction.objects.get(pk=transaction)  if transaction else models.Transaction()
+            }
+            note = models.LogsNote(title=request.POST['title'],content=request.POST['content'],transaction=initial['transaction'],ip=initial['ip'])
+        else:
+            try:
+                initial = {}
+                note = models.LogsNote.objects.get(pk=id)
+            except models.LogsNote.DoesNotExist:
+                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         initial['title'] = request.POST["title"]
         initial['content'] = request.POST['content']
         form = forms.NoteForm(initial,instance=note)
-        print(form.is_valid())
-        print(form.errors)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse("all_notes"))

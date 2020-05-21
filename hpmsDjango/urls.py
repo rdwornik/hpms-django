@@ -4,8 +4,8 @@ from django.views.generic.base import RedirectView
 from main import views
 
 urlpatterns = [
-    path('', RedirectView.as_view(url='/hpms/login'), name='login_redirect'),
-    path('admin/', admin.site.urls),
+    # path('', RedirectView.as_view(url='/hpms/login'), name='login_redirect'),
+    path('hpms/admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('hpms/', include("main.urls")),
 ]

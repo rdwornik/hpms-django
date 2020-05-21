@@ -62,6 +62,11 @@ urlpatterns = [
                 name="all_notes_add"
         ),
         path(
+                "all-notes/<int:id>/edit/",
+                views.all_notes_form_view,
+                name="all_notes_edit"
+        ),
+        path(
                 "tags/add/",
                 views.tags_form_view,
                 name="tags_add"

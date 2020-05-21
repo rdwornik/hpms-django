@@ -15,12 +15,9 @@ VISITOR_IP_CHOICES.insert(0, ('', '----'))
 
 #TODO Clean modules and code review
 #TODO write test with selenium and extra tests
-#TODO finsish this fucking project
-#TODO admin click
 #TODO sortowanie
 #TODO style tabel w oddzielnym pliku css
-#TODO php wywalic curla
-
+#TODO jeden template dla tables
 
 class TransactionBasicForm(forms.Form):
     time_after = forms.DateTimeField(   required=False,

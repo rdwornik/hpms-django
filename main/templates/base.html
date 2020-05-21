@@ -57,13 +57,20 @@
               class="nav-item {% if request.path == tags %} active {% endif %}">
                 <a id="tags-button" class="nav-link" href="{{ tags }}" >Tags</a>
             </li>
+            {% if request.user.is_superuser %}
+            <li
+              {% url 'admin:index' as admin %}
+              class="nav-item">
+                <a id="admin-button" class="btn btn-info btn-sm mt-1 ml-1" href="{{ admin }}" >Admin</a>
+            </li>
+            {% endif %}
           </ul>
           <ul class="navbar-nav ml-auto">
               {% if user.is_authenticated %}
                 <li 
                 {% url 'logout' as logout %}
                 class="nav-item">
-                    <a id="logout-button" class="btn btn-primary btn-sm" href="{{ logout }}" >Logout</a>
+                    <a id="logout-button" class="btn btn-primary btn-sm mt-1" href="{{ logout }}" >Logout</a>
                 </li>
               {% endif %}
         </ul>
