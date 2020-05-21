@@ -37,7 +37,7 @@ class NotesTable(tables.Table):
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn(template_name="tables/visitor_ip_column.html",orderable=False,verbose_name="Visitors IP")
     visits = tables.Column(empty_values=(), verbose_name="Visits")
-    add_note = tables.TemplateColumn(template_name="tables/add_note_column.html",orderable=False)
+    add_note = tables.TemplateColumn(template_name="tables/add_note_column.html",orderable=False,verbose_name="")
     class Meta:
         attrs = {
             "class": "table table-striped"
