@@ -15,7 +15,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -133,8 +132,8 @@ LOGIN_URL = '/hpms/login/'
 LOGIN_EXEMPT_URLS = (
     r'^hpms/logout/$',
     r'^hpms/api/logslogs/$',
-    r'^hpms/api/charts/$',
-    r'^hpms/api/charts$'
+    # r'^hpms/api/charts/$',
+    # r'^hpms/api/charts$'
 )
 
 #Constraints
