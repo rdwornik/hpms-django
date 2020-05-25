@@ -183,7 +183,7 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
 class VisitorsTablesView(SingleTableView):
     template_name = "visitors.html"
     table_class = tables.VisitorTable
-    queryset = models.Transaction.objects.annotate(visits=Count('visitor_ip',distinct=True))
+    queryset =  models.Transaction.objects.values("visitor_ip").order_by().annotate(visits=Count("visitor_ip"))
     paginator_class = LazyPaginator
     table_pagination = {
         "per_page": 10
