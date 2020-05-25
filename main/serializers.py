@@ -5,7 +5,7 @@ from main import models
 
 class VisitorIpSerializer(serializers.ModelSerializer):
     text = serializers.CharField(source="visitor_ip")
-    id = serializers.IntegerField(source="transaction")
+    id = serializers.CharField(source="visitor_ip")
     class Meta:
         model = models.Transaction
         fields = ['id','text']
