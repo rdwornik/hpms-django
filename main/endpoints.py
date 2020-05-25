@@ -9,17 +9,17 @@ from django_filters.rest_framework import DjangoFilterBackend
 from main import  models, filters,utils, serializers
 
 import datetime
-class VisitorList(viewsets.ReadOnlyModelViewSet):
-    serializer_class = serializers.HeaderValueModelSerializer
+class VisitorIpList(viewsets.ReadOnlyModelViewSet):
+    serializer_class = serializers.VisitorIpSerializer
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = [IsAuthenticated]
     class Meta:
         model = models.HeaderValue
     def get_queryset(self):
-        qs = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct() 
+        qs = models.Transaction.objects.order_by('visitor_ip').distinct('visitor_ip')
         q = self.request.query_params.get('q', None)
         if q is not None:
-            qs = qs.filter(header_value__istartswith=q)
+            qs = qs.filter(visitor_ip__istartswith=q)
         return qs
     
 class LogsTagList(viewsets.ReadOnlyModelViewSet):

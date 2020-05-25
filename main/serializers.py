@@ -3,10 +3,11 @@ import datetime
 from rest_framework import serializers
 from main import models
 
-class HeaderValueModelSerializer(serializers.ModelSerializer):
-    text = serializers.CharField(source="header_value")
+class VisitorIpSerializer(serializers.ModelSerializer):
+    text = serializers.CharField(source="visitor_ip")
+    id = serializers.IntegerField(source="transaction")
     class Meta:
-        model = models.HeaderValue
+        model = models.Transaction
         fields = ['id','text']
         
 class LogsTagModelSerializer(serializers.ModelSerializer):

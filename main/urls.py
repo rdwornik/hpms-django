@@ -5,12 +5,12 @@ from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 from main import views
 
-from .endpoints import LogsLogViewSet, ChartViewSet, VisitorList, LogsTagList, LogsTagNamesList, LogsNotesTitleList
+from .endpoints import LogsLogViewSet, ChartViewSet, VisitorIpList, LogsTagList, LogsTagNamesList, LogsNotesTitleList
 
 router = routers.DefaultRouter(trailing_slash=True)
 router.register(r"logslogs", LogsLogViewSet)
 router.register(r"charts", ChartViewSet)
-router.register(r"ip", VisitorList, basename="ip")
+router.register(r"visitor-ip", VisitorIpList, basename="visitor-ip")
 router.register(r"tags", LogsTagList, basename="tag")
 router.register(r"tag-names", LogsTagNamesList, basename="tag-names")
 router.register(r"note-titles", LogsNotesTitleList, basename="note-titles")

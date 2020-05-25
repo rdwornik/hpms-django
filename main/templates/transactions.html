@@ -2,9 +2,8 @@
 {% load render_table from django_tables2 %}
 {% load static %} 
 {% block css %}
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet" >
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" />
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css">
 <link rel="stylesheet" href="{% static 'css/select.css' %}">
 <link rel="stylesheet" href="{% static 'css/transactions.css' %}">
 {% endblock css %}
@@ -17,15 +16,13 @@
       {% include "include/form_errors.html" %}
     {% endblock errors %}
 
-    {% for field in form %}
+
+    {% for field in filter.form %}
       <div class="form-group mb-2 mr-2" id="{{field.name}}_group">
-        {% if field.name == "ip" or field.name == "server"  %}
-          {{field|add_class:"form-control"}}
-        {% else %}
-          {{ field }}
-        {% endif %}
+          {{ field|add_class:"form-control" }}
       </div>
     {% endfor %}
+
     <button class="btn btn-primary btn mb-2 mr-2" type="submit">Submit</button>
     <a class="btn btn-primary btn mb-2" href="{% url 'transactions' %}">Reset</a>
   </form>
@@ -35,9 +32,28 @@
 </div>
 {% endblock content %}
 {% block js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script src="/static/js/select.js"></script>
-{{ form.media }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+
+<script>
+  jQuery(function(){
+    jQuery('#id_time_0').datetimepicker({
+      format:"Y-m-d H:i",
+      onShow:function( ct ){
+      this.setOptions({
+       maxDate:jQuery('#id_time_1').val()?jQuery('#id_time_1').val():false
+      })
+     },
+    });
+    jQuery('#id_time_1').datetimepicker({
+      format:"Y-m-d H:i",
+      onShow:function( ct ){
+      this.setOptions({
+       minDate:jQuery('#id_time_0').val()?jQuery('#id_time_0').val():false
+      })
+     },
+    });
+   });
+</script>
 {% endblock js %}

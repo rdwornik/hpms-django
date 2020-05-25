@@ -154,27 +154,19 @@ def tags_view(request):
         "table": table
     })
 
-class FilteredTransactionsListView(SingleTableMixin, FilterView, FormView):
+class FilteredTransactionsListView(SingleTableMixin, FilterView):
     table_class = tables.TransactionsTable
     filterset_class = filters.TransactionsFilter
     model = models.Transaction
-    form_class = forms.TransactionsForm
     queryset = models.Transaction.objects.all()
     table_pagination = {
         "per_page": 10
     }
     def get(self, request, *args, **kwargs):
-        initial = { 'time_after' : (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_after') is None else datetime.datetime.fromisoformat(request.GET.get('time_after')).strftime("%Y-%m-%d %H:%M"),
-                    'time_before' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get('time_before') is None else datetime.datetime.fromisoformat(request.GET.get('time_before')).strftime("%Y-%m-%d %H:%M"),
-                    'assigned_tags' : request.GET.getlist('assigned_tags'),
-                    'ip' : request.GET.getlist('ip'),
-                    'server':request.GET.getlist('server')}
-        form = self.form_class(initial=initial)
         filter = self.filterset_class(request.GET,queryset=self.get_queryset())
         table = self.table_class(filter.qs)    
         table.paginate(page=request.GET.get("page", 1), per_page=10, paginator_class=LazyPaginator)
         return render(request, "transactions.html",  {
-            "form" : form,
             "tag_field" : "assigned_tags",
             "table":table,
             "filter" : filter,
