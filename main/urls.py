@@ -4,6 +4,7 @@ from django.urls import path, include
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 from main import views
+
 from .endpoints import LogsLogViewSet, ChartViewSet, VisitorList, LogsTagList, LogsTagNamesList, LogsNotesTitleList
 
 router = routers.DefaultRouter(trailing_slash=True)
@@ -31,7 +32,7 @@ urlpatterns = [
                 name="transactions"
         ),
         path(
-                "transactions/<int:ip>/<int:transaction>/",
+                "transactions/<str:ip>/<int:transaction>/",
                 views.transactions_detail_view,
                 name="transactions_detail"
         ),
@@ -51,12 +52,12 @@ urlpatterns = [
                 name="all_notes"
         ),
         path(
-                "all-notes/add/<int:ip>/",
+                "all-notes/add/<str:ip>/",
                 views.all_notes_form_view,
                 name="all_notes_add"
         ),
         path(
-                "all-notes/add/<int:ip>/<int:transaction>/",
+                "all-notes/add/<str:ip>/<int:transaction>/",
                 views.all_notes_form_view,
                 name="all_notes_add"
         ),
