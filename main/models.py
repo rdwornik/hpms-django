@@ -45,6 +45,8 @@ class LogsTag(models.Model):
 class Transaction(models.Model):
     transaction = models.BigAutoField(primary_key=True)
     time = models.DateTimeField(auto_now_add=True)
+    server = models.TextField()
+    visitor_ip = models.GenericIPAddressField()
     assigned_tags = models.ManyToManyField(LogsTag, through="LogsTagAssign")
     name = models.ManyToManyField(HeaderName,through="LogsLog")
     value = models.ManyToManyField(HeaderValue,through="LogsLog")

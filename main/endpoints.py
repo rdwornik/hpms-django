@@ -83,7 +83,7 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
         td = date2 - date1  
         time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
         trunc_func = utils.trunc_methods[time_range]
-        queryset = queryset.annotate(x=trunc_func('time', output_field=DateTimeField())).values('x').order_by().annotate(y=Count('pk')) 
+        queryset = queryset.annotate(x=trunc_func('time', output_field=DateTimeField())).values('x').order_by('x').annotate(y=Count('pk')) 
         data = serializers.ChartSerializer(queryset,many=True).data
         data = {
             'data':data,
@@ -91,9 +91,11 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
             'displayFormats' : utils.display_format
         }
         return Response(data)
+
 class LogsLogViewSet(viewsets.ModelViewSet):
     queryset = models.LogsLog.objects.all()
     serializer_class = serializers.HoneypotRequestSerializer
+    authentication_classes = (BasicAuthentication,)
     def list(self, request, *args, **kwargs):
         serializer = serializers.LogsLogSerializer(self.get_queryset().order_by("transaction").reverse(),many=True)
         return Response(serializer.data)

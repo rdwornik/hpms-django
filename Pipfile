@@ -23,6 +23,7 @@ pyparsing = "*"
 pydot = "*"
 pydotplus = "*"
 selenium = "*"
+coverage = "*"
 
 [requires]
 python_version = "3.7"

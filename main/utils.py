@@ -27,7 +27,7 @@ def get_or_create_methods_tag(request_method):
 
 time_range = {
     "second" : lambda td: 0 < td.seconds < 60,
-    "minute" : lambda td : td.days == 0 and 0 < (td.seconds)//60 % 60 != 0,
+    "minute" : lambda td : td.days == 0 and 0 < (td.seconds)  < 3600,
     "hour": lambda td :  td.days == 0 and 0 < (td.seconds)//3600 < 24 ,
     "day": lambda td :  0 < td.days <= 62 ,
     # "week" : lambda td : 7 < td.days <= 62,

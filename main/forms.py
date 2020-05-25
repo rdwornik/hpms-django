@@ -10,7 +10,7 @@ from main import models, widgets
 SERVER_CHOICES = [(id, server) for id, server in models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct().values_list()] 
 SERVER_CHOICES.insert(0, ('', 'Select server'))
   
-VISITOR_IP_CHOICES = [(value, id) for id, value in models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct().values_list('header_value','id')]
+VISITOR_IP_CHOICES = [(id, value) for id, value in models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct().values_list()]
 VISITOR_IP_CHOICES.insert(0, ('', '----'))
 
 #TODO Clean modules and code review
@@ -45,10 +45,8 @@ class TransactionsForm(TransactionBasicForm):
     server = forms.ChoiceField(required=False,
                                choices=SERVER_CHOICES)
 class TagsActionSelectForm(ModelForm):
-    ACTIONS = (
-        ("delete_selected","Deleted selected tags"),
-        ("search","Search tags"),
-        )
+    ACTIONS = ( ("delete_selected","Deleted selected tags"),
+                ("search","Search tags"),)
     select = forms.TypedChoiceField(choices=ACTIONS)
     tags = forms.CharField( required=False,
                             widget=forms.TextInput(attrs={"autocomplete":"off",
