@@ -13,7 +13,7 @@ class TransactionsFilter(django_filters.FilterSet):
     server =        django_filters.ModelChoiceFilter(required=False,to_field_name="server",method='filter_server',queryset=models.Transaction.objects.order_by('server').distinct('server'))
     assigned_tags = django_filters.ModelMultipleChoiceFilter(required=False,queryset=models.LogsTag.objects.all())
     time =          django_filters.DateTimeFromToRangeFilter(required=False)
-    visitor_ip =    django_filters.CharFilter(required=False,method='filter_visitor_ip',widget=SelectMultiple)
+    visitor_ip =    django_filters.CharFilter(required=False,method='filter_visitor_ip',widget=SelectMultiple(attrs={"data-url":reverse_lazy("visitor-ip-list")}))
 
     def __init__(self, *args, **kwargs):
         super(TransactionsFilter, self).__init__(*args, **kwargs)

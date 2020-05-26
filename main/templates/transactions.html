@@ -33,47 +33,8 @@
 {% endblock content %}
 {% block js %}
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-<!-- <script src="/static/js/select.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
-
-<script>
-  jQuery(function(){
-    $('#id_visitor_ip').select2({
-      placeholder: "Select visitor ip",
-      allowClear : true,
-      ajax:{
-        url: "http://localhost:8000/hpms/api/visitor-ip/",
-      }
-  });
-  });
-  query = new URLSearchParams(window.location.search)
-  visitor_ip = query.getAll('visitor_ip')
-  if(visitor_ip){
-    var options = [];
-    visitor_ip.forEach(element => options.push(new Option(element,element,false,true)))
-    $('#id_visitor_ip').append(options).trigger('change');
-  }
-</script>
-
-
-<script>
-  jQuery(function(){
-    jQuery('#id_time_0').datetimepicker({
-      format:"Y-m-d H:i",
-      onShow:function( ct ){
-      this.setOptions({
-       maxDate:jQuery('#id_time_1').val()?jQuery('#id_time_1').val():false
-      })
-     },
-    });
-    jQuery('#id_time_1').datetimepicker({
-      format:"Y-m-d H:i",
-      onShow:function( ct ){
-      this.setOptions({
-       minDate:jQuery('#id_time_0').val()?jQuery('#id_time_0').val():false
-      })
-     },
-    });
-   });
-</script>
+<script src="/static/js/select.js"></script>
+<script src="/static/js/select-api.js"></script>
+<script src="/static/js/datetimepicker.js"></script>
 {% endblock js %}
