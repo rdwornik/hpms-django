@@ -16,7 +16,7 @@ class TestPage(TestCase):
         )
         self.client = Client()
         self.client.force_login(self.user)
-        self.n1 = factories.HeaderNameFactory(header_name="VISITORS_IP")
+        self.n1 = factories.HeaderNameFactory(header_name="VISITOR_IP")
         self.v1 = factories.HeaderValueFactory(header_value="127.0.0.1")
         self.v2 = factories.HeaderValueFactory(header_value="127.0.1.2")
         self.v3 = factories.HeaderValueFactory(header_value="128.0.0.1")

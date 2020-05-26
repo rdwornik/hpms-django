@@ -21,7 +21,6 @@ class NotesTable(tables.Table):
                 "type" : "hidden"
             }
         })
-    transaction = tables.Column(accessor="transaction.pk")
     title = tables.LinkColumn("all_notes_edit", text=lambda record: record.title, args=[A("pk")])
     
     class Meta:
@@ -77,9 +76,9 @@ class TransactionsTable(tables.Table):
             }
         })
     transaction = tables.Column(
-        # linkify=lambda record: reverse("transactions_detail", 
-        #                                kwargs={"ip": record.logslog_set.filter(Q(name__header_name=settings.VISITORS_IP)).first().value_id,
-        #                                        "transaction": record.transaction}),        
+        linkify=lambda record: reverse("transactions_detail", 
+                                       kwargs={"ip": record.logslog_set.filter(Q(name__header_name=settings.VISITOR_IP)).first().value.pk,
+                                               "transaction": record.transaction}),        
         attrs={
                 "td" : { 
                     "scope" : "row",
@@ -129,7 +128,7 @@ class TransactionsTable(tables.Table):
         uri = record.logslog_set.filter(Q(name__header_name=settings.REQUEST_URI)).first()
         return uri.value.header_value  if uri else "None"
     def render_visitor_ip(self,record):
-        visitor = record.logslog_set.filter(Q(name__header_name=settings.VISITORS_IP)).first()
+        visitor = record.logslog_set.filter(Q(name__header_name=settings.VISITOR_IP)).first()
         return visitor.value.header_value  if visitor else "None"
     def render_server(self, record):
         server = record.logslog_set.filter(Q(name__header_name=settings.SERVER_NAME)).first()

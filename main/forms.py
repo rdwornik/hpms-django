@@ -15,7 +15,6 @@ from django.contrib.postgres import forms as psql_forms
 #TODO sortowanie
 #TODO style tabel w oddzielnym pliku css
 #TODO order headers alfabetcznie
-#TODO dlaczego notatki wiele do wielu pytanie
 class DateTimeRangeValidationForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
@@ -36,13 +35,29 @@ class TagForm(forms.ModelForm):
             "tag": forms.TextInput(),
             "value_cryteria" : forms.TextInput()
         }
-class NoteForm(forms.Form):
-    transaction =   forms.CharField(disabled=True, required=False)
-    ip =            forms.CharField(disabled=True, required=False)
-    title =         forms.CharField(widget=forms.TextInput)
-    content =       forms.CharField(widget=forms.Textarea)
+
+class NoteForm(forms.ModelForm):
+    transaction =   forms.IntegerField(disabled=True,required=False)
+    ip =            forms.CharField(disabled=True)
     
-    field_order=["ip","transaction","title","content"]
+    field_order=    ["ip","transaction","title","content"]
+    class Meta:
+        model = models.LogsNote
+        exclude = ['id','transactions']
+        localized_fields = "__all__"
+        widgets = {
+            "title": forms.TextInput(),
+        }
+    
+class TagForm(forms.ModelForm):     
+    class Meta:
+        model = models.LogsTag
+        fields = "__all__"
+        localized_fields = "__all__"
+        widgets = {
+            "tag": forms.TextInput(),
+            "value_cryteria" : forms.TextInput()
+        }
 
 
 class TagsActionSelectForm(forms.ModelForm):

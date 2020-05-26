@@ -8,7 +8,8 @@ from main import models
 
 from django.forms import ModelForm, TextInput, SelectMultiple, Select
 from django.urls import reverse_lazy
-from main import forms         class TransactionsFilter(django_filters.FilterSet):
+from main import forms
+class TransactionsFilter(django_filters.FilterSet):
     visitor_ip =    django_filters.CharFilter(required=False,method='visitor_ip_filter',widget=SelectMultiple(attrs={"data-url":reverse_lazy("visitor-ip-list")}))
     assigned_tags = django_filters.ModelMultipleChoiceFilter(required=False,queryset=models.LogsTag.objects.all())
     server =        django_filters.ModelChoiceFilter(required=False,method='server_filter',queryset=models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct())
@@ -23,7 +24,7 @@ from main import forms         class TransactionsFilter(django_filters.FilterSet
         return "%s" % obj.header_value
     
     def visitor_ip_filter(self, queryset, name, value):
-        return queryset.filter(Q(name__header_name=settings.VISITORS_IP) & Q(value__in=ast.literal_eval(value)))
+        return queryset.filter(Q(name__header_name=settings.VISITOR_IP) & Q(value__in=ast.literal_eval(value)))
     def server_filter(self, queryset, name, value):
         return queryset.filter(Q(name__header_name=settings.SERVER_NAME) & Q(value=value))
     

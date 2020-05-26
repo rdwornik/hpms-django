@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 data1 = {
    "headers":[
       {
-         "name":"VISITORS_IP",
+         "name":"VISITOR_IP",
          "value":"127.0.0.1"
       },
       {
@@ -24,7 +24,7 @@ data1 = {
 data2 = {
    "headers":[
       {
-         "name":"VISITORS_IP",
+         "name":"VISITOR_IP",
          "value":"128.0.0.1"
       },
       {
@@ -49,7 +49,7 @@ class TestEndpoints(APITestCase):
       self.client.force_authenticate(self.user)
 
    def test_create_object(self):
-      n1 = factories.HeaderNameFactory(header_name = "VISITORS_IP")
+      n1 = factories.HeaderNameFactory(header_name = "VISITOR_IP")
       t1 = factories.LogsTagFactory(
          name_cryteria = n1,
          value_cryteria = "127.*"

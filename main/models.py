@@ -45,8 +45,6 @@ class LogsTag(models.Model):
 class Transaction(models.Model):
     transaction = models.BigAutoField(primary_key=True)
     time = models.DateTimeField(auto_now_add=True)
-    # server = models.TextField()
-    # visitor_ip = models.GenericIPAddressField()
     assigned_tags = models.ManyToManyField(LogsTag, through="LogsTagAssign")
     name = models.ManyToManyField(HeaderName,through="LogsLog")
     value = models.ManyToManyField(HeaderValue,through="LogsLog")
@@ -72,18 +70,20 @@ class LogsLog(models.Model):
          return "{0} {1} {2}".format(self.name, self.value,self.transaction)
 
 class LogsNote(models.Model):
+    id = models.AutoField(primary_key = True)
+    transactions = models.ManyToManyField(Transaction)
     title = models.TextField()
     content = models.TextField()
-    transaction = models.ForeignKey(Transaction, blank=True, null=True, on_delete=models.CASCADE)
-    # ip = models.ForeignKey(HeaderValue, on_delete=models.CASCADE)
-    ip = models.TextField()
-    
+    transaction = models.IntegerField(blank=True,null=True,default=1)
+    ip = models.GenericIPAddressField()    
     class Meta:
         verbose_name = "LogsNote"
         verbose_name_plural = "LogsNotes"
+        ordering = ['-id']
+
         
     def __str__(self):
-         return "{0} {1} {2}".format(self.title, self.content, self.ip)
+         return "title {0} content {1} ip {2} trans {3}".format(self.title, self.content, self.ip, self.transaction)
         
 class LogsTagAssign(models.Model):
     transaction = models.ForeignKey(Transaction,on_delete=models.CASCADE)

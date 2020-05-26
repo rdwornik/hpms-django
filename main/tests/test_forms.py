@@ -4,7 +4,7 @@ from main import forms, models
 class TestForm(TestCase):
     def test_valid_tags_form_submit_tag(self):
         form = forms.TagForm({
-                "name_cryteria" : models.HeaderName.objects.create(header_name="VISITORS_IP"),
+                "name_cryteria" : models.HeaderName.objects.create(header_name="VISITOR_IP"),
                 "value_cryteria" : "127.*" ,
                 "tag" : "localhost" ,
                 "description" : "localhost"
@@ -16,13 +16,13 @@ class TestForm(TestCase):
     
     def test_invalid_tags_form_missing_field(self):
         form = forms.TagForm({
-                "name_cryteria" : models.HeaderName.objects.create(header_name="VISITORS_IP"),
+                "name_cryteria" : models.HeaderName.objects.create(header_name="VISITOR_IP"),
                 "description" : "none"
         })
         self.assertFalse(form.is_valid())
     def test_invalid_tags_form_regex(self):
         form = forms.TagForm({
-                "name_cryteria" : models.HeaderName.objects.create(header_name="VISITORS_IP"),
+                "name_cryteria" : models.HeaderName.objects.create(header_name="VISITOR_IP"),
                 "value_cryteria" : "*" ,
                 "tag" : "localhost" ,
                 "description" : "localhost"

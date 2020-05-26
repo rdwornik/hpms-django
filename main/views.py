@@ -20,10 +20,8 @@ from dateutil.relativedelta import relativedelta
 #TODO zrobic multiple ip
 #TODO cos przejscie z activity do transactions multiple tags ucinalo
 #TODO wrzucic na azure
-#TODO zmienic model transactions
 #TODO Godziny w activity 10:13 - 11:13
 #TODO Przyciski w activity
-#TODO multiple tags
 #TODO testy
 #TODO style kolumn wyrzucic
 #TODO dodac paginacje dla visitors spytac sie o ilosc danych czy warrto robic pginacje dla tagow czy tez serwera
@@ -48,20 +46,23 @@ def all_notes_form_view(request,id=None,ip=None,transaction=None):
     if request.method == "POST":
         if not id:
             initial = {
-                "ip" :ip,
-                "transaction" : models.Transaction.objects.get(pk=transaction)  if transaction else models.Transaction()
+                "ip" : ip,
+                "transaction" : transaction
             }
-            note = models.LogsNote(title=request.POST['title'],content=request.POST['content'],transaction=initial['transaction'],ip=initial['ip'])
+            note = models.LogsNote(**initial)
         else:
-            try:
-                initial = {}
+            try: 
                 note = models.LogsNote.objects.get(pk=id)
             except models.LogsNote.DoesNotExist:
                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-
-        form = forms.NoteForm(request.POST)
-        if form.is_valid():
-            note.save()
+        form = forms.NoteForm(request.POST,instance=note)
+        if form.has_changed() and form.is_valid():
+            logsnote = form.save()
+            if transaction:
+                t = [models.Transaction.objects.get(pk=transaction)]
+            else:   
+                t = models.Transaction.objects.filter(Q(name__header_name=settings.VISITOR_IP) & Q(value__header_value=ip))
+            logsnote.transactions.add(*t)
             return HttpResponseRedirect(reverse("all_notes"))
         return render(request, "all_notes_form.html", { "form" : form })
 
@@ -93,7 +94,9 @@ def activity_view(request):
     })
 
 def transactions_detail_view(request, transaction=1,ip=1):
-    table = tables.TransactionsDetailTable(models.Transaction.objects.get(pk=transaction).logslog_set.all())    
+    t = models.Transaction.objects.get(pk=transaction)
+    ip = t.logslog_set.filter(value=ip).first().value.header_value
+    table = tables.TransactionsDetailTable(t.logslog_set.all())    
     return render(request, "transactions_detail.html", {
         "table":table,
         "transaction": transaction,
@@ -172,7 +175,7 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView):
 class VisitorsTablesView(SingleTableView):
     template_name = "visitors.html"
     table_class = tables.VisitorTable
-    queryset = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).values("header_value","id",visits=Count("id")) 
+    queryset = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITOR_IP)).values("header_value","id",visits=Count("id")) 
     paginator_class = LazyPaginator
     table_pagination = {
         "per_page": 10

@@ -17,7 +17,7 @@ class VisitorIpList(viewsets.ReadOnlyModelViewSet):
     class Meta:
         model = models.HeaderValue
     def get_queryset(self):
-        qs = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct() 
+        qs = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITOR_IP)).distinct() 
         visitor_ip = self.request.query_params.getlist('visitor_ip', None)
         q = self.request.query_params.get('q', None)
         if q :
