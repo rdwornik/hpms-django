@@ -8,6 +8,7 @@ from main import models
 
 from django.forms import ModelForm, TextInput, SelectMultiple, Select
 from django.urls import reverse_lazy
+from main import forms
 
 class TransactionsFilter(django_filters.FilterSet):
     server =        django_filters.ModelChoiceFilter(required=False,to_field_name="server",method='filter_server',queryset=models.Transaction.objects.order_by('server').distinct('server'))
@@ -32,6 +33,7 @@ class TransactionsFilter(django_filters.FilterSet):
     class Meta:
         model = models.Transaction
         fields = ["time","assigned_tags","visitor_ip","server"]
+        form = forms.TransactionsForm
     
 class ChartFilter(rest_filters.FilterSet):
     time =              rest_filters.DateTimeFromToRangeFilter(required=False)

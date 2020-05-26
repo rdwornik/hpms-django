@@ -18,26 +18,34 @@ VISITOR_IP_CHOICES.insert(0, ('', '----'))
 #TODO sortowanie
 #TODO style tabel w oddzielnym pliku css
 
-class TimeRangeForm(forms.Form):
-    time_after = forms.DateTimeField(   required=False,
-                                        input_formats=["%Y-%m-%d %H:%M"],
-                                        widget=widgets.DateTimePickerInput())
-    time_before = forms.DateTimeField(  required=False,
-                                        input_formats=["%Y-%m-%d %H:%M"],
-                                        widget=widgets.DateTimePickerInput())
+# class TimeRangeForm(forms.Form):
+#     time_after = forms.DateTimeField(   required=False,
+#                                         input_formats=["%Y-%m-%d %H:%M"],
+#                                         widget=widgets.DateTimePickerInput())
+#     time_before = forms.DateTimeField(  required=False,
+#                                         input_formats=["%Y-%m-%d %H:%M"],
+#                                         widget=widgets.DateTimePickerInput())
+#     def clean(self):
+#         cleaned_data = super().clean()
+#         if cleaned_data.get("time_after") > cleaned_data.get("time_before"):
+#             msg = "Time after can't be bigger then time before"
+#             self.add_error('time_after',msg)
+#         return self.cleaned_data
+    
+class ActivityForm(forms.Form):
+        
+class TransactionsForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
-        if cleaned_data.get("time_after") > cleaned_data.get("time_before"):
-            msg = "Time after can't be bigger then time before"
-            self.add_error('time_after',msg)
+        print(cleaned_data)
+        if  cleaned_data["time"]:
+            time_after = cleaned_data["time"].start
+            time_before = cleaned_data["time"].stop
+            if time_after > time_before:
+                msg = "Time after can't be bigger then time before"
+                self.add_error('time',msg)
         return self.cleaned_data
-# class TransactionsForm(TransactionBasicForm):
-#     ip = forms.ChoiceField( required=False,
-#                             choices=VISITOR_IP_CHOICES,
-#                             widget=Select(attrs={"display-name":"ip",
-#                                                  "url-endpoint-select":reverse_lazy("visitor-ip-list")}))
     
-#     # server = forms.ModelChoiceField(required=False,queryset=models.Transaction.objects.all().distinct('server'),to_field_name="server")
 class TagsActionSelectForm(ModelForm):
     ACTIONS = ( ("delete_selected","Deleted selected tags"),
                 ("search","Search tags"),)
