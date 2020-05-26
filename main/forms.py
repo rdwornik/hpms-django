@@ -1,7 +1,6 @@
 import datetime
 
 from django import forms
-from django.forms import ModelForm, TextInput, SelectMultiple, Select
 from django.db.models import Q
 from django.conf import settings
 from django.urls import reverse_lazy
@@ -16,6 +15,7 @@ from django.contrib.postgres import forms as psql_forms
 #TODO sortowanie
 #TODO style tabel w oddzielnym pliku css
 #TODO order headers alfabetcznie
+#TODO dlaczego notatki wiele do wielu pytanie
 class DateTimeRangeValidationForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
@@ -27,44 +27,25 @@ class DateTimeRangeValidationForm(forms.Form):
                 self.add_error('time',msg)
         return self.cleaned_data
 
-class TagForm(ModelForm):     
+class TagForm(forms.ModelForm):     
     class Meta:
         model = models.LogsTag
         fields = "__all__"
         localized_fields = "__all__"
         widgets = {
-            "tag": TextInput(),
-            "value_cryteria" : TextInput()
+            "tag": forms.TextInput(),
+            "value_cryteria" : forms.TextInput()
         }
-class NoteForm(ModelForm):
-    transaction = forms.ModelChoiceField(queryset=models.Transaction.objects.all(),disabled=True,required=False)
-    ip = forms.ModelChoiceField(queryset=models.HeaderValue.objects.all(),disabled=True,required=False)
+class NoteForm(forms.Form):
+    transaction =   forms.CharField(disabled=True, required=False)
+    ip =            forms.CharField(disabled=True, required=False)
+    title =         forms.CharField(widget=forms.TextInput)
+    content =       forms.CharField(widget=forms.Textarea)
     
     field_order=["ip","transaction","title","content"]
-    
-    class Meta:
-        model = models.LogsNote
-        fields = "__all__"
-        localized_fields = "__all__"
-        widgets = {
-            "title" : TextInput(),
-        }
-    
-    def __init__(self, *args, **kwargs):
-        super(NoteForm, self).__init__(*args, **kwargs)
-        self.fields['transaction'].label_from_instance = self.transaction_label_from_instance
-        self.fields['ip'].label_from_instance = self.ip_label_from_instance
-
-    @staticmethod
-    def transaction_label_from_instance(obj):
-        return "%s" % obj.pk
-    
-    @staticmethod
-    def ip_label_from_instance(obj):
-        return "%s" % obj.header_value
 
 
-class TagsActionSelectForm(ModelForm):
+class TagsActionSelectForm(forms.ModelForm):
     ACTIONS =  (("delete_selected","Deleted selected tags"),
                 ("search","Search tags"))
 
@@ -76,7 +57,7 @@ class TagsActionSelectForm(ModelForm):
         model = models.LogsTag
         fields = ['tags']
 
-class NotesActionSelectForm(ModelForm):
+class NotesActionSelectForm(forms.ModelForm):
     ACTIONS = (
         ("delete_selected","Deleted selected notes"),
         ("search","Search notes"),

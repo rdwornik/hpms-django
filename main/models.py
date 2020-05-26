@@ -75,7 +75,8 @@ class LogsNote(models.Model):
     title = models.TextField()
     content = models.TextField()
     transaction = models.ForeignKey(Transaction, blank=True, null=True, on_delete=models.CASCADE)
-    ip = models.ForeignKey(HeaderValue, on_delete=models.CASCADE)
+    # ip = models.ForeignKey(HeaderValue, on_delete=models.CASCADE)
+    ip = models.TextField()
     
     class Meta:
         verbose_name = "LogsNote"

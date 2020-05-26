@@ -17,7 +17,6 @@ from rest_framework import status
 from main import models, tables, filters, forms
 from dateutil.relativedelta import relativedelta
 
-#TODO wyminic select2 na jquery
 #TODO zrobic multiple ip
 #TODO cos przejscie z activity do transactions multiple tags ucinalo
 #TODO wrzucic na azure
@@ -34,8 +33,8 @@ def all_notes_form_view(request,id=None,ip=None,transaction=None):
     if request.method == "GET":
         if not id:
             initial = {
-                "ip" : models.HeaderValue.objects.get(pk=ip),
-                "transaction" : models.Transaction.objects.get(pk=transaction)  if transaction else models.Transaction()
+                "ip" : ip,
+                "transaction" : transaction
             }
             form = forms.NoteForm(initial=initial)
         else:
@@ -49,7 +48,7 @@ def all_notes_form_view(request,id=None,ip=None,transaction=None):
     if request.method == "POST":
         if not id:
             initial = {
-                "ip" : models.HeaderValue.objects.get(pk=ip),
+                "ip" :ip,
                 "transaction" : models.Transaction.objects.get(pk=transaction)  if transaction else models.Transaction()
             }
             note = models.LogsNote(title=request.POST['title'],content=request.POST['content'],transaction=initial['transaction'],ip=initial['ip'])
@@ -59,11 +58,10 @@ def all_notes_form_view(request,id=None,ip=None,transaction=None):
                 note = models.LogsNote.objects.get(pk=id)
             except models.LogsNote.DoesNotExist:
                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-        initial['title'] = request.POST["title"]
-        initial['content'] = request.POST['content']
-        form = forms.NoteForm(initial,instance=note)
+
+        form = forms.NoteForm(request.POST)
         if form.is_valid():
-            form.save()
+            note.save()
             return HttpResponseRedirect(reverse("all_notes"))
         return render(request, "all_notes_form.html", { "form" : form })
 
@@ -88,9 +86,6 @@ def all_notes_view(request):
     })
 
 def activity_view(request):
-    # initial = { 'time_after' : (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_after') is None else datetime.datetime.fromisoformat(request.GET.get('time_after')).strftime("%Y-%m-%d %H:%M"),
-    #             'time_before' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get('time_before') is None else datetime.datetime.fromisoformat(request.GET.get('time_before')).strftime("%Y-%m-%d %H:%M"),
-    #             'assigned_tags' : request.GET.getlist('assigned_tags')}
     form = filters.ChartFilter(request.GET).form
     return render(request, "activity.html",  {
         "form" : form,
