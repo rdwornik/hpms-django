@@ -23,3 +23,4 @@ if(params){
   $("#id_".concat($this.attr("name"))).append(options).trigger("change");
 }
 });
+

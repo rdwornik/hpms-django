@@ -5,7 +5,7 @@ from django.forms import ModelForm, TextInput, SelectMultiple, Select
 from django.db.models import Q
 from django.conf import settings
 from django.urls import reverse_lazy
-from main import models, widgets
+from main import models
 
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.contrib.postgres import forms as psql_forms
@@ -15,11 +15,10 @@ from django.contrib.postgres import forms as psql_forms
 #TODO write extra tests
 #TODO sortowanie
 #TODO style tabel w oddzielnym pliku css
-
+#TODO order headers alfabetcznie
 class DateTimeRangeValidationForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
-        print(cleaned_data)
         if  cleaned_data["time"]:
             time_after = cleaned_data["time"].start
             time_before = cleaned_data["time"].stop

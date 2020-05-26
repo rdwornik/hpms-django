@@ -72,6 +72,6 @@ trunc_methods = {
     "year": TruncDay,
 }
 
-date_order = lambda date1, date2: (date1, date2) if date1 < date2 else (date2,date1) 
-time_delta = lambda date1, date2 : date2 - date1
+# date_order = lambda date1, date2: (date1, date2) if date1 < date2 else (date2,date1) 
+# time_delta = lambda date1, date2 : date2 - date1
 
