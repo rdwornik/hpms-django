@@ -88,10 +88,10 @@ def all_notes_view(request):
     })
 
 def activity_view(request):
-    initial = { 'time_after' : (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_after') is None else datetime.datetime.fromisoformat(request.GET.get('time_after')).strftime("%Y-%m-%d %H:%M"),
-                'time_before' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get('time_before') is None else datetime.datetime.fromisoformat(request.GET.get('time_before')).strftime("%Y-%m-%d %H:%M"),
-                'assigned_tags' : request.GET.getlist('assigned_tags')}
-    form = forms.TransactionBasicForm(initial)
+    # initial = { 'time_after' : (datetime.datetime.now() + relativedelta(years=-1)).strftime("%Y-%m-%d %H:%M") if request.GET.get('time_after') is None else datetime.datetime.fromisoformat(request.GET.get('time_after')).strftime("%Y-%m-%d %H:%M"),
+    #             'time_before' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M") if request.GET.get('time_before') is None else datetime.datetime.fromisoformat(request.GET.get('time_before')).strftime("%Y-%m-%d %H:%M"),
+    #             'assigned_tags' : request.GET.getlist('assigned_tags')}
+    form = filters.ChartFilter(request.GET).form
     return render(request, "activity.html",  {
         "form" : form,
         "tag_field" : "assigned_tags",
@@ -168,6 +168,7 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView):
         table = self.table_class(filter.qs)    
         table.paginate(page=request.GET.get("page", 1), per_page=10, paginator_class=LazyPaginator)
         return render(request, "transactions.html",  {
+            "form" : filter.form,
             "tag_field" : "assigned_tags",
             "table":table,
             "filter" : filter,

@@ -13,10 +13,10 @@
   <form method="get" id="myForm" class="form-inline">
     {% load widget_tweaks %}
     {% block errors %}
-      {% include "include/filter_form_errors.html" %}
+      {% include "include/form_errors.html" %}
     {% endblock errors %}
 
-    {% for field in filter.form %}
+    {% for field in form %}
       <div class="form-group mb-2 mr-2" id="{{field.name}}_group">
           {{ field|add_class:"form-control" }}
       </div>

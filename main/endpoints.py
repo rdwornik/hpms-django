@@ -7,6 +7,7 @@ from django.conf import settings
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from main import  models, filters,utils, serializers
+from dateutil.relativedelta import relativedelta
 
 import datetime
 class VisitorIpList(viewsets.ReadOnlyModelViewSet):
@@ -78,9 +79,13 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = [IsAuthenticated]
     def list(self, request, *args, **kwargs):
+        time_after = (datetime.datetime.now() + relativedelta(years=-1)) if request.GET.get('time_after') is None else datetime.datetime.fromisoformat(request.GET.get('time_after'))
+        time_before = datetime.datetime.now() if request.GET.get('time_before') is None else datetime.datetime.fromisoformat(request.GET.get('time_before'))
         queryset = self.filter_queryset(self.get_queryset())
-        date1, date2 = utils.date_order(datetime.datetime.fromisoformat(request.GET['time_after']),datetime.datetime.fromisoformat(request.GET['time_before']))
-        td = date2 - date1  
+        # print(time_after)
+        # print(time_before)
+        time_after, time_before # = utils.date_order(datetime.datetime.fromisoformat(request.GET['time_after']),datetime.datetime.fromisoformat(request.GET['time_before']))
+        td = time_before - time_after  
         time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
         trunc_func = utils.trunc_methods[time_range]
         queryset = queryset.annotate(x=trunc_func('time', output_field=DateTimeField())).values('x').order_by('x').annotate(y=Count('pk')) 
