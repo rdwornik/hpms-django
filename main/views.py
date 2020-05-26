@@ -27,6 +27,7 @@ from dateutil.relativedelta import relativedelta
 #TODO multiple tags
 #TODO testy
 #TODO style kolumn wyrzucic
+#TODO dodac paginacje dla visitors spytac sie o ilosc danych czy warrto robic pginacje dla tagow czy tez serwera
 
 
 def all_notes_form_view(request,id=None,ip=None,transaction=None):
