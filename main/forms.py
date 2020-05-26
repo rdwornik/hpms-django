@@ -16,25 +16,7 @@ from django.contrib.postgres import forms as psql_forms
 #TODO sortowanie
 #TODO style tabel w oddzielnym pliku css
 
-# class TimeRangeForm(forms.Form):
-#     time_after = forms.DateTimeField(   required=False,
-#                                         input_formats=["%Y-%m-%d %H:%M"],
-#                                         widget=widgets.DateTimePickerInput())
-#     time_before = forms.DateTimeField(  required=False,
-#                                         input_formats=["%Y-%m-%d %H:%M"],
-#                                         widget=widgets.DateTimePickerInput())
-#     def clean(self):
-#         cleaned_data = super().clean()
-#         if cleaned_data.get("time_after") > cleaned_data.get("time_before"):
-#             msg = "Time after can't be bigger then time before"
-#             self.add_error('time_after',msg)
-#         return self.cleaned_data
-    
-class ActivityForm(forms.Form):
-    assigned_tags = forms.ModelMultipleChoiceField(required=False,queryset=models.LogsTag.objects.all())
-    time =          psql_forms.DateTimeRangeField()
-    
-class TransactionsForm(forms.Form):
+class DateTimeRangeValidationForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         print(cleaned_data)
@@ -45,18 +27,7 @@ class TransactionsForm(forms.Form):
                 msg = "Time after can't be bigger then time before"
                 self.add_error('time',msg)
         return self.cleaned_data
-    
-class TagsActionSelectForm(ModelForm):
-    ACTIONS =  (("delete_selected","Deleted selected tags"),
-                ("search","Search tags"))
 
-    select = forms.TypedChoiceField(choices=ACTIONS)
-    tags = forms.CharField( required=False,
-                            widget=forms.TextInput(attrs={"autocomplete":"off",
-                                                          "data-url": reverse_lazy("tag-names-list")}))
-    class Meta:
-        model = models.LogsTag
-        fields = ['tags']
 class TagForm(ModelForm):     
     class Meta:
         model = models.LogsTag
@@ -92,7 +63,20 @@ class NoteForm(ModelForm):
     @staticmethod
     def ip_label_from_instance(obj):
         return "%s" % obj.header_value
-    
+
+
+class TagsActionSelectForm(ModelForm):
+    ACTIONS =  (("delete_selected","Deleted selected tags"),
+                ("search","Search tags"))
+
+    select = forms.TypedChoiceField(choices=ACTIONS)
+    tags = forms.CharField( required=False,
+                            widget=forms.TextInput(attrs={"autocomplete":"off",
+                                                          "data-url": reverse_lazy("tag-names-list")}))
+    class Meta:
+        model = models.LogsTag
+        fields = ['tags']
+
 class NotesActionSelectForm(ModelForm):
     ACTIONS = (
         ("delete_selected","Deleted selected notes"),

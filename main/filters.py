@@ -33,7 +33,7 @@ class TransactionsFilter(django_filters.FilterSet):
     class Meta:
         model = models.Transaction
         fields = ["time","assigned_tags","visitor_ip","server"]
-        form = forms.TransactionsForm
+        form = forms.DateTimeRangeValidationForm
     
 class ChartFilter(rest_filters.FilterSet):
     time =              rest_filters.DateTimeFromToRangeFilter(required=False)
@@ -41,3 +41,4 @@ class ChartFilter(rest_filters.FilterSet):
     class Meta:
         model = models.Transaction
         fields = ["time","assigned_tags"]
+        form = forms.DateTimeRangeValidationForm
