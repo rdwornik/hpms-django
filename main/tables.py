@@ -31,8 +31,7 @@ class NotesTable(tables.Table):
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn(template_name="tables/visitor_ip_column.html",orderable=False,verbose_name="Visitors IP")
     visits = tables.Column(empty_values=(), verbose_name="Visits")
-    add_note = tables.TemplateColumn(template_name="tables/add_note_column.html",orderable=False,verbose_name="")
-    
+    add_note = tables.TemplateColumn(template_name="tables/add_note_column.html",orderable=False,verbose_name="")  
 class TransactionsDetailTable(tables.Table):
     class Meta:
         model = models.LogsLog
@@ -78,7 +77,9 @@ class TransactionsTable(tables.Table):
             }
         })
     transaction = tables.Column(
-        linkify=("transactions_detail",{"ip": A('visitor_ip'),'transaction':A('transaction')}),
+        # linkify=lambda record: reverse("transactions_detail", 
+        #                                kwargs={"ip": record.logslog_set.filter(Q(name__header_name=settings.VISITORS_IP)).first().value_id,
+        #                                        "transaction": record.transaction}),        
         attrs={
                 "td" : { 
                     "scope" : "row",
@@ -127,12 +128,12 @@ class TransactionsTable(tables.Table):
     def render_request_uri(self, record):
         uri = record.logslog_set.filter(Q(name__header_name=settings.REQUEST_URI)).first()
         return uri.value.header_value  if uri else "None"
-    # def render_visitor_ip(self,record):
-    #     visitor = record.logslog_set.filter(Q(name__header_name=settings.VISITORS_IP)).first()
-    #     return visitor.value.header_value  if visitor else "None"
-    # def render_server(self, record):
-    #     server = record.logslog_set.filter(Q(name__header_name=settings.SERVER_NAME)).first()
-    #     return server.value.header_value  if server else "None"
+    def render_visitor_ip(self,record):
+        visitor = record.logslog_set.filter(Q(name__header_name=settings.VISITORS_IP)).first()
+        return visitor.value.header_value  if visitor else "None"
+    def render_server(self, record):
+        server = record.logslog_set.filter(Q(name__header_name=settings.SERVER_NAME)).first()
+        return server.value.header_value  if server else "None"
     def render_transaction(self, value,record):
         request_method = record.logslog_set.filter(Q(name__header_name=settings.REQUEST_METHOD)).first()
         tag = request_method.value.header_value if request_method else "None"           

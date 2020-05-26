@@ -8,13 +8,11 @@ from main import models
 
 from django.forms import ModelForm, TextInput, SelectMultiple, Select
 from django.urls import reverse_lazy
-from main import forms
-
-class TransactionsFilter(django_filters.FilterSet):
-    server =        django_filters.ModelChoiceFilter(required=False,to_field_name="server",method='filter_server',queryset=models.Transaction.objects.order_by('server').distinct('server'))
+from main import forms         class TransactionsFilter(django_filters.FilterSet):
+    visitor_ip =    django_filters.CharFilter(required=False,method='visitor_ip_filter',widget=SelectMultiple(attrs={"data-url":reverse_lazy("visitor-ip-list")}))
     assigned_tags = django_filters.ModelMultipleChoiceFilter(required=False,queryset=models.LogsTag.objects.all())
+    server =        django_filters.ModelChoiceFilter(required=False,method='server_filter',queryset=models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct())
     time =          django_filters.DateTimeFromToRangeFilter(required=False)
-    visitor_ip =    django_filters.CharFilter(required=False,method='filter_visitor_ip',widget=SelectMultiple(attrs={"data-url":reverse_lazy("visitor-ip-list")}))
 
     def __init__(self, *args, **kwargs):
         super(TransactionsFilter, self).__init__(*args, **kwargs)
@@ -22,17 +20,16 @@ class TransactionsFilter(django_filters.FilterSet):
 
     @staticmethod
     def server_label_from_instance(obj):
-        return "%s" % obj.server
+        return "%s" % obj.header_value
     
-    def filter_server(self, queryset, name, value):
-        return queryset.filter(Q(server=value.server))
-        
-    def filter_visitor_ip(self, queryset, name, value):
-        return queryset.filter(visitor_ip__in=ast.literal_eval(value))
+    def visitor_ip_filter(self, queryset, name, value):
+        return queryset.filter(Q(name__header_name=settings.VISITORS_IP) & Q(value__in=ast.literal_eval(value)))
+    def server_filter(self, queryset, name, value):
+        return queryset.filter(Q(name__header_name=settings.SERVER_NAME) & Q(value=value))
     
     class Meta:
         model = models.Transaction
-        fields = ["time","assigned_tags","visitor_ip","server"]
+        fields = ["time","assigned_tags"]
         form = forms.DateTimeRangeValidationForm
     
 class ChartFilter(rest_filters.FilterSet):

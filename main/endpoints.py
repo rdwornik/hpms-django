@@ -11,16 +11,19 @@ from dateutil.relativedelta import relativedelta
 
 import datetime
 class VisitorIpList(viewsets.ReadOnlyModelViewSet):
-    serializer_class = serializers.VisitorIpSerializer
+    serializer_class = serializers.HeaderValueModelSerializer
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = [IsAuthenticated]
     class Meta:
         model = models.HeaderValue
     def get_queryset(self):
-        qs = models.Transaction.objects.order_by('visitor_ip').distinct('visitor_ip')
+        qs = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITORS_IP)).distinct() 
+        visitor_ip = self.request.query_params.getlist('visitor_ip', None)
         q = self.request.query_params.get('q', None)
-        if q is not None:
-            qs = qs.filter(visitor_ip__istartswith=q)
+        if q :
+            qs = qs.filter(header_value__istartswith=q)
+        elif visitor_ip :
+            qs = qs.filter(pk__in=visitor_ip)
         return qs
     
 class LogsTagList(viewsets.ReadOnlyModelViewSet):

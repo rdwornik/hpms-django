@@ -16,11 +16,27 @@ var $this = $(this);
 });
 //Set query parameters
 query = new URLSearchParams(window.location.search)
-params = query.getAll($this.attr("name"))
+params = query.get($this.attr("name"))
 if(params){
-  var options = []
-  params.forEach(element => options.push(new Option(element,element,false,true)))
-  $("#id_".concat($this.attr("name"))).append(options).trigger("change");
+    var ipSelect=$("[data-url]")
+    $.ajax({
+      type: 'GET',
+      url: ipSelect.attr("data-url").concat("?",query.toString())
+  }).then(function (data) {
+      // create the option and append to Select2
+      console.log(data)
+      var options = []
+      data.results.forEach(element => options.push(new Option(element.text,element.id,false,true)))
+      ipSelect.append(options).trigger('change');
+
+      // manually trigger the `select2:select` event
+      ipSelect.trigger({
+          type: 'select2:select',
+          params: {
+              data: data
+          }
+      });
+  });
 }
 });
 
