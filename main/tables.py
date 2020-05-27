@@ -7,10 +7,9 @@ from django.urls import reverse, reverse_lazy
 from main import models
 from main import utils
 
-
-class ActivityTable(table.Table):
-    date = tables.Column()
-    visits_count = tables.Column() 
+class ActivityTable(tables.Table):
+    date = tables.DateTimeColumn(format ='M d Y, h:i A')
+    visits_count = tables.Column()
 class NotesTable(tables.Table):
     selection = tables.CheckBoxColumn(
         accessor="pk",
@@ -26,7 +25,7 @@ class NotesTable(tables.Table):
             }
         })
     title = tables.LinkColumn("all_notes_edit", text=lambda record: record.title, args=[A("pk")])
-    
+
     class Meta:
         model = models.LogsNote
         exclude = ["id"]

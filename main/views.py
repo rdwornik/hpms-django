@@ -16,6 +16,8 @@ from django.views.generic import View
 from rest_framework import status
 from main import models, tables, filters, forms
 from dateutil.relativedelta import relativedelta
+from main import utils
+from django.db.models import Count, DateTimeField
 
 #TODO cos przejscie z activity do transactions multiple tags ucinalo
 #TODO Tags multiple header value 
@@ -83,8 +85,17 @@ def all_notes_view(request):
     return render(request,"all_notes.html")
 
 def activity_view(request):
+    time_after =    datetime.datetime.fromisoformat(request.GET.get('time_after'))  if request.GET.get('time_after')    else (datetime.datetime.now() + relativedelta(years=-1))  
+    time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.datetime.now() 
+    td = time_before - time_after       
+    time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
+    trunc_func = utils.trunc_methods[time_range]
+    #TODO maybe make an agregation
+    queryset = models.Transaction.objects.annotate(date=trunc_func('time', output_field=DateTimeField())).values('date').order_by('date').annotate(visits_count=Count('pk')) 
+    table = tables.ActivityTable(queryset)
     form = filters.ChartFilter(request.GET).form
     return render(request, "activity.html",  {
+        "table" : table,
         "form" : form,
         "tag_field" : "assigned_tags",
     })

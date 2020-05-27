@@ -10,6 +10,7 @@ from main import  models, filters,utils, serializers
 from dateutil.relativedelta import relativedelta
 
 import datetime
+#TODO Placeholdey dodac
 class LogsNotesTitleList(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.LogsNotesTitleModelSerializer
     authentication_classes = (SessionAuthentication, BasicAuthentication)
@@ -99,7 +100,6 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         time_after =    datetime.datetime.fromisoformat(request.GET.get('time_after'))  if request.GET.get('time_after')    else (datetime.datetime.now() + relativedelta(years=-1))  
         time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.datetime.now() 
-        
         td = time_before - time_after       
         time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
         trunc_func = utils.trunc_methods[time_range]
