@@ -68,17 +68,11 @@ def all_notes_form_view(request,id=None,visitor_ip=None,transaction=None):
 
 def all_notes_view(request):
     queryset = models.LogsNote.objects.all()
-    initial = {"select":"search"}    
-    print(request.GET)
+
     if request.method == "POST"and request.POST.__contains__("selected_notes"):
             notes_to_delete = request.POST.getlist("selected_notes")
-            models.LogsNote.objects.filter(id__in=notes_to_delete).delete()
-        # elif request.POST.get("select") == "search" and request.POST.get("title"):
-        #     queryset = models.LogsNote.objects.filter(title__istartswith=request.POST.get("title"))
-        #     initial["title"] = request.POST.get("title")
-        #     filter = filters.NoteFilter(request.POST,queryset=queryset)
-        #     queryset
-    # form = forms.NotesActionSelectForm(initial=initial)
+            queryset.objects.filter(id__in=notes_to_delete).delete()
+
     filter = filters.NoteFilter(request.GET,queryset=queryset)
     table = tables.NotesTable(filter.qs, order_by="-id") 
     table.paginate(page=request.GET.get("page", 1), per_page=5)
@@ -87,6 +81,7 @@ def all_notes_view(request):
         "table": table
     })
     return render(request,"all_notes.html")
+
 def activity_view(request):
     form = filters.ChartFilter(request.GET).form
     return render(request, "activity.html",  {

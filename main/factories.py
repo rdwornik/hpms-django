@@ -8,9 +8,6 @@ class TransactionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Transaction
     time = datetime.now()
-    # transaction=factory.fuzzy.FuzzyInteger(0,5000)
-    # server = "hpmsphp.example.com"
-    # visitor_ip = "192.168.0.248"
     transaction = factory.Sequence(int)
 
 

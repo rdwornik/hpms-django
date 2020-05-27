@@ -13,26 +13,21 @@ from main import forms
 
 
 class NoteFilter(django_filters.FilterSet):
-    visitor_ip =    django_filters.CharFilter(required=False,method='visitor_ip_filter',widget=SelectMultiple(attrs={"data-url":reverse_lazy("visitor-ip-list"),"tags":"false"}))
-    transaction =   django_filters.NumberFilter(required=False)
+    visitor_ip =    django_filters.CharFilter(required=False,method='visitor_ip_filter',widget=Select(attrs={"data-url":reverse_lazy("note-visitor-ip-list"),"tags":"true"}))
     title =         django_filters.CharFilter(required=False,method='title_filter',widget=Select(attrs={"data-url":reverse_lazy("note-titles-list"),"tags":"true"}))
+    transaction =   django_filters.NumberFilter(required=False)
         
     def visitor_ip_filter(self, queryset, name, value):
-        print('vsuewf')
-        print(value)
-        return queryset.filter(Q(visitor_ip__in=ast.literal_eval(value)))
+        return queryset.filter(visitor_ip__istartswith=value)
     def title_filter(self, queryset, name, value):
-        print('hello')
-        print(value)
         return queryset.filter(title__istartswith=value)
         
     class Meta:
         model = models.LogsNote
-        fields = ["visitor_ip","transaction","title"]
-        # form = forms.NotesActionSelectForm
+        fields = ["visitor_ip","title","transaction"]
 
 class TransactionsFilter(django_filters.FilterSet):
-    visitor_ip =    django_filters.CharFilter(required=False,method='visitor_ip_filter',widget=SelectMultiple(attrs={"data-url":reverse_lazy("visitor-ip-list")}))
+    visitor_ip =    django_filters.CharFilter(required=False,method='visitor_ip_filter',widget=SelectMultiple(attrs={"data-url":reverse_lazy("visitor-ip-list"),"tags":"false"}))
     assigned_tags = django_filters.ModelMultipleChoiceFilter(required=False,queryset=models.LogsTag.objects.all())
     server =        django_filters.ModelChoiceFilter(required=False,method='server_filter',queryset=models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct())
     time =          django_filters.DateTimeFromToRangeFilter(required=False)

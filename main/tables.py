@@ -3,10 +3,14 @@ from django.conf import settings
 from django.utils.html import format_html
 from django_tables2.utils import A  # alias for Accessor
 from django.db.models import Q
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from main import models
 from main import utils
 
+
+class ActivityTable(table.Table):
+    date = tables.Column()
+    visits_count = tables.Column() 
 class NotesTable(tables.Table):
     selection = tables.CheckBoxColumn(
         accessor="pk",
@@ -129,15 +133,24 @@ class TransactionsTable(tables.Table):
         return uri.value.header_value  if uri else "None"
     def render_visitor_ip(self,record):
         visitor = record.logslog_set.filter(Q(name__header_name=settings.VISITOR_IP)).first()
-        return visitor.value.header_value  if visitor else "None"
+        visitor_id = visitor.value_id  if visitor else "None"
+        visitor_header_value = visitor.value.header_value  if visitor else "None"
+        notes_count = models.LogsNote.objects.filter(visitor_ip=visitor_header_value).count()
+        return format_html("<a href='{0}?visitor_ip={1}' style='z-index: 2; position:relative'>{2} </a>\
+                            <a href='{3}?visitor_ip={2}' style='z-index: 2; position:relative'>[{4}]</a>".format( reverse_lazy("transactions"),
+                                                                                                                visitor_id,
+                                                                                                                visitor_header_value,
+                                                                                                                reverse_lazy("all_notes"),
+                                                                                                                notes_count))
     def render_server(self, record):
         server = record.logslog_set.filter(Q(name__header_name=settings.SERVER_NAME)).first()
         return server.value.header_value  if server else "None"
     def render_transaction(self, value,record):
         request_method = record.logslog_set.filter(Q(name__header_name=settings.REQUEST_METHOD)).first()
-        tag = request_method.value.header_value if request_method else "None"           
+        notes_count = record.logsnote_set.filter(transaction=record.transaction).count()
+        tag = request_method.value.header_value if request_method else "None"         
         letter, color = utils.get_or_create_methods_tag(tag)
-        return format_html("{}<b><font color={}> {}</font></b>".format(value, color, letter))
+        return format_html("{}<b><font color={}> {}</font></b> <a href='{}?transaction={}' style='z-index: 2; position:relative'>[{}]</a>".format(value, color, letter,reverse_lazy('all_notes'),value,notes_count))
     def render_tags(self, record):
         return format_html("".join("<b>{}</b> : {} <br/>"
                              .format(num, t.tag.tag) for num, t in enumerate(record.logstagassign_set.all(), start=1)))

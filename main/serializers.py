@@ -26,7 +26,12 @@ class LogsTagNamesModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.LogsTag
         fields = ['tag']
-    
+class LogsNotesVisitorIpModelSerializer(serializers.ModelSerializer):
+    text = serializers.CharField(source="visitor_ip")
+    id = serializers.CharField(source="visitor_ip")
+    class Meta:
+        model = models.LogsNote
+        fields = ['id','text']
 class LogsNotesTitleModelSerializer(serializers.ModelSerializer):
     text = serializers.CharField(source="title")
     id = serializers.CharField(source="title")
