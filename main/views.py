@@ -26,7 +26,8 @@ from django.db.models import Count, DateTimeField
 #TODO Przyciski w activity
 #TODO testy
 #TODO style kolumn wyrzucic
-#TODO dodac paginacje dla visitors spytac sie o ilosc danych czy warrto robic pginacje dla tagow czy tez serwera
+#TODO dodac paginacje dla visitors spytac sie o ilosc danych czy warrto robic pginacje dla tagow czy tez s    #TODO maybe make an agregation
+#TODO maybe make an agregation instead of annotate perhaps
 
 
 def all_notes_form_view(request,id=None,visitor_ip=None,transaction=None):
@@ -89,12 +90,12 @@ def activity_view(request):
     time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.datetime.now() 
     td = time_before - time_after       
     time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
-    trunc_func = utils.trunc_methods[time_range]
-    #TODO maybe make an agregation
+    trunc_func = utils.trunc_methods_table[time_range]
     queryset = models.Transaction.objects.annotate(date=trunc_func('time', output_field=DateTimeField())).values('date').order_by('date').annotate(visits_count=Count('pk')) 
-    table = tables.ActivityTable(queryset)
+    table = tables.ActivityTable(queryset,request=request,show_header=False)
     form = filters.ChartFilter(request.GET).form
     return render(request, "activity.html",  {
+        "hello" : "hello",
         "table" : table,
         "form" : form,
         "tag_field" : "assigned_tags",

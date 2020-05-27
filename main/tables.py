@@ -8,8 +8,11 @@ from main import models
 from main import utils
 
 class ActivityTable(tables.Table):
-    date = tables.DateTimeColumn(format ='M d Y, h:i A')
-    visits_count = tables.Column()
+    date = tables.Column()
+    visits_count = tables.Column(verbose_name="Count")
+    
+    def render_date(self,value, record):
+        return value
 class NotesTable(tables.Table):
     selection = tables.CheckBoxColumn(
         accessor="pk",

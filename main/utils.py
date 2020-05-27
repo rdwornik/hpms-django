@@ -1,8 +1,7 @@
 import datetime
 import random 
 
-from django.db.models.functions import TruncDay, TruncHour, TruncMinute, TruncSecond
-
+from django.db.models import functions as functions
 methods = {
     "GET" : ("G","008000"),
     "POST" : ("P","0000FF"),
@@ -63,13 +62,22 @@ select_trunc_method = {
     "day": lambda td :  0 < td.days,
 }
 
-trunc_methods = {
-    "second" : TruncSecond,
-    "minute" : TruncMinute,
-    "hour": TruncHour,
-    "day": TruncDay,
-    "month": TruncDay,
-    "year": TruncDay,
+trunc_methods_chart = {
+    "second" : functions.TruncSecond,
+    "minute" : functions.TruncMinute,
+    "hour": functions.TruncHour,
+    "day": functions.TruncDay,
+    "month": functions.TruncDay,
+    "year": functions.TruncDay,
+}
+
+trunc_methods_table = {
+    "second" : functions.TruncSecond,
+    "minute" : functions.TruncMinute,
+    "hour": functions.TruncHour,
+    "day": functions.TruncDay,
+    "month": functions.TruncMonth,
+    "year": functions.TruncYear,
 }
 
 # date_order = lambda date1, date2: (date1, date2) if date1 < date2 else (date2,date1) 

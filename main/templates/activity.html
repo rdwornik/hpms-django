@@ -25,17 +25,29 @@
     <a class="btn btn-primary btn mb-2" href="{% url 'activity' %}">Reset</a>
   </form>
 </div>
-<div class="table">
-  {% render_table table "tables/activity_table.html"  %}
+<div class="flex-container mt-2">
+  <div class="table">
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="btn-group mb-2"  role="group" aria-label="Basic example">
+          <button id="previous_btn" type="button" class="btn btn-sm btn-info"><<</button>
+          <button id="current_btn" type="button" class="btn btn-sm btn-info ml-2 mr-2">Middle</button>
+          <button id="next_btn" type="button" class="btn btn-sm btn-info">>></button>
+        </div>
+      </div>
+    </div>
+    {% render_table table "tables/activity_table.html"  %}
+  </div>
+  <div class="chart">
+    <canvas id="myChart" 
+    url-endpoint-chart="{% url 'transaction-list' %}" 
+    request-query="{{ request.GET.urlencode }}"
+    tag-field="{{ tag_field }}"
+    transactions="{% url 'transactions' %}">
+    </canvas>
+  </div>
 </div>
-<div class="result">
-  <canvas id="myChart" 
-          url-endpoint-chart="{% url 'transaction-list' %}" 
-          request-query="{{ request.GET.urlencode }}"
-          tag-field="{{ tag_field }}"
-          transactions="{% url 'transactions' %}">
-  </canvas>
-</div>
+
 {% endblock content %}
 {% block js %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
@@ -48,4 +60,7 @@
 {% if not form.errors %}
   <script src="/static/js/chart.js"></script>
 {% endif %}
+<script>
+
+</script>
 {% endblock js %} 

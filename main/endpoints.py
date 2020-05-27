@@ -102,7 +102,7 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
         time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.datetime.now() 
         td = time_before - time_after       
         time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
-        trunc_func = utils.trunc_methods[time_range]
+        trunc_func = utils.trunc_methods_chart[time_range]
         queryset = queryset.annotate(x=trunc_func('time', output_field=DateTimeField())).values('x').order_by('x').annotate(y=Count('pk')) 
         data = serializers.ChartSerializer(queryset,many=True).data
         data = {

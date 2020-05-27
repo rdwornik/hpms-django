@@ -1,3 +1,17 @@
 #assigned_tags_group.form-group  {
     width: 40%;
 }
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+.flex-container > .table {
+width: 20%;
+overflow: auto;
+}
+
+.flex-container > .chart {
+width: 80%;
+overflow: auto;
+}
