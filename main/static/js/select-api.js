@@ -1,9 +1,11 @@
 //Retrive data from api
 $("[data-url]").each(function(){
 var $this = $(this);
+var isTagsTrueSet = ($this.attr("tags") == "true")
   $this.select2({
     placeholder: "Select ".concat($this.attr("name")),
     allowClear : true,
+    tags: isTagsTrueSet,
     ajax:{
       url: $this.attr("data-url"),
       data: function(params){
@@ -15,22 +17,24 @@ var $this = $(this);
     }
 });
 //Set query parameters
-query = new URLSearchParams(window.location.search)
-params = query.get($this.attr("name"))
+var query = new URLSearchParams(window.location.search)
+var params = query.get($this.attr("name"))
 if(params){
-    var ipSelect=$("[data-url]")
     $.ajax({
       type: 'GET',
-      url: ipSelect.attr("data-url").concat("?",query.toString())
+      url: $this.attr("data-url").concat("?",query.toString())
   }).then(function (data) {
       // create the option and append to Select2
-      console.log(data)
+      console.log(params)
       var options = []
-      data.results.forEach(element => options.push(new Option(element.text,element.id,false,true)))
-      ipSelect.append(options).trigger('change');
-
+      if(data.count){
+          data.results.forEach(element => options.push(new Option(element.text,element.id,false,true)))
+      }else if(isTagsTrueSet){
+          options.push(new Option(params,params,false,true))
+      }
+      $this.append(options).trigger('change');
       // manually trigger the `select2:select` event
-      ipSelect.trigger({
+      $this.trigger({
           type: 'select2:select',
           params: {
               data: data

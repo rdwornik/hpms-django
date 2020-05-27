@@ -75,7 +75,7 @@ class LogsNote(models.Model):
     title = models.TextField()
     content = models.TextField()
     transaction = models.IntegerField(blank=True,null=True,default=1)
-    ip = models.GenericIPAddressField()    
+    visitor_ip = models.GenericIPAddressField()    
     class Meta:
         verbose_name = "LogsNote"
         verbose_name_plural = "LogsNotes"
@@ -83,7 +83,7 @@ class LogsNote(models.Model):
 
         
     def __str__(self):
-         return "title {0} content {1} ip {2} trans {3}".format(self.title, self.content, self.ip, self.transaction)
+         return "title {0} content {1} ip {2} trans {3}".format(self.title, self.content, self.visitor_ip, self.transaction)
         
 class LogsTagAssign(models.Model):
     transaction = models.ForeignKey(Transaction,on_delete=models.CASCADE)

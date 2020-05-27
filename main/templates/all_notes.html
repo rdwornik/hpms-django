@@ -2,17 +2,30 @@
 {% load render_table from django_tables2  %}
 {% load static %} 
 {% block css %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
-<link rel="stylesheet" href="{% static 'css/autocomplete.css' %}">
+<link rel="stylesheet" href="{% static 'css/select.css' %}">
+<link rel="stylesheet" href="{% static 'css/all-notes.css' %}">
 {% endblock css %}
 {% block content %}
   <h2>All notes</h2>
+  <form method="get" class="form-inline">
+    {% load widget_tweaks %}
+    {% for field in form %}
+      <div class="form-group mb-2 mr-2" id="{{field.name}}_group">
+          {{ field|add_class:"form-control" }}
+      </div>
+    {% endfor %}
+    <div class="col-auto mb-2">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </div>  
+  </form>
   <form method="post">
     <div class="action">
       <div class="form-row align-items-center">
         {% load widget_tweaks %}
-        {% csrf_token %}
+        <!-- {% csrf_token %}
         {% block errors %}
         {% include "include/form_errors.html" %}
         {% endblock errors %}
@@ -21,9 +34,10 @@
             {{ field|add_label_class:"sr-only" }}
             {{ field|add_class:"form-control mb-2" }}
           </div>
-        {% endfor %}
+        {% endfor %} -->
+        {% csrf_token %}
           <div class="col-auto mb-2">
-            <button type="submit" class="btn btn-primary">Go</button>
+            <button type="submit" class="btn btn-primary">Delete Selected</button>
           </div>  
       </div>
     </div>
@@ -31,9 +45,13 @@
       {% render_table table "tables/table.html"  %}
     </div>
   </form>
+
 {% endblock content %}
 {% block js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.js"></script>
-<script src="/static/js/autocomplete.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.js"></script> -->
+<!-- <script src="/static/js/autocomplete.js"></script> -->
+
+<script src="/static/js/select-api.js"></script>
 {% endblock js %}

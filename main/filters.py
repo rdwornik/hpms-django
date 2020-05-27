@@ -9,6 +9,28 @@ from main import models
 from django.forms import ModelForm, TextInput, SelectMultiple, Select
 from django.urls import reverse_lazy
 from main import forms
+
+
+
+class NoteFilter(django_filters.FilterSet):
+    visitor_ip =    django_filters.CharFilter(required=False,method='visitor_ip_filter',widget=SelectMultiple(attrs={"data-url":reverse_lazy("visitor-ip-list"),"tags":"false"}))
+    transaction =   django_filters.NumberFilter(required=False)
+    title =         django_filters.CharFilter(required=False,method='title_filter',widget=Select(attrs={"data-url":reverse_lazy("note-titles-list"),"tags":"true"}))
+        
+    def visitor_ip_filter(self, queryset, name, value):
+        print('vsuewf')
+        print(value)
+        return queryset.filter(Q(visitor_ip__in=ast.literal_eval(value)))
+    def title_filter(self, queryset, name, value):
+        print('hello')
+        print(value)
+        return queryset.filter(title__istartswith=value)
+        
+    class Meta:
+        model = models.LogsNote
+        fields = ["visitor_ip","transaction","title"]
+        # form = forms.NotesActionSelectForm
+
 class TransactionsFilter(django_filters.FilterSet):
     visitor_ip =    django_filters.CharFilter(required=False,method='visitor_ip_filter',widget=SelectMultiple(attrs={"data-url":reverse_lazy("visitor-ip-list")}))
     assigned_tags = django_filters.ModelMultipleChoiceFilter(required=False,queryset=models.LogsTag.objects.all())

@@ -10,6 +10,22 @@ from main import  models, filters,utils, serializers
 from dateutil.relativedelta import relativedelta
 
 import datetime
+class LogsNotesTitleList(viewsets.ReadOnlyModelViewSet):
+    serializer_class = serializers.LogsNotesTitleModelSerializer
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = [IsAuthenticated] 
+    class Meta:
+        model = models.LogsTag
+    def get_queryset(self):
+        qs = models.LogsNote.objects.all()
+        title = self.request.query_params.get('title', None)
+        q = self.request.query_params.get('q', None)
+        if q is not None:
+            qs = qs.filter(title__istartswith=q)
+        elif title :
+            qs = qs.filter(title=title)
+        return qs
+    
 class VisitorIpList(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.HeaderValueModelSerializer
     authentication_classes = (SessionAuthentication, BasicAuthentication)
@@ -57,23 +73,23 @@ class LogsTagNamesList(viewsets.ReadOnlyModelViewSet):
         names = [list(name.values())[0] for name in data]
         return Response(names)
 
-class LogsNotesTitleList(viewsets.ReadOnlyModelViewSet):
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
-    permission_classes = [IsAuthenticated] 
-    class Meta:
-        model = models.LogsTag
-    def get_queryset(self):
-        qs = models.LogsNote.objects.all()
-        term = self.request.query_params.get('term', None)
-        if term is not None:
-            qs = qs.filter(title__istartswith=term)
-        return qs
+# class LogsNotesTitleList(viewsets.ReadOnlyModelViewSet):
+#     authentication_classes = (SessionAuthentication, BasicAuthentication)
+#     permission_classes = [IsAuthenticated] 
+#     class Meta:
+#         model = models.LogsTag
+#     def get_queryset(self):
+#         qs = models.LogsNote.objects.all()
+#         term = self.request.query_params.get('term', None)
+#         if term is not None:
+#             qs = qs.filter(title__istartswith=term)
+#         return qs
     
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        data = serializers.LogsNotesTitleModelSerializer(queryset,many=True).data
-        names = [list(name.values())[0] for name in data]
-        return Response(names)
+#     def list(self, request, *args, **kwargs):
+#         queryset = self.get_queryset()
+#         data = serializers.LogsNotesTitleModelSerializer(queryset,many=True).data
+#         names = [list(name.values())[0] for name in data]
+#         return Response(names)
     
 class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Transaction.objects.all()

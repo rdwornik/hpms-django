@@ -38,9 +38,9 @@ class TagForm(forms.ModelForm):
 
 class NoteForm(forms.ModelForm):
     transaction =   forms.IntegerField(disabled=True,required=False)
-    ip =            forms.CharField(disabled=True)
+    visitor_ip =            forms.CharField(disabled=True)
     
-    field_order=    ["ip","transaction","title","content"]
+    field_order=    ["visitor_ip","transaction","title","content"]
     class Meta:
         model = models.LogsNote
         exclude = ['id','transactions']
@@ -72,15 +72,15 @@ class TagsActionSelectForm(forms.ModelForm):
         model = models.LogsTag
         fields = ['tags']
 
-class NotesActionSelectForm(forms.ModelForm):
-    ACTIONS = (
-        ("delete_selected","Deleted selected notes"),
-        ("search","Search notes"),
-        )
-    select = forms.TypedChoiceField(choices=ACTIONS)
-    title = forms.CharField(required=False,
-                            widget=forms.TextInput(attrs={"autocomplete":"off",
-                                                          "data-url": reverse_lazy("note-titles-list")}))
-    class Meta:
-        model = models.LogsNote
-        fields = ['title']
+# class NotesActionSelectForm(forms.form):
+#     ACTIONS = (
+#         ("delete_selected","Deleted selected notes"),
+#         ("search","Search notes"),
+#         )
+#     select = forms.TypedChoiceField(choices=ACTIONS)
+    # title = forms.CharField(required=False,
+    #                         widget=forms.TextInput(attrs={"autocomplete":"off",
+    #                                                       "data-url": reverse_lazy("note-titles-list")}))
+    # class Meta:
+    #     model = models.LogsNote
+    #     fields = ['title']

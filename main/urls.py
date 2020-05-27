@@ -31,7 +31,7 @@ urlpatterns = [
                 name="transactions"
         ),
         path(
-                "transactions/<int:ip>/<int:transaction>/",
+                "transactions/<int:visitor_ip>/<int:transaction>/",
                 views.transactions_detail_view,
                 name="transactions_detail"
         ),
@@ -51,12 +51,12 @@ urlpatterns = [
                 name="all_notes"
         ),
         path(
-                "all-notes/add/<str:ip>/",
+                "all-notes/add/<str:visitor_ip>/",
                 views.all_notes_form_view,
                 name="all_notes_add"
         ),
         path(
-                "all-notes/add/<str:ip>/<int:transaction>/",
+                "all-notes/add/<str:visitor_ip>/<int:transaction>/",
                 views.all_notes_form_view,
                 name="all_notes_add"
         ),

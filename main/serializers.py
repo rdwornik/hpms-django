@@ -28,9 +28,11 @@ class LogsTagNamesModelSerializer(serializers.ModelSerializer):
         fields = ['tag']
     
 class LogsNotesTitleModelSerializer(serializers.ModelSerializer):
+    text = serializers.CharField(source="title")
+    id = serializers.CharField(source="title")
     class Meta:
         model = models.LogsNote
-        fields = ['title']
+        fields = ['id','text']
          
 class ChartSerializer(serializers.Serializer):
     x = serializers.DateTimeField(format="%Y-%m-%d %H:%M")

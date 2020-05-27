@@ -26,7 +26,7 @@ class NotesTable(tables.Table):
     class Meta:
         model = models.LogsNote
         exclude = ["id"]
-        sequence = ("selection","title","content","ip","transaction")  
+        sequence = ("selection","title","content","visitor_ip","transaction")  
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn(template_name="tables/visitor_ip_column.html",orderable=False,verbose_name="Visitors IP")
     visits = tables.Column(empty_values=(), verbose_name="Visits")
@@ -77,7 +77,7 @@ class TransactionsTable(tables.Table):
         })
     transaction = tables.Column(
         linkify=lambda record: reverse("transactions_detail", 
-                                       kwargs={"ip": record.logslog_set.filter(Q(name__header_name=settings.VISITOR_IP)).first().value.pk,
+                                       kwargs={"visitor_ip": record.logslog_set.filter(Q(name__header_name=settings.VISITOR_IP)).first().value.pk,
                                                "transaction": record.transaction}),        
         attrs={
                 "td" : { 
