@@ -23,7 +23,9 @@
     {% endfor %}
     <button class="btn btn-primary mb-2 mr-2" type="submit">Submit</button>
     <a class="btn btn-primary btn mb-2" href="{% url 'activity' %}">Reset</a>
-  </form>
+  </form>   
+
+    
 </div>
 <div class="flex-container mt-2">
   <div class="table">
@@ -31,7 +33,7 @@
       <div class="row justify-content-center">
         <div class="btn-group mb-2"  role="group" aria-label="Basic example">
           <button id="previous_btn" type="button" class="btn btn-sm btn-info"><<</button>
-          <button id="current_btn" type="button" class="btn btn-sm btn-info ml-2 mr-2">Middle</button>
+          <button id="current_btn" type="button" class="btn btn-sm btn-info ml-2 mr-2">{{ current_date }}</button>
           <button id="next_btn" type="button" class="btn btn-sm btn-info">>></button>
         </div>
       </div>
