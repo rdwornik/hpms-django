@@ -7,11 +7,11 @@
   }
 
 .flex-container > .table {
-width: 20%;
+width: 11%;
 overflow: auto;
 }
 
 .flex-container > .chart {
-width: 80%;
+width: 89%;
 overflow: auto;
 }

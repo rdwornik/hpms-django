@@ -91,18 +91,19 @@ def activity_view(request):
     td = time_before - time_after       
     time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
     trunc_func = utils.trunc_methods_table[time_range]
-    queryset = models.Transaction.objects.annotate(date=trunc_func('time', output_field=DateTimeField())).values('date').order_by('date').annotate(visits_count=Count('pk'))
+    qs = filters.ChartFilter(request.GET,queryset=models.Transaction.objects.all()).qs
+    queryset = qs.annotate(date=trunc_func('time', output_field=DateTimeField())).values('date').order_by('date').annotate(visits_count=Count('pk'))
     current_date = utils.get_current_date[time_range](time_before)
-    previous, next = utils.get_previous_and_next[time_range]
-    next_date = {'time_before' : next(time_before),'time_after': time_before }
-    previous_date = {'time_before' : time_after, 'time_before' : previous(time_after)}
-    table = tables.ActivityTable(queryset,show_header=False)
+    previous, next = utils.get_previous_and_next[time_range](time_after,time_before)
+    print(previous)
+    print(next)
+    table = tables.ActivityTable(queryset,request=request,show_header=False)
     form = filters.ChartFilter(request.GET).form
     return render(request, "activity.html",  {
         "time_range": time_range,
         "current_date":current_date,
-        "next_date" : next_date,
-        "previous_date" : previous_date,
+        "next" : next,
+        "previous" : previous,
         "table" : table,
         "form" : form,
         "tag_field" : "assigned_tags",
