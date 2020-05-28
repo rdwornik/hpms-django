@@ -94,9 +94,8 @@ def activity_view(request):
     qs = filters.ChartFilter(request.GET,queryset=models.Transaction.objects.all()).qs
     queryset = qs.annotate(date=trunc_func('time', output_field=DateTimeField())).values('date').order_by('date').annotate(visits_count=Count('pk'))
     current_date = utils.get_current_date[time_range](time_before)
-    previous, next = utils.get_previous_and_next[time_range](time_after,time_before)
-    print(previous)
-    print(next)
+    previous, next = utils.get_previous_and_next[time_range](time_after,time_before)      
+    
     table = tables.ActivityTable(queryset,request=request,show_header=False)
     form = filters.ChartFilter(request.GET).form
     return render(request, "activity.html",  {
