@@ -1,0 +1,39 @@
+<main class="tags-form">
+    <div class="cotainer">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">Tags Form</div>
+                    <div class="card-body">
+                      <form action="" method="POST">
+                        {% csrf_token %}
+                        {% load widget_tweaks %}
+                        {% block errors %}
+                        {% include "include/form_errors.html" %}
+                        {% endblock errors %}
+                        {% for field in form  %}
+                          <div class="form-group row">
+                            {{ field|add_label_class:"col-md-4 col-form-label text-md-right"}}
+                            {% if field.name == "description" %}
+                              <div class="col-6 text-truncate">
+                                {{ field|add_class:"form-control" }}
+                              </div>
+                            {% else %}
+                              <div class="col-6">
+                                {{ field|add_class:"form-control" }}
+                              </div>
+                            {% endif %}
+                          </div>
+                        {% endfor %}
+                        <div class="col-md-6 offset-md-4">
+                            <button type="submit" class="btn btn-primary">
+                                Submit
+                            </button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </main>

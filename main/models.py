@@ -30,13 +30,13 @@ class HeaderValue(models.Model):
         return "{0}".format(self.header_value)
     
 class TagCryteria(models.Model):
-    name_cryteria = models.ForeignKey(HeaderValue,on_delete=models.CASCADE)
+    name_cryteria = models.ForeignKey(HeaderName,on_delete=models.CASCADE)
     value_cryteria = models.TextField(validators=[validate_regex])
     
     class Meta:
         verbose_name = "Tag Cryteria"
         verbose_name_plural = "Tag Cryterias"
-        
+    
 class LogsTag(models.Model):
     cryterias = models.ManyToManyField(TagCryteria)
     tag = models.TextField(unique=True)
@@ -49,6 +49,7 @@ class LogsTag(models.Model):
 
     def __str__(self):
         return "{0}".format(self.tag)
+    
 
 class Transaction(models.Model):
     transaction = models.BigAutoField(primary_key=True)

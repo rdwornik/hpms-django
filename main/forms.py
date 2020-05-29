@@ -8,13 +8,16 @@ from main import models
 
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.contrib.postgres import forms as psql_forms
-
+from django.forms import inlineformset_factory, modelform_factory,formset_factory,modelformset_factory
 
 #TODO Clean modules and code review
 #TODO write extra tests
 #TODO sortowanie
 #TODO style tabel w oddzielnym pliku css
 #TODO order headers alfabetcznie
+
+
+
 class DateTimeRangeValidationForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
@@ -26,15 +29,20 @@ class DateTimeRangeValidationForm(forms.Form):
                 self.add_error('time',msg)
         return self.cleaned_data
 
-class TagForm(forms.ModelForm):     
+
+
+class LogsTagForm(forms.ModelForm):     
     class Meta:
         model = models.LogsTag
-        fields = "__all__"
+        exclude = ["cryterias"]
         localized_fields = "__all__"
         widgets = {
             "tag": forms.TextInput(),
-            "value_cryteria" : forms.TextInput()
         }
+
+TagCryteriaFormSet = modelformset_factory(models.TagCryteria,fields=("name_cryteria","value_cryteria"),extra=3, widgets = {
+            "value_cryteria": forms.TextInput(),
+        })
 
 class NoteForm(forms.ModelForm):
     transaction =   forms.IntegerField(disabled=True,required=False)

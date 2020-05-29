@@ -118,34 +118,50 @@ def transactions_detail_view(request, transaction=1,visitor_ip=1):
         "visitor_ip": visitor_ip
     })
 
+# def tags_form_view(request, id=None):
+#     if request.method == "GET":
+#         if not id:
+#             form = forms.TagForm()
+#         else:
+#             try:
+#                 tag = models.LogsTag.objects.get(pk=id)
+#             except models.LogsTag.DoesNotExist:
+#                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+#             form = forms.TagForm(instance=tag)
+#         return render(request, "tags_form.html", { "form" : form })
+
+#     if request.method == "POST":
+#         if not id:
+#             tag = models.LogsTag()
+#             edited = False
+#         else:
+#             try:
+#                 tag = models.LogsTag.objects.get(pk=id)
+#             except models.LogsTag.DoesNotExist:
+#                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+#             edited = True
+#         form = forms.TagForm(request.POST, instance=tag)
+#         if form.has_changed() and form.is_valid():
+#             tag = form.save()
+#             models.LogsTagAssign.objects.assign_tags_on_tags_created_or_updated(tag,edited)
+#             return HttpResponseRedirect(reverse("tags"))
+#         return render(request, "tags_form.html", { "form" : form })
 def tags_form_view(request, id=None):
     if request.method == "GET":
-        if not id:
-            form = forms.TagForm()
-        else:
-            try:
-                tag = models.LogsTag.objects.get(pk=id)
-            except models.LogsTag.DoesNotExist:
-                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-            form = forms.TagForm(instance=tag)
-        return render(request, "tags_form.html", { "form" : form })
-
-    if request.method == "POST":
-        if not id:
-            tag = models.LogsTag()
-            edited = False
-        else:
-            try:
-                tag = models.LogsTag.objects.get(pk=id)
-            except models.LogsTag.DoesNotExist:
-                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-            edited = True
-        form = forms.TagForm(request.POST, instance=tag)
-        if form.has_changed() and form.is_valid():
-            tag = form.save()
-            models.LogsTagAssign.objects.assign_tags_on_tags_created_or_updated(tag,edited)
-            return HttpResponseRedirect(reverse("tags"))
-        return render(request, "tags_form.html", { "form" : form })
+        # if not id:
+        #     tag = models.LogsTag()
+        # else:
+        #     tag = models.LogsTag.objects.get_object_or_404(pk=id)
+        form = forms.LogsTagForm()
+        formset = forms.TagCryteriaFormSet()
+    # if request.method == "POST":
+    #     formset = forms.LogsTagFormSet(
+    #         request.POST
+    #     )
+    #     if formset.is_valid(): 
+    #         formset.save()
+    #         formset.save_m2m()  
+    return render(request, "tags_form.html",{"formset":formset,"form":form})
 
 
 def tags_view(request):
