@@ -18,6 +18,7 @@ from main import models, tables, filters, forms
 from dateutil.relativedelta import relativedelta
 from main import utils
 from django.db.models import Count, DateTimeField
+from django.shortcuts import get_object_or_404
 
 #TODO cos przejscie z activity do transactions multiple tags ucinalo
 #TODO Tags multiple header value 
@@ -117,50 +118,56 @@ def transactions_detail_view(request, transaction=1,visitor_ip=1):
         "transaction": transaction,
         "visitor_ip": visitor_ip
     })
-
-# def tags_form_view(request, id=None):
-#     if request.method == "GET":
-#         if not id:
-#             form = forms.TagForm()
-#         else:
-#             try:
-#                 tag = models.LogsTag.objects.get(pk=id)
-#             except models.LogsTag.DoesNotExist:
-#                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-#             form = forms.TagForm(instance=tag)
-#         return render(request, "tags_form.html", { "form" : form })
-
-#     if request.method == "POST":
-#         if not id:
-#             tag = models.LogsTag()
-#             edited = False
-#         else:
-#             try:
-#                 tag = models.LogsTag.objects.get(pk=id)
-#             except models.LogsTag.DoesNotExist:
-#                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-#             edited = True
-#         form = forms.TagForm(request.POST, instance=tag)
-#         if form.has_changed() and form.is_valid():
-#             tag = form.save()
-#             models.LogsTagAssign.objects.assign_tags_on_tags_created_or_updated(tag,edited)
-#             return HttpResponseRedirect(reverse("tags"))
-#         return render(request, "tags_form.html", { "form" : form })
+    
 def tags_form_view(request, id=None):
-    if request.method == "GET":
-        # if not id:
-        #     tag = models.LogsTag()
-        # else:
-        #     tag = models.LogsTag.objects.get_object_or_404(pk=id)
-        form = forms.LogsTagForm()
-        formset = forms.TagCryteriaFormSet()
-    # if request.method == "POST":
-    #     formset = forms.LogsTagFormSet(
-    #         request.POST
-    #     )
-    #     if formset.is_valid(): 
-    #         formset.save()
-    #         formset.save_m2m()  
+    if not id:
+        tag = models.LogsTag()
+        queryset = models.TagCryteria.objects.none()
+        edited=False
+    else:
+        tag = get_object_or_404(models.LogsTag,pk=id)
+        queryset = tag.cryterias.all()
+        edited=True
+        
+    if request.method == "POST":
+        form = forms.LogsTagForm(request.POST, instance=tag)
+        formset = forms.TagCryteriaFormSet(
+            request.POST,
+            queryset=queryset
+        )
+        if form.is_valid() and form.has_changed() and formset.is_valid():
+            tag = form.save() 
+        for error in formset.errors:
+            print(error)
+        if formset.is_valid() and formset.has_changed():
+            instances = formset.save(commit=False)
+            for new in formset.new_objects:
+                cryteria, created = models.TagCryteria.objects.get_or_create(name_cryteria=new.name_cryteria,value_cryteria=new.value_cryteria)
+                tag.cryterias.add(cryteria)
+
+            for changed_obj, changed_data in formset.changed_objects:
+                old_cryteria = queryset.get(pk=changed_obj.pk)
+                if old_cryteria.logstag_set.count() == 1:
+                    old_cryteria.delete()
+                else:
+                    tag.cryterias.remove(old_cryteria)
+                cryteria, created = models.TagCryteria.objects.get_or_create(name_cryteria=changed_obj.name_cryteria,value_cryteria=changed_obj.value_cryteria)
+                tag.cryterias.add(cryteria)
+            for to_delete in formset.deleted_objects:
+                old_cryteria = queryset.get(pk=to_delete.pk)
+                if old_cryteria.logstag_set.count() == 1:
+                    old_cryteria.delete()
+                else:
+                    tag.cryterias.remove(old_cryteria)
+                if tag.cryterias.count() == 0:
+                    tag.delete()
+                    return HttpResponseRedirect(reverse("tags"))
+            models.LogsTagAssign.objects.assign_tags_on_tags_created(tag,edited)
+            return HttpResponseRedirect(reverse("tags"))
+        return render(request, "tags_form.html",{"formset":formset,"form":form})
+
+    form = forms.LogsTagForm(instance=tag)
+    formset = forms.TagCryteriaFormSet(queryset=queryset) 
     return render(request, "tags_form.html",{"formset":formset,"form":form})
 
 
@@ -170,8 +177,13 @@ def tags_view(request):
     if request.method == "POST":
         if request.POST.get("select") == "delete_selected" \
         and request.POST.__contains__("selected_tags"):
-            tags_to_delete = request.POST.getlist("selected_tags")
-            models.LogsTag.objects.filter(id__in=tags_to_delete).delete()
+            selected_tags = request.POST.getlist("selected_tags")
+            tags_to_delete = models.LogsTag.objects.filter(id__in=selected_tags)
+            for tag_to_delete in tags_to_delete:
+                for cryteria in tag_to_delete.cryterias.all():
+                    if cryteria.logstag_set.count() == 1:
+                        cryteria.delete()
+                tag_to_delete.delete()
         elif request.POST.get("select") == "search" and request.POST.get("tags"):
             queryset = models.LogsTag.objects.filter(tag__istartswith=request.POST.get("tags"))
             initial["tags"] = request.POST.get("tags")

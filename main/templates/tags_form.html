@@ -4,11 +4,20 @@
 <form method="POST">
 {% csrf_token %}
 {% load widget_tweaks %}
+
+{% block errors %}
+{% include "include/form_errors.html" %}
+{% endblock errors %}
+
+
 {% for field in form %}
 {{ field.label_tag }} {{ field|add_class:"form-control" }}
 
 {% endfor %}
 {{ formset.management_form }}
+
+
+
 {% for form in formset %}
 <p>
 

@@ -36,6 +36,8 @@ class TagCryteria(models.Model):
     class Meta:
         verbose_name = "Tag Cryteria"
         verbose_name_plural = "Tag Cryterias"
+    def __str__(self):
+        return "{0} {1}".format(self.name_cryteria,self.value_cryteria)
     
 class LogsTag(models.Model):
     cryterias = models.ManyToManyField(TagCryteria)
@@ -48,7 +50,7 @@ class LogsTag(models.Model):
         ordering = ['id']
 
     def __str__(self):
-        return "{0}".format(self.tag)
+        return "{0} {1}".format(self.id,self.tag)
     
 
 class Transaction(models.Model):

@@ -40,9 +40,13 @@ class LogsTagForm(forms.ModelForm):
             "tag": forms.TextInput(),
         }
 
-TagCryteriaFormSet = modelformset_factory(models.TagCryteria,fields=("name_cryteria","value_cryteria"),extra=3, widgets = {
-            "value_cryteria": forms.TextInput(),
-        })
+TagCryteriaFormSet = modelformset_factory(models.TagCryteria,
+                                          fields=("name_cryteria","value_cryteria"),
+                                          extra=3,
+                                          min_num=1, 
+                                          validate_min=True,
+                                          can_delete=True,
+                                          widgets = {"value_cryteria": forms.TextInput()})
 
 class NoteForm(forms.ModelForm):
     transaction =   forms.IntegerField(disabled=True,required=False)
