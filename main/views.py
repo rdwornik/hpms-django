@@ -93,6 +93,7 @@ def activity_view(request):
     table = tables.ActivityTable(queryset,request=request,show_header=False)
     form = filters.ChartFilter(request.GET).form
     return render(request, "activity.html",  {
+        "queryset" : qs,
         "time_range": time_range,
         "current_date":current_date,
         "next" : next,

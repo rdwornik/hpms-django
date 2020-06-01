@@ -8,7 +8,7 @@ from main import models
 from main import utils
 #TODO wywalic range z activity
 #TODO wycentrowac tabele
-
+#TODO zobacz jeszcze raz model slectec choice file z nonem
 class ActivityTable(tables.Table):
     date = tables.Column(attrs={
             "td": {"align": "center"}
@@ -30,7 +30,8 @@ class ActivityTable(tables.Table):
         return format_html("<a href='{0}?{1}' >{2}</a>".format(reverse_lazy("transactions"), updated.urlencode(),value))
     
     class Meta:
-        attrs = {"style" : "width:100%;"}
+        attrs = {"style" : "width:100%;",
+                 "class": "table table-striped"}
 class NotesTable(tables.Table):
     selection = tables.CheckBoxColumn(
         accessor="pk",
@@ -51,10 +52,17 @@ class NotesTable(tables.Table):
         model = models.LogsNote
         exclude = ["id"]
         sequence = ("selection","title","content","visitor_ip","transaction")  
+        attrs = {
+            "class": "table table-striped"
+        } 
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn(template_name="tables/visitor_ip_column.html",orderable=False,verbose_name="Visitors IP")
     visits = tables.Column(empty_values=(), verbose_name="Visits")
     add_note = tables.TemplateColumn(template_name="tables/add_note_column.html",orderable=False,verbose_name="")  
+    class Meta:
+        attrs = {
+            "class": "table table-striped"
+        } 
 class TransactionsDetailTable(tables.Table):
     class Meta:
         model = models.LogsLog
@@ -148,6 +156,9 @@ class TransactionsTable(tables.Table):
         row_attrs = {
             "style": "transform: rotate(0);"
         }
+        attrs = {
+            "class": "table table-striped"
+        } 
     def render_request_uri(self, record):
         uri = record.logslog_set.filter(Q(name__header_name=settings.REQUEST_URI)).first()
         return uri.value.header_value  if uri else "None"
@@ -237,3 +248,6 @@ class TagsTable(tables.Table):
     class Meta:
         models = models.LogsTag
         sequence = ("id","selection", "tag", "name_cryteria", "value_cryteria", "description")
+        attrs = {
+            "class": "table table-striped"
+        } 
