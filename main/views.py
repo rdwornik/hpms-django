@@ -21,9 +21,13 @@ from django.db.models import Count, DateTimeField
 from django.shortcuts import get_object_or_404
 from django_tables2 import RequestConfig
 from django.db.models import OuterRef, Subquery
+
 #TODO wrzucic na azure
 #TODO dodac paginacje dla visitors spytac sie o ilosc danych czy warrto robic pginacje dla tagow czy tez s 
-
+#TODO długi czas ładowania ip dodaj opóźnieni
+#TODO Check if viistor ip server in it
+#TODO Clean modules and code review
+#TODO write extra tests
 
 def all_notes_form_view(request,id=None,visitor_ip=None,transaction=None):
     if request.method == "GET":
@@ -164,21 +168,6 @@ def tags_form_view(request, id=None):
 
 def tags_view(request):
     queryset = models.LogsTag.objects.all()
-
-    # if request.method == "POST":
-    #     if request.POST.get("select") == "delete_selected" \
-    #     and request.POST.__contains__("selected_tags"):
-    #         selected_tags = request.POST.getlist("selected_tags")
-    #         tags_to_delete = models.LogsTag.objects.filter(id__in=selected_tags)
-    #         for tag_to_delete in tags_to_delete:
-    #             for cryteria in tag_to_delete.cryterias.all():
-    #                 if cryteria.logstag_set.count() == 1:
-    #                     cryteria.delete()
-    #             tag_to_delete.delete()
-    #     elif request.POST.get("select") == "search" and request.POST.get("tags"):
-    #         queryset = models.LogsTag.objects.filter(tag_name__istartswith=request.POST.get("tags"))
-    #         initial["tags"] = request.POST.get("tags")
-            
     if request.method == "POST"and request.POST.__contains__("selected_tags"):
         selected_tags = request.POST.getlist("selected_tags")
         tags_to_delete = models.LogsTag.objects.filter(id__in=selected_tags)

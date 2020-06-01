@@ -10,10 +10,6 @@ from django.contrib.postgres.fields import DateTimeRangeField
 from django.contrib.postgres import forms as psql_forms
 from django.forms import inlineformset_factory, modelform_factory,formset_factory,modelformset_factory
 
-#TODO Clean modules and code review
-#TODO write extra tests
-#TODO sortowanie
-#TODO order headers alfabetcznie
 class DateTimeRangeValidationForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()

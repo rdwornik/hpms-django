@@ -10,7 +10,6 @@ from main import  models, filters,utils, serializers
 from dateutil.relativedelta import relativedelta
 
 import datetime
-#TODO Placeholdey dodac
 class LogsNotesTitleList(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.LogsNotesTitleModelSerializer
     authentication_classes = (SessionAuthentication, BasicAuthentication)
@@ -74,7 +73,6 @@ class VisitorIpList(viewsets.ReadOnlyModelViewSet):
         elif visitor_ip :
             qs = qs.filter(pk__in=visitor_ip)
         return qs
-    
     
 class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Transaction.objects.all()
