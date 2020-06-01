@@ -21,7 +21,7 @@ from django.db.models import Count, DateTimeField
 from django.shortcuts import get_object_or_404
 
 #TODO wrzucic na azure
-#TODO dodac paginacje dla visitors spytac sie o ilosc danych czy warrto robic pginacje dla tagow czy tez s    #TODO maybe make an agregation
+#TODO dodac paginacje dla visitors spytac sie o ilosc danych czy warrto robic pginacje dla tagow czy tez s 
 
 
 def all_notes_form_view(request,id=None,visitor_ip=None,transaction=None):
