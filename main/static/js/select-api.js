@@ -7,6 +7,7 @@ var isTagsTrueSet = ($this.attr("tags") == "true")
     allowClear : true,
     tags: isTagsTrueSet,
     ajax:{
+      delay: 250, // wait 250 milliseconds before triggering the request
       url: $this.attr("data-url"),
       data: function(params){
         var query = {

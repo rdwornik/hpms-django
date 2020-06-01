@@ -50,15 +50,3 @@ class NoteForm(forms.ModelForm):
         widgets = {
             "title": forms.TextInput(),
         }
-    
-class TagsActionSelectForm(forms.ModelForm):
-    ACTIONS =  (("delete_selected","Deleted selected tags"),
-                ("search","Search tags"))
-
-    select = forms.TypedChoiceField(choices=ACTIONS)
-    tag_names = forms.CharField( required=False,
-                            widget=forms.TextInput(attrs={"autocomplete":"off",
-                                                          "data-url": reverse_lazy("tag-names-list")}))
-    class Meta:
-        model = models.LogsTag
-        fields = ['tag_names']

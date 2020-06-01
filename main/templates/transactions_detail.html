@@ -4,5 +4,5 @@
   <h2>Transaction {{ transaction }}
     <a class="btn btn-info btn-sm mb-1" href="{% url 'all_notes_add' visitor_ip transaction%}">Add note</a>
   </h2>
-    {% render_table table %}
+{% render_table table %}
 {% endblock content %}

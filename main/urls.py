@@ -4,17 +4,8 @@ from django.urls import path, include
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 
-urlpatterns = [
-    
-]
-
-
-
 from main import views
 from .endpoints import LogsLogViewSet, ChartViewSet, VisitorIpList, LogsTagNameList, LogsNotesTitleList,LogsNotesVisitorIpList
-
-
-
 
 router = routers.DefaultRouter(trailing_slash=True)
 router.register(r"logslogs", LogsLogViewSet)
@@ -37,7 +28,7 @@ urlpatterns = [
         ),
         path(
                 "transactions/",
-                views.FilteredTransactionsListView.as_view(template_name = "transactions.html"),
+                views.transactions_view,
                 name="transactions"
         ),
         path(

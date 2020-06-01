@@ -55,7 +55,6 @@ class LogsTag(models.Model):
     def __str__(self):
         return "{0} {1}".format(self.id,self.tag_name)
     
-
 class Transaction(models.Model):
     transaction = models.BigAutoField(primary_key=True)
     time = models.DateTimeField(auto_now_add=True)
@@ -111,4 +110,3 @@ class LogsTagAssign(models.Model):
 
     def __str__(self):
         return "{0} {1}".format(self.transaction, self.tag)
-    

@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -6,10 +8,10 @@ from django.db.models import Count, DateTimeField
 from django.conf import settings
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
-from main import  models, filters,utils, serializers
 from dateutil.relativedelta import relativedelta
 
-import datetime
+from main import  models, filters, utils, serializers
+
 class LogsNotesTitleList(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.LogsNotesTitleModelSerializer
     authentication_classes = (SessionAuthentication, BasicAuthentication)

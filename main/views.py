@@ -1,34 +1,25 @@
 import datetime
 
 from django.shortcuts import render
-from django.db.models import Q, Count
-from django_filters.views import FilterView
-from django_tables2.views import (
-    SingleTableMixin,
-    SingleTableView
-)
-from django.conf import settings
+from django.db.models import Q, Count, DateTimeField, OuterRef, Subquery
+from django_tables2.views import SingleTableView
+from django_tables2 import RequestConfig
 from django_tables2.paginators import LazyPaginator
+
+from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse
-from django.views.generic.edit import FormView
 from django.urls import reverse
 from django.views.generic import View
-from rest_framework import status
-from main import models, tables, filters, forms
 from dateutil.relativedelta import relativedelta
-from main import utils
-from django.db.models import Count, DateTimeField
 from django.shortcuts import get_object_or_404
-from django_tables2 import RequestConfig
-from django.db.models import OuterRef, Subquery
 
+from main import models, tables, filters, forms, utils
 #TODO wrzucic na azure
 #TODO dodac paginacje dla visitors spytac sie o ilosc danych czy warrto robic pginacje dla tagow czy tez s 
 #TODO długi czas ładowania ip dodaj opóźnieni
 #TODO Check if viistor ip server in it
 #TODO Clean modules and code review
 #TODO write extra tests
-
 
 def all_notes_form_view(request,id=None,visitor_ip=None,transaction=None):
     if not id:
@@ -148,7 +139,6 @@ def tags_form_view(request, id=None):
     formset = forms.TagCryteriaFormSet(queryset=queryset) 
     return render(request, "tags_form.html",{"formset":formset,"form":form})
 
-
 def tags_view(request):
     queryset = models.LogsTag.objects.all()
     if request.method == "POST"and request.POST.__contains__("selected_tags"):
@@ -168,16 +158,8 @@ def tags_view(request):
         "table": table
     })
 
-class FilteredTransactionsListView(SingleTableMixin, FilterView):
-    table_class = tables.TransactionsTable
-    filterset_class = filters.TransactionsFilter
-    model = models.Transaction
-    queryset = models.Transaction.objects.all()
-    table_pagination = {
-        "per_page": 10
-    }
-    def get(self, request, *args, **kwargs):
-        filter = self.filterset_class(request.GET,queryset=self.get_queryset())
+def transactions_view(request):
+        filter = filters.TransactionsFilter(request.GET,queryset=models.Transaction.objects.all())
         subquery = filter.qs.filter(Q(transaction=OuterRef('transaction')) & 
                                     (Q(name__header_name=settings.SERVER_NAME) | 
                                      Q(name__header_name=settings.VISITOR_IP)  | 
@@ -186,7 +168,7 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView):
         queryset = filter.qs.annotate(server=Subquery(subquery.filter(Q(name__header_name=settings.SERVER_NAME)).values('value__header_value')[:1]),
                                                        visitor_ip=Subquery(subquery.filter(Q(name__header_name=settings.VISITOR_IP)).values('value__header_value')[:1]),
                                                        request_uri=Subquery(subquery.filter(Q(name__header_name=settings.REQUEST_URI)).values('value__header_value')[:1]))
-        table = self.table_class(queryset)    
+        table = tables.TransactionsTable(queryset)    
         RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
         return render(request, "transactions.html",  {
             "form" : filter.form,
@@ -194,7 +176,7 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView):
             "table":table,
             "filter" : filter,
         })
-            
+
 class VisitorsTablesView(SingleTableView):
     template_name = "visitors.html"
     table_class = tables.VisitorTable
@@ -203,4 +185,3 @@ class VisitorsTablesView(SingleTableView):
     table_pagination = {
         "per_page": 10
     }
-

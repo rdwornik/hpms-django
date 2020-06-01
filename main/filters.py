@@ -4,11 +4,9 @@ import ast
 from django.conf import settings
 from django.db.models import Q
 from django_filters import rest_framework as rest_filters
-from main import models
-
-from django.forms import ModelForm, TextInput, SelectMultiple, Select, NumberInput
+from django.forms import SelectMultiple, Select, NumberInput
 from django.urls import reverse_lazy
-from main import forms
+from main import forms, models
 
 
 class NoteFilter(django_filters.FilterSet):

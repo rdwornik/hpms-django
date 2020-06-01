@@ -10,6 +10,9 @@
   <h2>All notes</h2>
   <form method="get" class="form-inline" id="searchForm">
     {% load widget_tweaks %}
+    {% block errors %}
+    {% include "include/form_errors.html" %}
+    {% endblock errors %}
     {% for field in form %}
       <div class="form-group mb-2 mr-2" id="{{field.name}}_group">
           {{ field|add_class:"form-control" }}

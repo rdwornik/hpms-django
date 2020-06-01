@@ -1,40 +1,7 @@
 import datetime
 import random 
 from dateutil.relativedelta import relativedelta
-
 from django.db.models import functions as functions
-methods = {
-    "GET"  : ("G","008000"),
-    "POST" : ("P","0000FF"),
-    "HEAD" : ("H", "FFFF00"),
-    "None" : ("None","000000")
-}
-def get_or_create_methods_tag(request_method):
-    if request_method not in methods:
-        i = 0
-        tag = request_method[i]
-        color = "%06x" % random.randint(0, 0xFFFFFF)
-        tags = [tag[0] for tag in methods.values()]
-        colors = [color[1] for color in methods.values()]
-        while request_method[i] in tags:
-            i += 1
-            tag += request_method[i]
-        while color in colors:
-            color = "%06x" % random.randint(0, 0xFFFFFF)
-        methods[request_method] = (tag, color)
-    return methods[request_method]
-
-
-time_range = {
-    "second" : lambda td: 0 < td.seconds < 60,
-    "minute" : lambda td : td.days == 0 and 0 < (td.seconds)  < 3600,
-    "hour": lambda td :  td.days == 0 and 0 < (td.seconds)//3600 < 24 ,
-    "day": lambda td :  0 < td.days <= 31 ,
-    # "week" : lambda td : 7 < td.days <= 62,
-    "month" : lambda td : 31 < td.days <= 450 ,
-    "year" : lambda td :  450 < td.days,
-}
-
 
 '''
 Moment.js string format
@@ -50,6 +17,38 @@ quarter	    '[Q]Q - YYYY'	 'Q3 - 2015'
 year	    'YYYY'	         '2015'
 '''
 
+methods = {
+    "GET"  : ("G","008000"),
+    "POST" : ("P","0000FF"),
+    "HEAD" : ("H", "FFFF00"),
+    "None" : ("None","000000")
+}
+
+def get_or_create_methods_tag(request_method):
+    if request_method not in methods:
+        i = 0
+        tag = request_method[i]
+        color = "%06x" % random.randint(0, 0xFFFFFF)
+        tags = [tag[0] for tag in methods.values()]
+        colors = [color[1] for color in methods.values()]
+        while request_method[i] in tags:
+            i += 1
+            tag += request_method[i]
+        while color in colors:
+            color = "%06x" % random.randint(0, 0xFFFFFF)
+        methods[request_method] = (tag, color)
+    return methods[request_method]
+
+time_range = {
+    "second" : lambda td: 0 < td.seconds < 60,
+    "minute" : lambda td : td.days == 0 and 0 < (td.seconds)  < 3600,
+    "hour": lambda td :  td.days == 0 and 0 < (td.seconds)//3600 < 24 ,
+    "day": lambda td :  0 < td.days <= 31 ,
+    # "week" : lambda td : 7 < td.days <= 62,
+    "month" : lambda td : 31 < td.days <= 450 ,
+    "year" : lambda td :  450 < td.days,
+}
+
 display_format = {
     "second" : "HH:mm:ss",
     "minute" : "HH:mm",
@@ -58,11 +57,6 @@ display_format = {
     # "week" : "DD.MM.YY",
     "month" : "MMM YYYY",
     "year" : "YYYY",
-}
-
-select_trunc_method = {
-    "hour": lambda td :  td.days == 0 and 0 < (td.seconds)//3600 < 24,
-    "day": lambda td :  0 < td.days,
 }
 
 trunc_methods_chart = {
@@ -80,14 +74,6 @@ trunc_methods_table = {
     "day":      functions.TruncDay,
     "month":    functions.TruncMonth,
     "year":     functions.TruncYear,
-}
-
-get_time_table = {
-    "minute"    :   {"time_after": lambda date: date, "time_before" : lambda date: date}, 
-    "hour"      :   {"time_after": lambda date: date, "time_before" : lambda date: date},    
-    "day"       :   {"time_after": lambda date: date, "time_before" : lambda date: date},    
-    "month"     :   {"time_after": lambda date: date, "time_before" : lambda date: date},  
-    "year"      :   {"time_after": lambda date: date, "time_before" : lambda date: date},   
 }
 
 get_current_date = {
@@ -121,9 +107,3 @@ get_time_after_and_before = {
     "day"       : lambda date: (date.strftime('%Y-%m-%d %H:%M'), (date + relativedelta(days=1)      + relativedelta(hours=-1)   ).strftime('%Y-%m-%d %H:%M')),
     "month"     : lambda date: (date.strftime('%Y-%m-%d %H:%M'), (date + relativedelta(months=1)    + relativedelta(days=-1)    ).strftime('%Y-%m-%d %H:%M')),
 }
-
-
-
-# date_order = lambda date1, date2: (date1, date2) if date1 < date2 else (date2,date1) 
-# time_delta = lambda date1, date2 : {"time_after":date, "time_before": date2 - date1
-

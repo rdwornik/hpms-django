@@ -1,5 +1,4 @@
 import factory
-import factory.fuzzy
 
 from datetime import datetime
 from main import models
