@@ -5,4 +5,7 @@
 #visitor_ip_group.form-group  {
     width: 30%;
 }
-  
+
+#server_group.form-group  {
+    width: 20%;
+}

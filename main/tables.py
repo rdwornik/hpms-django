@@ -82,7 +82,7 @@ class NotesTable(tables.Table):
     class Meta:
         model = models.LogsNote
         exclude = ("id", )
-        sequence = ("selection", "transaction", "visitor_ip", "title", "content")
+        sequence = ("selection", "transaction", "title", "visitor_ip", "content")
         attrs = {
           "class": "table table-striped"
         }

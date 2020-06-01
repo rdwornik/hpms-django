@@ -21,6 +21,9 @@ class HeaderName(models.Model):
     header_name = models.TextField(unique=True)
     def __str__(self):
         return "{0}".format(self.header_name)
+    class Meta:
+        ordering = ('header_name',)
+
     
 class HeaderValue(models.Model):
     header_value = models.TextField(unique=True)
@@ -47,7 +50,7 @@ class LogsTag(models.Model):
     class Meta:
         verbose_name = "Logs Tag"
         verbose_name_plural = "Logs Tags"
-        ordering = ['id']
+        ordering = ('id',)
 
     def __str__(self):
         return "{0} {1}".format(self.id,self.tag_name)
@@ -63,7 +66,7 @@ class Transaction(models.Model):
     class Meta:
         verbose_name ="Transaction"
         verbose_name_plural = "Transactions"
-        ordering = ['-transaction']
+        ordering = ('-transaction',)
         
     def __str__(self):
         return "{}".format(self.time)
@@ -90,7 +93,7 @@ class LogsNote(models.Model):
     class Meta:
         verbose_name = "LogsNote"
         verbose_name_plural = "LogsNotes"
-        ordering = ['-id']
+        ordering = ('-id',)
 
         
     def __str__(self):

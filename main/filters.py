@@ -6,16 +6,15 @@ from django.db.models import Q
 from django_filters import rest_framework as rest_filters
 from main import models
 
-from django.forms import ModelForm, TextInput, SelectMultiple, Select
+from django.forms import ModelForm, TextInput, SelectMultiple, Select, NumberInput
 from django.urls import reverse_lazy
 from main import forms
-
 
 
 class NoteFilter(django_filters.FilterSet):
     visitor_ip =    django_filters.CharFilter(required=False,method='visitor_ip_filter',widget=Select(attrs={"data-url":reverse_lazy("note-visitor-ip-list"),"tags":"true"}))
     title =         django_filters.CharFilter(required=False,method='title_filter',widget=Select(attrs={"data-url":reverse_lazy("note-titles-list"),"tags":"true"}))
-    transaction =   django_filters.NumberFilter(required=False)
+    transaction =   django_filters.NumberFilter(required=False,widget=NumberInput(attrs={"placeholder":"Select transaction"}))
         
     def visitor_ip_filter(self, queryset, name, value):
         return queryset.filter(visitor_ip__istartswith=value)
@@ -53,6 +52,14 @@ class TransactionsFilter(django_filters.FilterSet):
 class ChartFilter(rest_filters.FilterSet):
     time =              rest_filters.DateTimeFromToRangeFilter(required=False)
     assigned_tags =     rest_filters.ModelMultipleChoiceFilter(required=False,queryset=models.LogsTag.objects.all())
+    
+    def __init__(self, *args, **kwargs):
+        super(ChartFilter, self).__init__(*args, **kwargs)
+        self.form.fields['assigned_tags'].label_from_instance = self.assigned_tags_label_from_instance
+
+    @staticmethod
+    def assigned_tags_label_from_instance(obj):
+        return "%s" % obj.tag_name
     class Meta:
         model = models.Transaction
         fields = ("time","assigned_tags")
