@@ -9,14 +9,14 @@ class LogsTagAssignManager(Manager):
             for cryteria in models.TagCryteria.objects.filter(Q(name_cryteria = log.name)):
                 if re.match(cryteria.value_cryteria,log.value.header_value):
                     cryterias.append(cryteria)
-        tags = models.LogsTag.objects.filter(cryterias__in=cryterias)
+        tags = models.LogsTag.objects.filter(cryterias__in=cryterias).distinct()
         for tag in tags:
             if set(tag.cryterias.all()) & set(cryterias) == set(tag.cryterias.all()):
                 self.create(transaction = log.transaction,tag = tag)
         
     def assign_tags_on_tags_created(self, tag, edited):
         if edited:
-            self.filter(tag=tag).delete()
+            self.filter(pk=tag.pk).delete()
         
         transactions= models.Transaction.objects.all()
  

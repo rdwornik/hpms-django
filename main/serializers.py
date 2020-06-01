@@ -86,4 +86,4 @@ class HoneypotRequestSerializer(serializers.Serializer):
         t = models.Transaction.objects.create()
         logs = [ models.LogsLog(transaction=t, **h) for h in self.validated_data['headers']]
         logs_created = models.LogsLog.objects.bulk_create(logs,ignore_conflicts=True)
-        # models.LogsTagAssign.objects.assign_tags_on_logs_created(logs_created)
+        models.LogsTagAssign.objects.assign_tags_on_transaction_created(logs_created)

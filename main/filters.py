@@ -24,7 +24,7 @@ class NoteFilter(django_filters.FilterSet):
         
     class Meta:
         model = models.LogsNote
-        fields = ["visitor_ip","title","transaction"]
+        fields = ("visitor_ip","title","transaction")
 
 class TransactionsFilter(django_filters.FilterSet):
     visitor_ip =    django_filters.CharFilter(required=False,method='visitor_ip_filter',widget=SelectMultiple(attrs={"data-url":reverse_lazy("visitor-ip-list"),"tags":"false"}))
@@ -34,11 +34,11 @@ class TransactionsFilter(django_filters.FilterSet):
 
     def __init__(self, *args, **kwargs):
         super(TransactionsFilter, self).__init__(*args, **kwargs)
-        self.form.fields['server'].label_from_instance = self.server_label_from_instance
+        self.form.fields['assigned_tags'].label_from_instance = self.assigned_tags_label_from_instance
 
     @staticmethod
-    def server_label_from_instance(obj):
-        return "%s" % obj.header_value
+    def assigned_tags_label_from_instance(obj):
+        return "%s" % obj.tag_name
     
     def visitor_ip_filter(self, queryset, name, value):
         return queryset.filter(Q(name__header_name=settings.VISITOR_IP) & Q(value__in=ast.literal_eval(value)))
@@ -47,7 +47,7 @@ class TransactionsFilter(django_filters.FilterSet):
     
     class Meta:
         model = models.Transaction
-        fields = ["time","assigned_tags"]
+        fields = ("time","assigned_tags")
         form = forms.DateTimeRangeValidationForm
     
 class ChartFilter(rest_filters.FilterSet):
@@ -55,5 +55,5 @@ class ChartFilter(rest_filters.FilterSet):
     assigned_tags =     rest_filters.ModelMultipleChoiceFilter(required=False,queryset=models.LogsTag.objects.all())
     class Meta:
         model = models.Transaction
-        fields = ["time","assigned_tags"]
+        fields = ("time","assigned_tags")
         form = forms.DateTimeRangeValidationForm

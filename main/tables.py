@@ -5,6 +5,8 @@ from django_tables2.utils import A
 from django.db.models import Q
 from django.urls import reverse, reverse_lazy
 from main import models, utils
+
+#TODO Check if viistor ip server in it
 class ActivityTable(tables.Table):
     date = tables.Column(attrs = {
       "td": {
@@ -139,8 +141,8 @@ class TagsTable(tables.Table):
         "style": "width: 38%"
       }
     })
-    tag = tables.LinkColumn("tags_edit",
-      text = lambda value: value,
+    tag_name = tables.LinkColumn("tags_edit",
+      text = lambda value: value.tag_name,
       args = [A("pk")],
       attrs = {
         "td": {
@@ -164,7 +166,7 @@ class TagsTable(tables.Table):
       })
     class Meta: 
         models = models.LogsTag
-        sequence = ("id", "selection", "tag", "name_cryteria", "value_cryteria", "description")
+        sequence = ("id", "selection", "tag_name", "name_cryteria", "value_cryteria", "description")
         attrs = {
           "class": "table table-striped"
         }
@@ -178,8 +180,6 @@ class TransactionsDetailTable(tables.Table):
 class TransactionsTable(tables.Table):
     id = tables.Column(orderable = False, visible = False)
     visitor_ip = tables.Column(verbose_name = "Visitor IP",
-      empty_values = (),
-      orderable = False,
       attrs = {
         "td": {
           "style": "word-break: break-all"
@@ -189,8 +189,6 @@ class TransactionsTable(tables.Table):
         }
       })
     request_uri = tables.Column(verbose_name = "Request URI",
-      empty_values = (),
-      orderable = False,
       attrs = {
         "td": {
           "style": "word-break: break-all"
@@ -199,8 +197,7 @@ class TransactionsTable(tables.Table):
           "style": "width: 25%"
         }
       })
-    server = tables.Column(empty_values = (),
-      orderable = False,
+    server = tables.Column(verbose_name = "Server",
       attrs = {
         "td": {
           "style": "word-break: break-all"
@@ -227,7 +224,6 @@ class TransactionsTable(tables.Table):
         }
       })
     time = tables.DateTimeColumn(format = "d F Y H:i:s",
-      orderable = False,
       attrs = {
         "td": {
           "style": "word-break: break-all"
@@ -256,24 +252,17 @@ class TransactionsTable(tables.Table):
         attrs = {
           "class": "table table-striped"
         }
-    def render_request_uri(self, record):
-        uri = record.logslog_set.filter(Q(name__header_name=settings.REQUEST_URI)).first()
-        return uri.value.header_value  if uri else "None"
-    def render_server(self, record):
-        server = record.logslog_set.filter(Q(name__header_name=settings.SERVER_NAME)).first()
-        return server.value.header_value  if server else "None"
+  
     def render_tags(self, record):
         return format_html("".join("<b>{}</b> : {} "
-                             .format(num, t.tag.tag) for num, t in enumerate(record.logstagassign_set.all(), start=1)))
-    def render_visitor_ip(self,record):
-        visitor = record.logslog_set.filter(Q(name__header_name=settings.VISITOR_IP)).first()
-        visitor_id = visitor.value_id  if visitor else "None"
-        visitor_header_value = visitor.value.header_value  if visitor else "None"
-        notes_count = models.LogsNote.objects.filter(visitor_ip=visitor_header_value).count()
+                             .format(num, t.tag.tag_name) for num, t in enumerate(record.logstagassign_set.all(), start=1)))
+    def render_visitor_ip(self, value,record):
+        visitor = record.logslog_set.filter(Q(name__header_name=settings.VISITOR_IP)).first().value_id 
+        notes_count = models.LogsNote.objects.filter(visitor_ip=value).count()
         return format_html("<a href='{0}?visitor_ip={1}' style='z-index: 2; position:relative'>{2} </a>\
                             <a href='{3}?visitor_ip={2}' style='z-index: 2; position:relative'>[{4}]</a>".format( reverse_lazy("transactions"),
-                                                                                                                visitor_id,
-                                                                                                                visitor_header_value,
+                                                                                                                visitor,
+                                                                                                                value,
                                                                                                                 reverse_lazy("all_notes"),
                                                                                                                 notes_count))
     def render_transaction(self, value,record):

@@ -69,7 +69,7 @@ class LogsTagList(viewsets.ReadOnlyModelViewSet):
         qs = models.LogsTag.objects.all()
         q = self.request.query_params.get('q', None)
         if q is not None:
-            qs = qs.filter(tag__istartswith=q)
+            qs = qs.filter(tag_name__istartswith=q)
         return qs
     
 class LogsTagNamesList(viewsets.ReadOnlyModelViewSet):
@@ -81,7 +81,7 @@ class LogsTagNamesList(viewsets.ReadOnlyModelViewSet):
         qs = models.LogsTag.objects.all()
         term = self.request.query_params.get('term', None)
         if term is not None:
-            qs = qs.filter(tag__istartswith=term)
+            qs = qs.filter(tag_name__istartswith=term)
         return qs
     
     def list(self, request, *args, **kwargs):

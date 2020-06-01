@@ -41,7 +41,7 @@ class TagCryteria(models.Model):
     
 class LogsTag(models.Model):
     cryterias = models.ManyToManyField(TagCryteria)
-    tag = models.TextField(unique=True)
+    tag_name = models.TextField(unique=True)
     description = models.TextField()
 
     class Meta:
@@ -50,7 +50,7 @@ class LogsTag(models.Model):
         ordering = ['id']
 
     def __str__(self):
-        return "{0} {1}".format(self.id,self.tag)
+        return "{0} {1}".format(self.id,self.tag_name)
     
 
 class Transaction(models.Model):

@@ -14,9 +14,6 @@ from django.forms import inlineformset_factory, modelform_factory,formset_factor
 #TODO write extra tests
 #TODO sortowanie
 #TODO order headers alfabetcznie
-
-
-
 class DateTimeRangeValidationForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
@@ -28,15 +25,13 @@ class DateTimeRangeValidationForm(forms.Form):
                 self.add_error('time',msg)
         return self.cleaned_data
 
-
-
 class LogsTagForm(forms.ModelForm):     
     class Meta:
         model = models.LogsTag
         exclude = ["cryterias"]
         localized_fields = "__all__"
         widgets = {
-            "tag": forms.TextInput(),
+            "tag_name": forms.TextInput(),
         }
 
 TagCryteriaFormSet = modelformset_factory(models.TagCryteria,
@@ -60,38 +55,14 @@ class NoteForm(forms.ModelForm):
             "title": forms.TextInput(),
         }
     
-class TagForm(forms.ModelForm):     
-    class Meta:
-        model = models.LogsTag
-        fields = "__all__"
-        localized_fields = "__all__"
-        widgets = {
-            "tag": forms.TextInput(),
-            "value_cryteria" : forms.TextInput()
-        }
-
-
 class TagsActionSelectForm(forms.ModelForm):
     ACTIONS =  (("delete_selected","Deleted selected tags"),
                 ("search","Search tags"))
 
     select = forms.TypedChoiceField(choices=ACTIONS)
-    tags = forms.CharField( required=False,
+    tag_names = forms.CharField( required=False,
                             widget=forms.TextInput(attrs={"autocomplete":"off",
                                                           "data-url": reverse_lazy("tag-names-list")}))
     class Meta:
         model = models.LogsTag
-        fields = ['tags']
-
-# class NotesActionSelectForm(forms.form):
-#     ACTIONS = (
-#         ("delete_selected","Deleted selected notes"),
-#         ("search","Search notes"),
-#         )
-#     select = forms.TypedChoiceField(choices=ACTIONS)
-    # title = forms.CharField(required=False,
-    #                         widget=forms.TextInput(attrs={"autocomplete":"off",
-    #                                                       "data-url": reverse_lazy("note-titles-list")}))
-    # class Meta:
-    #     model = models.LogsNote
-    #     fields = ['title']
+        fields = ['tag_names']

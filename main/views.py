@@ -19,7 +19,8 @@ from dateutil.relativedelta import relativedelta
 from main import utils
 from django.db.models import Count, DateTimeField
 from django.shortcuts import get_object_or_404
-
+from django_tables2 import RequestConfig
+from django.db.models import OuterRef, Subquery
 #TODO wrzucic na azure
 #TODO dodac paginacje dla visitors spytac sie o ilosc danych czy warrto robic pginacje dla tagow czy tez s 
 
@@ -72,7 +73,7 @@ def all_notes_view(request):
 
     filter = filters.NoteFilter(request.GET,queryset=queryset)
     table = tables.NotesTable(filter.qs, order_by="-id") 
-    table.paginate(page=request.GET.get("page", 1), per_page=5)
+    RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
     return render(request, "all_notes.html",  {
         "form" : filter.form,
         "table": table
@@ -112,13 +113,6 @@ def transactions_detail_view(request, transaction=1,visitor_ip=1):
     })
     
 def tags_form_view(request, id=None):
-    data = {
-            # each form field data with a proper index form
-            'myformset-0-raw': 'my raw field string',
-            # form status, number of forms
-            'myformset-INITIAL_FORMS': 1,
-            'myformset-TOTAL_FORMS': 2,
-    }
     if not id:
         tag = models.LogsTag()
         queryset = models.TagCryteria.objects.none()
@@ -129,7 +123,6 @@ def tags_form_view(request, id=None):
         edited=True
         
     if request.method == "POST":
-
         form = forms.LogsTagForm(request.POST, instance=tag)
         formset = forms.TagCryteriaFormSet(
             request.POST,
@@ -183,12 +176,12 @@ def tags_view(request):
                         cryteria.delete()
                 tag_to_delete.delete()
         elif request.POST.get("select") == "search" and request.POST.get("tags"):
-            queryset = models.LogsTag.objects.filter(tag__istartswith=request.POST.get("tags"))
+            queryset = models.LogsTag.objects.filter(tag_name__istartswith=request.POST.get("tags"))
             initial["tags"] = request.POST.get("tags")
 
     form = forms.TagsActionSelectForm(initial=initial)
     table = tables.TagsTable(queryset, order_by="-id") 
-    table.paginate(page=request.GET.get("page", 1), per_page=5)
+    RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
     return render(request, "tags.html",  {
         "form" : form,
         "table": table
@@ -204,8 +197,16 @@ class FilteredTransactionsListView(SingleTableMixin, FilterView):
     }
     def get(self, request, *args, **kwargs):
         filter = self.filterset_class(request.GET,queryset=self.get_queryset())
-        table = self.table_class(filter.qs)    
-        table.paginate(page=request.GET.get("page", 1), per_page=10, paginator_class=LazyPaginator)
+        subquery = filter.qs.filter(Q(transaction=OuterRef('transaction')) & 
+                                    (Q(name__header_name=settings.SERVER_NAME) | 
+                                     Q(name__header_name=settings.VISITOR_IP)  | 
+                                     Q(name__header_name=settings.REQUEST_URI))).order_by('transaction')
+        
+        queryset = filter.qs.annotate(server=Subquery(subquery.filter(Q(name__header_name=settings.SERVER_NAME)).values('value__header_value')[:1]),
+                                                       visitor_ip=Subquery(subquery.filter(Q(name__header_name=settings.VISITOR_IP)).values('value__header_value')[:1]),
+                                                       request_uri=Subquery(subquery.filter(Q(name__header_name=settings.REQUEST_URI)).values('value__header_value')[:1]))
+        table = self.table_class(queryset)    
+        RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
         return render(request, "transactions.html",  {
             "form" : filter.form,
             "tag_field" : "assigned_tags",
