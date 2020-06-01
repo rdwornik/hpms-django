@@ -120,6 +120,13 @@ def transactions_detail_view(request, transaction=1,visitor_ip=1):
     })
     
 def tags_form_view(request, id=None):
+    data = {
+            # each form field data with a proper index form
+            'myformset-0-raw': 'my raw field string',
+            # form status, number of forms
+            'myformset-INITIAL_FORMS': 1,
+            'myformset-TOTAL_FORMS': 2,
+    }
     if not id:
         tag = models.LogsTag()
         queryset = models.TagCryteria.objects.none()
@@ -130,6 +137,7 @@ def tags_form_view(request, id=None):
         edited=True
         
     if request.method == "POST":
+
         form = forms.LogsTagForm(request.POST, instance=tag)
         formset = forms.TagCryteriaFormSet(
             request.POST,

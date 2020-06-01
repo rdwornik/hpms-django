@@ -42,7 +42,7 @@ class LogsTagForm(forms.ModelForm):
 
 TagCryteriaFormSet = modelformset_factory(models.TagCryteria,
                                           fields=("name_cryteria","value_cryteria"),
-                                          extra=3,
+                                          extra=1,
                                           min_num=1, 
                                           validate_min=True,
                                           can_delete=True,
