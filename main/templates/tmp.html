@@ -7,23 +7,34 @@
                     <div class="card-body">
                       <form action="" method="POST">
                         {% csrf_token %}
+                        {{ formset.management_form }}
                         {% load widget_tweaks %}
-                        {% block errors %}
-                        {% include "include/form_errors.html" %}
-                        {% endblock errors %}
-                        {% for field in form  %}
+                        {% block form_errors %}
+                          {% include "include/form_errors.html" %}
+                        {% endblock form_errors %}
+                        {% block formset_errors %}
+                          {% include "include/formset_errors.html" %}
+                        {% endblock formset_errors %}
+                        {% for field in form %}
                           <div class="form-group row">
                             {{ field|add_label_class:"col-md-4 col-form-label text-md-right"}}
-                            {% if field.name == "description" %}
-                              <div class="col-6 text-truncate">
-                                {{ field|add_class:"form-control" }}
-                              </div>
-                            {% else %}
                               <div class="col-6">
                                 {{ field|add_class:"form-control" }}
                               </div>
-                            {% endif %}
                           </div>
+                        {% endfor %}
+                        {% for form in formset %}
+                          {% for field in form.visible_fields %}
+                            <div class="form-group row">
+                              {{ field|add_label_class:"col-md-4 col-form-label text-md-right"}}
+                                <div class="col-6">
+                                  {{ field|add_class:"form-control" }}
+                                </div>
+                            </div>
+                          {% endfor %}
+                          {% for hidden in form.hidden_fields %}
+                              {{ hidden }}
+                          {% endfor %}
                         {% endfor %}
                         <div class="col-md-6 offset-md-4">
                             <button type="submit" class="btn btn-primary">

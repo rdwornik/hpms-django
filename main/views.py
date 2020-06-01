@@ -136,9 +136,7 @@ def tags_form_view(request, id=None):
             queryset=queryset
         )
         if form.is_valid() and form.has_changed() and formset.is_valid():
-            tag = form.save() 
-        for error in formset.errors:
-            print(error)
+            tag = form.save()          
         if formset.is_valid() and formset.has_changed():
             instances = formset.save(commit=False)
             for new in formset.new_objects:

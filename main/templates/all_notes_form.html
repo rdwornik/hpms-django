@@ -16,15 +16,9 @@
                       {% for field in form  %}
                         <div class="form-group row">
                           {{ field|add_label_class:"col-md-4 col-form-label text-md-right"}}
-                          {% if field.name == "content" %}
-                            <div class="col-6 text-truncate">
-                              {{ field|add_class:"form-control" }}
-                            </div>
-                          {% else %}
                             <div class="col-6">
                               {{ field|add_class:"form-control" }}
                             </div>
-                          {% endif %}
                         </div>
                       {% endfor %}
                       <div class="col-md-6 offset-md-4">
