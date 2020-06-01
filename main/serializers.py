@@ -3,41 +3,31 @@ import datetime
 from rest_framework import serializers
 from main import models
 
-# class VisitorIpSerializer(serializers.ModelSerializer):
-#     text = serializers.CharField(source="visitor_ip")
-#     id = serializers.CharField(source="visitor_ip")
-#     class Meta:
-#         model = models.Transaction
-#         fields = ['id','text']
-
 class HeaderValueModelSerializer(serializers.ModelSerializer):
     text = serializers.CharField(source="header_value")
     class Meta:
         model = models.HeaderValue
-        fields = ['id','text']
+        fields = ('id','text')
         
-class LogsTagModelSerializer(serializers.ModelSerializer):
-    text = serializers.CharField(source="tag")
+class LogsTagNameModelSerializer(serializers.ModelSerializer):
+    text = serializers.CharField(source="tag_name")
+    id = serializers.CharField(source="tag_name")
     class Meta:
         model = models.LogsTag
-        fields = ['id','text']
-
-class LogsTagNamesModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.LogsTag
-        fields = ['tag']
+        fields = ('id','text')
+        
 class LogsNotesVisitorIpModelSerializer(serializers.ModelSerializer):
     text = serializers.CharField(source="visitor_ip")
     id = serializers.CharField(source="visitor_ip")
     class Meta:
         model = models.LogsNote
-        fields = ['id','text']
+        fields = ('id','text')
 class LogsNotesTitleModelSerializer(serializers.ModelSerializer):
     text = serializers.CharField(source="title")
     id = serializers.CharField(source="title")
     class Meta:
         model = models.LogsNote
-        fields = ['id','text']
+        fields = ('id','text')
          
 class ChartSerializer(serializers.Serializer):
     x = serializers.DateTimeField(format="%Y-%m-%d %H:%M")

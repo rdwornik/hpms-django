@@ -11,7 +11,7 @@ urlpatterns = [
 
 
 from main import views
-from .endpoints import LogsLogViewSet, ChartViewSet, VisitorIpList, LogsTagList, LogsTagNamesList, LogsNotesTitleList,LogsNotesVisitorIpList
+from .endpoints import LogsLogViewSet, ChartViewSet, VisitorIpList, LogsTagList, LogsTagNameList, LogsNotesTitleList,LogsNotesVisitorIpList
 
 
 
@@ -20,8 +20,7 @@ router = routers.DefaultRouter(trailing_slash=True)
 router.register(r"logslogs", LogsLogViewSet)
 router.register(r"charts", ChartViewSet)
 router.register(r"visitor-ip", VisitorIpList, basename="visitor-ip")
-router.register(r"tags", LogsTagList, basename="tag")
-router.register(r"tag-names", LogsTagNamesList, basename="tag-names")
+router.register(r"tag-names", LogsTagNameList, basename="tag-names")
 router.register(r"note-titles", LogsNotesTitleList, basename="note-titles")
 router.register(r"note-visitor-ip", LogsNotesVisitorIpList, basename="note-visitor-ip")
 

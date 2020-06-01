@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.urls import reverse, reverse_lazy
 from main import models, utils
 
+#TODO długi czas ładowania ip dodaj opóźnieni
 #TODO Check if viistor ip server in it
 class ActivityTable(tables.Table):
     date = tables.Column(attrs = {

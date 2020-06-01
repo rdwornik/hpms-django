@@ -43,6 +43,22 @@ class LogsNotesVisitorIpList(viewsets.ReadOnlyModelViewSet):
             qs = qs.filter(visitor_ip=visitor_ip)
         return qs
     
+class LogsTagNameList(viewsets.ReadOnlyModelViewSet):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.LogsTagNameModelSerializer 
+    class Meta:
+        model = models.LogsTag
+    def get_queryset(self):
+        qs = models.LogsTag.objects.all()
+        tag_name = self.request.query_params.get('tag_name', None)
+        q = self.request.query_params.get('q', None)
+        if q is not None:
+            qs = qs.filter(tag_name__istartswith=q)
+        elif tag_name :
+            qs = qs.filter(tag_name=tag_name)
+        return qs
+    
 class VisitorIpList(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.HeaderValueModelSerializer
     authentication_classes = (SessionAuthentication, BasicAuthentication)
@@ -59,36 +75,6 @@ class VisitorIpList(viewsets.ReadOnlyModelViewSet):
             qs = qs.filter(pk__in=visitor_ip)
         return qs
     
-class LogsTagList(viewsets.ReadOnlyModelViewSet):
-    serializer_class = serializers.LogsTagModelSerializer  
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
-    permission_classes = [IsAuthenticated] 
-    class Meta:
-        model = models.LogsTag
-    def get_queryset(self):
-        qs = models.LogsTag.objects.all()
-        q = self.request.query_params.get('q', None)
-        if q is not None:
-            qs = qs.filter(tag_name__istartswith=q)
-        return qs
-    
-class LogsTagNamesList(viewsets.ReadOnlyModelViewSet):
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
-    permission_classes = [IsAuthenticated] 
-    class Meta:
-        model = models.LogsTag
-    def get_queryset(self):
-        qs = models.LogsTag.objects.all()
-        term = self.request.query_params.get('term', None)
-        if term is not None:
-            qs = qs.filter(tag_name__istartswith=term)
-        return qs
-    
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        data = serializers.LogsTagNamesModelSerializer(queryset,many=True).data
-        names = [list(name.values())[0] for name in data]
-        return Response(names)
     
 class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Transaction.objects.all()
