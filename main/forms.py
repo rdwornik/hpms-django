@@ -13,7 +13,6 @@ from django.forms import inlineformset_factory, modelform_factory,formset_factor
 #TODO Clean modules and code review
 #TODO write extra tests
 #TODO sortowanie
-#TODO style tabel w oddzielnym pliku css
 #TODO order headers alfabetcznie
 
 

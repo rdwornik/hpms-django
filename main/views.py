@@ -20,15 +20,8 @@ from main import utils
 from django.db.models import Count, DateTimeField
 from django.shortcuts import get_object_or_404
 
-#TODO cos przejscie z activity do transactions multiple tags ucinalo
-#TODO Tags multiple header value 
 #TODO wrzucic na azure
-#TODO Godziny w activity 10:13 - 11:13
-#TODO Przyciski w activity
-#TODO testy
-#TODO style kolumn wyrzucic
 #TODO dodac paginacje dla visitors spytac sie o ilosc danych czy warrto robic pginacje dla tagow czy tez s    #TODO maybe make an agregation
-#TODO maybe make an agregation instead of annotate perhaps
 
 
 def all_notes_form_view(request,id=None,visitor_ip=None,transaction=None):

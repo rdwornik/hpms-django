@@ -1,3 +1,8 @@
+Date.prototype.addHours = function(h) {
+  this.setTime(this.getTime() + (h*60*60*1000));
+  return this;
+}
+
 var canvas = document.getElementById("myChart")
 URL_ENDPOINT = canvas.attributes.getNamedItem("url-endpoint-chart").value;
 URL = URL_ENDPOINT.concat(window.location.search)
@@ -14,6 +19,7 @@ $.ajax({
 })
 function setChart(data)
 {
+    var label = data.label;
     var ctx = canvas.getContext("2d")
     var myChart = new Chart(ctx, 
     {
@@ -77,7 +83,15 @@ function setChart(data)
           value = chartData.datasets[0].data[idx]
           params = new URLSearchParams(window.location.search)
           params.set('time_after',value['x'])
-          params.set('time_before',value['x'].substring(0,10).concat(" 23:59"))
+          time = new Date(value['x'])
+          if(label == "hour"){
+            time_before = time.addHours(1)
+          }else if(label == "minute"){
+            time_before = time.addHours(1/60)
+          }else{
+            time_before = time.addHours(24)
+          }
+          params.set('time_before', moment(time_before).format("YYYY-MM-DD HH:mm"))          
           transactions_url = this.attributes.getNamedItem("transactions").value
           url = transactions_url.concat("?", params.toString())
           window.location.href = url
