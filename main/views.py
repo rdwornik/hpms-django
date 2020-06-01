@@ -29,34 +29,14 @@ from django.db.models import OuterRef, Subquery
 #TODO Clean modules and code review
 #TODO write extra tests
 
-def all_notes_form_view(request,id=None,visitor_ip=None,transaction=None):
-    if request.method == "GET":
-        if not id:
-            initial = {
-                "visitor_ip" : visitor_ip,
-                "transaction" : transaction
-            }
-            form = forms.NoteForm(initial=initial)
-        else:
-            try:
-                note = models.LogsNote.objects.get(pk=id)
-            except models.LogsNote.DoesNotExist:
-                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-            form = forms.NoteForm(instance=note)
-        return render(request, "all_notes_form.html", { "form" : form })
 
+def all_notes_form_view(request,id=None,visitor_ip=None,transaction=None):
+    if not id:
+        note = models.LogsNote(visitor_ip=visitor_ip, transaction=transaction)
+    else:
+        note = get_object_or_404(models.LogsNote,pk=id)
+        
     if request.method == "POST":
-        if not id:
-            initial = {
-                "visitor_ip" : visitor_ip,
-                "transaction" : transaction
-            }
-            note = models.LogsNote(**initial)
-        else:
-            try: 
-                note = models.LogsNote.objects.get(pk=id)
-            except models.LogsNote.DoesNotExist:
-                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         form = forms.NoteForm(request.POST,instance=note)
         if form.has_changed() and form.is_valid():
             logsnote = form.save()
@@ -66,7 +46,10 @@ def all_notes_form_view(request,id=None,visitor_ip=None,transaction=None):
                 t = models.Transaction.objects.filter(Q(name__header_name=settings.VISITOR_IP) & Q(value__header_value=visitor_ip))
             logsnote.transactions.add(*t)
             return HttpResponseRedirect(reverse("all_notes"))
-        return render(request, "all_notes_form.html", { "form" : form })
+        return render(request, "all_notes_form.html", {"form" : form})
+    
+    form = forms.NoteForm(instance=note)
+    return render(request, "all_notes_form.html", {"form" : form})
 
 def all_notes_view(request):
     queryset = models.LogsNote.objects.all()
