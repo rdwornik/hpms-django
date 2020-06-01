@@ -17,13 +17,12 @@
     {% endfor %}
     <button class="btn btn-primary btn mb-2 mr-2" type="submit">Search</button> 
     <a class="btn btn-primary btn mb-2" href="{% url 'all_notes' %}">Reset</a>
-
   </form>
   <form method="post">
     <div class="action">
         {% load widget_tweaks %}
         {% csrf_token %}
-        <button class="btn btn-secondary btn mb-2 mr-2" type="submit">Delete Selected</button> 
+        <button class="btn btn-danger btn mb-2 mr-2" type="submit">Delete Selected</button> 
     </div>
     <div class="result">
       {% render_table table "tables/table.html"  %}

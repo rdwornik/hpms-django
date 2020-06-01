@@ -11,7 +11,7 @@ urlpatterns = [
 
 
 from main import views
-from .endpoints import LogsLogViewSet, ChartViewSet, VisitorIpList, LogsTagList, LogsTagNameList, LogsNotesTitleList,LogsNotesVisitorIpList
+from .endpoints import LogsLogViewSet, ChartViewSet, VisitorIpList, LogsTagNameList, LogsNotesTitleList,LogsNotesVisitorIpList
 
 
 

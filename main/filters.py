@@ -26,7 +26,7 @@ class NoteFilter(django_filters.FilterSet):
         fields = ("visitor_ip","title","transaction")
 
 class TagFilter(django_filters.FilterSet):
-    tag_name =         django_filters.CharFilter(required=False,method='tag_name_filter',widget=Select(attrs={"data-url":reverse_lazy("note-titles-list"),"tags":"true"}))
+    tag_name =         django_filters.CharFilter(required=False,method='tag_name_filter',widget=Select(attrs={"data-url":reverse_lazy("tag-names-list"),"tags":"true"}))
     
     def tag_name_filter(self, queryset, name, value):
         return queryset.filter(tag_name__istartswith=value)

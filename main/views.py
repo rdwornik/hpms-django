@@ -78,7 +78,6 @@ def all_notes_view(request):
         "form" : filter.form,
         "table": table
     })
-    return render(request,"all_notes.html")
 
 def activity_view(request):
     time_after =    datetime.datetime.fromisoformat(request.GET.get('time_after'))  if request.GET.get('time_after')    else (datetime.datetime.now() + relativedelta(years=-1))  
@@ -165,26 +164,35 @@ def tags_form_view(request, id=None):
 
 def tags_view(request):
     queryset = models.LogsTag.objects.all()
-    initial = {"select":"search"}
-    if request.method == "POST":
-        if request.POST.get("select") == "delete_selected" \
-        and request.POST.__contains__("selected_tags"):
-            selected_tags = request.POST.getlist("selected_tags")
-            tags_to_delete = models.LogsTag.objects.filter(id__in=selected_tags)
-            for tag_to_delete in tags_to_delete:
-                for cryteria in tag_to_delete.cryterias.all():
-                    if cryteria.logstag_set.count() == 1:
-                        cryteria.delete()
-                tag_to_delete.delete()
-        elif request.POST.get("select") == "search" and request.POST.get("tags"):
-            queryset = models.LogsTag.objects.filter(tag_name__istartswith=request.POST.get("tags"))
-            initial["tags"] = request.POST.get("tags")
 
-    form = forms.TagsActionSelectForm(initial=initial)
-    table = tables.TagsTable(queryset, order_by="-id") 
+    # if request.method == "POST":
+    #     if request.POST.get("select") == "delete_selected" \
+    #     and request.POST.__contains__("selected_tags"):
+    #         selected_tags = request.POST.getlist("selected_tags")
+    #         tags_to_delete = models.LogsTag.objects.filter(id__in=selected_tags)
+    #         for tag_to_delete in tags_to_delete:
+    #             for cryteria in tag_to_delete.cryterias.all():
+    #                 if cryteria.logstag_set.count() == 1:
+    #                     cryteria.delete()
+    #             tag_to_delete.delete()
+    #     elif request.POST.get("select") == "search" and request.POST.get("tags"):
+    #         queryset = models.LogsTag.objects.filter(tag_name__istartswith=request.POST.get("tags"))
+    #         initial["tags"] = request.POST.get("tags")
+            
+    if request.method == "POST"and request.POST.__contains__("selected_tags"):
+        selected_tags = request.POST.getlist("selected_tags")
+        tags_to_delete = models.LogsTag.objects.filter(id__in=selected_tags)
+        for tag_to_delete in tags_to_delete:
+            for cryteria in tag_to_delete.cryterias.all():
+                if cryteria.logstag_set.count() == 1:
+                    cryteria.delete()
+            tag_to_delete.delete()
+
+    filter = filters.TagFilter(request.GET,queryset=queryset)
+    table = tables.TagsTable(filter.qs, order_by="-id") 
     RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
     return render(request, "tags.html",  {
-        "form" : form,
+        "form" : filter.form,
         "table": table
     })
 
