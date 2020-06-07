@@ -207,7 +207,7 @@ class TransactionsTable(tables.Table):
       })
     transaction = tables.Column(linkify = lambda record: reverse("transactions_detail",
         kwargs = {
-          "visitor_ip": record.logslog_set.filter(Q(name__header_name = settings.VISITOR_IP)).first().value.pk,
+          "visitor_ip": record.visitor_ip,
           "transaction": record.transaction
         }),
       attrs = {
