@@ -13,7 +13,7 @@ class NoteFilter(django_filters.FilterSet):
     visitor_ip =    django_filters.CharFilter(required=False,method='visitor_ip_filter',widget=Select(attrs={"data-url":reverse_lazy("note-visitor-ip-list"),"tags":"true"}))
     title =         django_filters.CharFilter(required=False,method='title_filter',widget=Select(attrs={"data-url":reverse_lazy("note-titles-list"),"tags":"true"}))
     transaction =   django_filters.NumberFilter(required=False,widget=NumberInput(attrs={"placeholder":"Select transaction"}))
-        
+
     def visitor_ip_filter(self, queryset, name, value):
         return queryset.filter(visitor_ip__istartswith=value)
     def title_filter(self, queryset, name, value):
