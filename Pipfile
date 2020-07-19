@@ -23,8 +23,6 @@ pyparsing = "*"
 pydot = "*"
 pydotplus = "*"
 selenium = "*"
-coverage = "*"
-faker = "*"
 
 [requires]
 python_version = "3.7"

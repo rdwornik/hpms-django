@@ -89,3 +89,6 @@ local_settings.py
 db.sqlite3
 
 hpms_models.png 
+
+Pipfile
+Pipfile.lock
