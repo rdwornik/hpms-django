@@ -1,4 +1,3 @@
-import datetime
 import random 
 from dateutil.relativedelta import relativedelta
 from django.db.models import functions as functions
@@ -11,7 +10,7 @@ second	    'h:mm:ss a'	     '11:20:01 AM'
 minute	    'h:mm a'	     '11:20 AM'
 hour	    'hA'	         '11AM'
 day	        'MMM D'	         'Sep 4'
-week	    'll'	         'Sep 4 2015'
+week	    'll'	        'Sep 4 2015'
 month	    'MMM YYYY'	     'Sep 2015'
 quarter	    '[Q]Q - YYYY'	 'Q3 - 2015'
 year	    'YYYY'	         '2015'

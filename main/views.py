@@ -81,7 +81,6 @@ def activity_view(request):
 
 def transactions_detail_view(request,visitor_ip, transaction=1,):
     t = models.Transaction.objects.get(pk=transaction)
-    # visitor_ip = t.logslog_set.filter(value=visitor_ip).first().value.header_value
     table = tables.TransactionsDetailTable(t.logslog_set.all())    
     RequestConfig(request,paginate={"per_page": 25}).configure(table)
     return render(request, "transactions_detail.html", {

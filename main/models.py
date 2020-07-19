@@ -13,7 +13,7 @@ def validate_regex(value):
     except re.error:
         raise ValidationError(
         _(' %(value)s is not an valid regular expression'),
-        params={'value': value},
+        yarams={'value': value},
         )
         
 # Create your models here.

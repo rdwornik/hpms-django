@@ -8,7 +8,6 @@ from django.forms import SelectMultiple, Select, NumberInput
 from django.urls import reverse_lazy
 from main import forms, models
 
-
 class NoteFilter(django_filters.FilterSet):
     visitor_ip =    django_filters.CharFilter(required=False,method='visitor_ip_filter',widget=Select(attrs={"data-url":reverse_lazy("note-visitor-ip-list"),"tags":"true"}))
     title =         django_filters.CharFilter(required=False,method='title_filter',widget=Select(attrs={"data-url":reverse_lazy("note-titles-list"),"tags":"true"}))
@@ -50,7 +49,7 @@ class TransactionsFilter(django_filters.FilterSet):
         return queryset.filter(Q(name__header_name=settings.VISITOR_IP) & Q(value__in=ast.literal_eval(value)))
     def server_filter(self, queryset, name, value):
         return queryset.filter(Q(name__header_name=settings.SERVER_NAME) & Q(value=value))
-    
+
     class Meta:
         model = models.Transaction
         fields = ("time","assigned_tags")
