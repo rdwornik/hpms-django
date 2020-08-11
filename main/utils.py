@@ -39,86 +39,86 @@ def get_or_create_methods_tag(request_method):
     return methods[request_method]
 
 time_range = {
-    "second" : lambda td: 0 < td.seconds < 60,
-    "minute" : lambda td : td.days == 0 and 0 < (td.seconds)  < 3600,
-    "hour": lambda td :  td.days == 0 and 0 < (td.seconds)//3600 < 24 ,
-    "day": lambda td :  0 < td.days <= 31 ,
-    # "week" : lambda td : 7 < td.days <= 62,
-    "month" : lambda td : 31 < td.days <= 450 ,
-    "year" : lambda td :  450 < td.days,
+    "second"    : lambda td : 0 < td.seconds < 60,
+    "minute"    : lambda td : td.days == 0 and 0 < (td.seconds)  < 3600,
+    "hour"      : lambda td : td.days == 0 and 0 < (td.seconds)//3600 < 24 ,
+    "day"       : lambda td : 0 < td.days <= 31 ,
+    # "week"    : lambda td : 7 < td.days <= 62,
+    "month"     : lambda td : 31 < td.days <= 450 ,
+    "year"      : lambda td : 450 < td.days,
 }
 
 display_format = {
-    "second" : "HH:mm:ss",
-    "minute" : "HH:mm",
-    "hour": "HH",
-    "day":   "DD.MM",
-    # "week" : "DD.MM.YY",
-    "month" : "MMM YYYY",
-    "year" : "YYYY",
+    "second"    : "HH:mm:ss",
+    "minute"    : "HH:mm",
+    "hour"      : "HH",
+    "day"       : "DD.MM",
+    # "week"    : "DD.MM.YY",
+    "month"     : "MMM YYYY",
+    "year"      : "YYYY",
 }
 
 trunc_methods_chart = {
-    "second" :   functions.TruncSecond,
-    "minute" :   functions.TruncMinute,
-    "hour" :     functions.TruncHour,
-    "day" :      functions.TruncDay,
-    "month" :    functions.TruncDay,
-    "year" :     functions.TruncDay,
+    "second"    : functions.TruncSecond,
+    "minute"    : functions.TruncMinute,
+    "hour"      : functions.TruncHour,
+    "day"       : functions.TruncDay,
+    "month"     : functions.TruncDay,
+    "year"      : functions.TruncDay,
 }
 
 default_chart_date_format = {
-    "minute" :    "%Y-%m-%d %H:%M",
-    "hour" :     "%Y-%m-%d %H:00",
-    "day" :   "%Y-%m-%d 00:00",
-    "month" :    "%Y-%m-%d 00:00"
+    "minute"    : "%Y-%m-%d %H:%M",
+    "hour"      : "%Y-%m-%d %H:00",
+    "day"       : "%Y-%m-%d 00:00",
+    "month"     : "%Y-%m-%d 00:00"
 }
 
 default_chart_add_relative = {
-    "minute" :    lambda k: relativedelta(minutes=k),
-    "hour" :     lambda k: relativedelta(hours=k),
-    "day" :   lambda k: relativedelta(days=k),
-    "month" :    lambda k: relativedelta(days=k)
+    "minute"    : lambda k: relativedelta(minutes=k),
+    "hour"      : lambda k: relativedelta(hours=k),
+    "day"       : lambda k: relativedelta(days=k),
+    "month"     : lambda k: relativedelta(days=k)
 }
 
 default_chart_time_range = {
-    "minute" :  lambda td : td.seconds//60,
-    "hour" :    lambda td : (td.seconds)//3600,
-    "day" :     lambda td : td.days,
-    "month" :   lambda td : td.days,
+    "minute"    : lambda td : td.seconds//60,
+    "hour"      : lambda td : (td.seconds)//3600,
+    "day"       : lambda td : td.days,
+    "month"     : lambda td : td.days,
 }
 
 trunc_methods_table = {
-    "minute" :  functions.TruncMinute,
-    "hour":     functions.TruncHour,
-    "day":      functions.TruncDay,
-    "month":    functions.TruncMonth,
-    "year":     functions.TruncYear,
+    "minute"    : functions.TruncMinute,
+    "hour"      : functions.TruncHour,
+    "day"       : functions.TruncDay,
+    "month"     : functions.TruncMonth,
+    "year"      : functions.TruncYear,
 }
 
 get_current_date = {
-    "minute"    :  lambda date : date.strftime("%H:00"), 
-    "hour"      :  lambda date : date.strftime("%d %b %Y"),  
-    "day"       :  lambda date : date.strftime("%b %Y"),  
-    "month"     :  lambda date : date.strftime("%Y"), 
-    "year"      :  lambda date : "Years",  
+    "minute"    : lambda date : date.strftime("%H:00"), 
+    "hour"      : lambda date : date.strftime("%d %b %Y"),  
+    "day"       : lambda date : date.strftime("%b %Y"),  
+    "month"     : lambda date : date.strftime("%Y"), 
+    "year"      : lambda date : "Years",  
 }
 
 format_table_date = {
-    "minute"    :  lambda date : date.strftime("%M:00 - %M:59"),  
-    "hour"      :  lambda date : date.strftime("%H:00 - %H:59"),
-    "day"       :  lambda date : date.strftime("%d.%m"),      
-    "month"     :  lambda date : date.strftime("%B"), 
-    "year"      :  lambda date : date.strftime("%Y"),  
+    "minute"    : lambda date : date.strftime("%M:00 - %M:59"),  
+    "hour"      : lambda date : date.strftime("%H:00 - %H:59"),
+    "day"       : lambda date : date.strftime("%d.%m"),      
+    "month"     : lambda date : date.strftime("%B"), 
+    "year"      : lambda date : date.strftime("%Y"),  
 }
 
 #tuple is returned
 get_previous_and_next = {
-    "minute": lambda time_after, time_before: ( {"time_after": (time_after + relativedelta(hours=-1 )).strftime('%Y-%m-%d %H:%M'),  "time_before": (time_before + relativedelta(hours=-1)).strftime('%Y-%m-%d %H:%M')},  {"time_after": (time_after + relativedelta(hours=+1)).strftime('%Y-%m-%d %H:%M') ,"time_before": (time_before + relativedelta(hours=+1    )).strftime('%Y-%m-%d %H:%M')   }),
-    "hour"  : lambda time_after, time_before: ( {"time_after": (time_after + relativedelta(days=-1  )).strftime('%Y-%m-%d %H:%M'),  "time_before": (time_before + relativedelta(days=-1)).strftime('%Y-%m-%d %H:%M')},  {"time_after": (time_after + relativedelta(days=+1)).strftime('%Y-%m-%d %H:%M') ,"time_before": (time_before + relativedelta(days=+1       )).strftime('%Y-%m-%d %H:%M')   }),
-    "day"   : lambda time_after, time_before: ( {"time_after": (time_after + relativedelta(months=-1)).strftime('%Y-%m-%d %H:%M'),  "time_before": (time_before + relativedelta(months=-1)).strftime('%Y-%m-%d %H:%M')},  {"time_after": (time_after + relativedelta(months=+1)).strftime('%Y-%m-%d %H:%M') ,"time_before": (time_before + relativedelta(months=+1 )).strftime('%Y-%m-%d %H:%M')   }),
-    "month" : lambda time_after, time_before: ( {"time_after": (time_after + relativedelta(years=-1 )).strftime('%Y-%m-%d %H:%M'),  "time_before": (time_before + relativedelta(years=-1)).strftime('%Y-%m-%d %H:%M')},  {"time_after": (time_after + relativedelta(years=+1)).strftime('%Y-%m-%d %H:%M') ,"time_before": (time_before + relativedelta(years=+1    )).strftime('%Y-%m-%d %H:%M')   }),
-    "year"  : lambda time_after, time_before: ( {"time_after": (time_after + relativedelta(years=-10)).strftime('%Y-%m-%d %H:%M'),  "time_before": (time_before + relativedelta(years=-10)).strftime('%Y-%m-%d %H:%M')},  {"time_after": (time_after + relativedelta(years=+10)).strftime('%Y-%m-%d %H:%M') ,"time_before": (time_before + relativedelta(years=+10 )).strftime('%Y-%m-%d %H:%M')   }),                      
+    "minute"    : lambda time_after, time_before: ( {"time_after": (time_after + relativedelta(hours=-1 )).strftime('%Y-%m-%d %H:%M'),  "time_before": (time_before + relativedelta(hours=-1)).strftime('%Y-%m-%d %H:%M')},  {"time_after": (time_after + relativedelta(hours=+1)).strftime('%Y-%m-%d %H:%M') ,"time_before": (time_before + relativedelta(hours=+1    )).strftime('%Y-%m-%d %H:%M')   }),
+    "hour"      : lambda time_after, time_before: ( {"time_after": (time_after + relativedelta(days=-1  )).strftime('%Y-%m-%d %H:%M'),  "time_before": (time_before + relativedelta(days=-1)).strftime('%Y-%m-%d %H:%M')},  {"time_after": (time_after + relativedelta(days=+1)).strftime('%Y-%m-%d %H:%M') ,"time_before": (time_before + relativedelta(days=+1       )).strftime('%Y-%m-%d %H:%M')   }),
+    "day"       : lambda time_after, time_before: ( {"time_after": (time_after + relativedelta(months=-1)).strftime('%Y-%m-%d %H:%M'),  "time_before": (time_before + relativedelta(months=-1)).strftime('%Y-%m-%d %H:%M')},  {"time_after": (time_after + relativedelta(months=+1)).strftime('%Y-%m-%d %H:%M') ,"time_before": (time_before + relativedelta(months=+1 )).strftime('%Y-%m-%d %H:%M')   }),
+    "month"     : lambda time_after, time_before: ( {"time_after": (time_after + relativedelta(years=-1 )).strftime('%Y-%m-%d %H:%M'),  "time_before": (time_before + relativedelta(years=-1)).strftime('%Y-%m-%d %H:%M')},  {"time_after": (time_after + relativedelta(years=+1)).strftime('%Y-%m-%d %H:%M') ,"time_before": (time_before + relativedelta(years=+1    )).strftime('%Y-%m-%d %H:%M')   }),
+    "year"      : lambda time_after, time_before: ( {"time_after": (time_after + relativedelta(years=-10)).strftime('%Y-%m-%d %H:%M'),  "time_before": (time_before + relativedelta(years=-10)).strftime('%Y-%m-%d %H:%M')},  {"time_after": (time_after + relativedelta(years=+10)).strftime('%Y-%m-%d %H:%M') ,"time_before": (time_before + relativedelta(years=+10 )).strftime('%Y-%m-%d %H:%M')   }),                      
 }
 
 get_time_after_and_before = {
