@@ -18,14 +18,25 @@
       {% include "include/form_errors.html" %}
     {% endblock errors %}
     {% for field in form %}
-      <div class="form-group mb-2 mr-2" id="{{field.name}}_group">
+      <div class="django-form form-group mb-2 mr-2" id="{{field.name}}_group">
           {{ field|add_class:"form-control" }}
       </div>
     {% endfor %}
+    <div class="form-group mb-2 mr-2">
+      <select id="id_chart_type" class="form-control" name="chart_type">
+        <option value="1">custom</option>
+        <option value="2">default</option>
+      </select>
+    </div>
+    <div class="form-group mb-2 mr-2">
+      <select id="id_distribution_type" class="form-control" name="distribution_type">
+        <option value="1">distribution</option>
+        <option value="2">series</option>
+      </select>
+    </div>
     <button class="btn btn-primary mb-2 mr-2" type="submit">Submit</button>
     <a class="btn btn-primary btn mb-2" href="{% url 'activity' %}">Reset</a>
   </form>   
-
 </div>
 <div class="flex-container mt-2">
   <div class="table">
@@ -59,7 +70,12 @@
 <script src="/static/js/select.js"></script>
 <script src="/static/js/select-api.js"></script>
 <script src="/static/js/datetimepicker.js"></script>
+<script>
+  $('#id_distribution_type').val({{ request.GET.distribution_type }});
+  $('#id_chart_type').val({{ request.GET.chart_type }});
+</script>
 {% if not form.errors %}
   <script src="/static/js/chart.js"></script>
 {% endif %}
+
 {% endblock js %} 

@@ -39,7 +39,8 @@ function setChart(data)
               xAxes: 
                 [{
                     type: "time",
-                    distribution: "series",
+                    // distribution: "series",
+                    distribution: data.distribution_type,
                     time: 
                         {
                             unit: data.label,

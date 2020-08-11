@@ -14,7 +14,7 @@
     {% include "include/form_errors.html" %}
     {% endblock errors %}
     {% for field in form %}
-      <div class="form-group mb-2 mr-2" id="{{field.name}}_group">
+      <div class="django-form form-group mb-2 mr-2" id="{{field.name}}_group">
           {{ field|add_class:"form-control" }}
       </div>
     {% endfor %}

@@ -84,15 +84,34 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
+        chart_type =        utils.chart_type[str(request.GET.get('chart_type'))] if request.GET.get('chart_type') else utils.chart_type['1']
+        distribution_type = utils.distribution_type[str(request.GET.get('distribution_type'))] if request.GET.get('distribution_type') else utils.distribution_type['2']
         time_after =    datetime.datetime.fromisoformat(request.GET.get('time_after'))  if request.GET.get('time_after')    else (datetime.datetime.now() + relativedelta(years=-1))  
         time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.datetime.now() 
         td = time_before - time_after       
         time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
         trunc_func = utils.trunc_methods_chart[time_range]
-        queryset = queryset.annotate(x=trunc_func('time', output_field=DateTimeField())).values('x').order_by('x').annotate(y=Count('pk')) 
-        data = serializers.ChartSerializer(queryset,many=True).data
+        queryset = queryset.annotate(x=trunc_func('time', output_field=DateTimeField())).values('x').order_by('x').annotate(y=Count('pk'))
+
+        if chart_type == 'custom':
+            data = serializers.ChartSerializer(queryset,many=True).data
+        elif chart_type == 'default':
+            date_format = utils.default_chart_date_format[time_range]
+            tempdict = {
+                row['x'].strftime(date_format) : row['y']
+                for row in queryset
+            }
+            data = [
+                {
+                    'x': (time_after + utils.default_chart_add_relative[time_range](k)).strftime(date_format),
+                    'y': tempdict.get((time_after + utils.default_chart_add_relative[time_range](k)).strftime(date_format),0)
+                }
+                for k in range(utils.default_chart_time_range[time_range](td) + 1)
+            ]
+
         data = {
-            'data':data,
+            'data': data,
+            'distribution_type' : distribution_type,
             'label' : time_range,
             'displayFormats' : utils.display_format
         }

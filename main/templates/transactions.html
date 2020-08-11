@@ -15,13 +15,11 @@
     {% block errors %}
       {% include "include/form_errors.html" %}
     {% endblock errors %}
-
     {% for field in form %}
-      <div class="form-group mb-2 mr-2" id="{{field.name}}_group">
+      <div class="django-form form-group mb-2 mr-2" id="{{field.name}}_group">
           {{ field|add_class:"form-control" }}
       </div>
     {% endfor %}
-
     <button class="btn btn-primary btn mb-2 mr-2" type="submit">Submit</button>
     <a class="btn btn-primary btn mb-2" href="{% url 'transactions' %}">Reset</a>
   </form>
@@ -40,4 +38,4 @@
   $('#select_per_page').val({{ request.GET.per_page }});
   $('#go_to_page_number').val({{ request.GET.page }});
 </script>
-{% endblock js %}
+{% endblock js %} 

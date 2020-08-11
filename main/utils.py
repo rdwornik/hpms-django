@@ -59,12 +59,33 @@ display_format = {
 }
 
 trunc_methods_chart = {
-    "second" :  functions.TruncSecond,
-    "minute" :  functions.TruncMinute,
-    "hour":     functions.TruncHour,
-    "day":      functions.TruncDay,
-    "month":    functions.TruncDay,
-    "year":     functions.TruncDay,
+    "second" :   functions.TruncSecond,
+    "minute" :   functions.TruncMinute,
+    "hour" :     functions.TruncHour,
+    "day" :      functions.TruncDay,
+    "month" :    functions.TruncDay,
+    "year" :     functions.TruncDay,
+}
+
+default_chart_date_format = {
+    "minute" :    "%Y-%m-%d %H:%M",
+    "hour" :     "%Y-%m-%d %H:00",
+    "day" :   "%Y-%m-%d 00:00",
+    "month" :    "%Y-%m-%d 00:00"
+}
+
+default_chart_add_relative = {
+    "minute" :    lambda k: relativedelta(minutes=k),
+    "hour" :     lambda k: relativedelta(hours=k),
+    "day" :   lambda k: relativedelta(days=k),
+    "month" :    lambda k: relativedelta(days=k)
+}
+
+default_chart_time_range = {
+    "minute" :  lambda td : td.seconds//60,
+    "hour" :    lambda td : (td.seconds)//3600,
+    "day" :     lambda td : td.days,
+    "month" :   lambda td : td.days,
 }
 
 trunc_methods_table = {
@@ -105,4 +126,14 @@ get_time_after_and_before = {
     "hour"      : lambda date: (date.strftime('%Y-%m-%d %H:%M'), (date + relativedelta(hours=1)     + relativedelta(minutes=-1) ).strftime('%Y-%m-%d %H:%M')),   
     "day"       : lambda date: (date.strftime('%Y-%m-%d %H:%M'), (date + relativedelta(days=1)      + relativedelta(hours=-1)   ).strftime('%Y-%m-%d %H:%M')),
     "month"     : lambda date: (date.strftime('%Y-%m-%d %H:%M'), (date + relativedelta(months=1)    + relativedelta(days=-1)    ).strftime('%Y-%m-%d %H:%M')),
+}
+
+chart_type = {
+    "1" : "custom",
+    "2" : "default"
+}
+
+distribution_type = {
+    "1" : "distribution",
+    "2" : "series"
 }
