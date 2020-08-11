@@ -4,5 +4,12 @@
   <h2>Transaction {{ transaction }}
     <a class="btn btn-info btn-sm mb-1" href="{% url 'all_notes_add' visitor_ip transaction%}">Add note</a>
   </h2>
-{% render_table table %}
+  <div class="result">
+    {% render_table table "tables/table.html"  %}
+  </div>
 {% endblock content %}
+{% block js %}
+<script>
+  $('#select_per_page').val({{ request.GET.per_page }});
+</script>
+{% endblock js %}

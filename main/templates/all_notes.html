@@ -36,4 +36,7 @@
 {% block js %}
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script src="/static/js/select-api.js"></script>
+<script>
+  $('#select_per_page').val({{ request.GET.per_page }});
+  </script>
 {% endblock js %}

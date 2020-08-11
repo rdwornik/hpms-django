@@ -78,6 +78,25 @@ def activity_view(request):
         "form" : form,
         "tag_field" : "assigned_tags",
     })
+    
+def transactions_view(request):
+        filter = filters.TransactionsFilter(request.GET,queryset=models.Transaction.objects.all())
+        subquery = filter.qs.filter(Q(transaction=OuterRef('transaction')) & 
+                                    (Q(name__header_name=settings.SERVER_NAME) | 
+                                     Q(name__header_name=settings.VISITOR_IP)  | 
+                                     Q(name__header_name=settings.REQUEST_URI))).order_by('transaction')
+        
+        queryset = filter.qs.annotate(server=Subquery(subquery.filter(Q(name__header_name=settings.SERVER_NAME)).values('value__header_value')[:1]),
+                                                       visitor_ip=Subquery(subquery.filter(Q(name__header_name=settings.VISITOR_IP)).values('value__header_value')[:1]),
+                                                       request_uri=Subquery(subquery.filter(Q(name__header_name=settings.REQUEST_URI)).values('value__header_value')[:1]))
+        table = tables.TransactionsTable(queryset)    
+        RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
+        return render(request, "transactions.html",  {
+            "form" : filter.form,
+            "tag_field" : "assigned_tags",
+            "table":table,
+            "filter" : filter,
+        })
 
 def transactions_detail_view(request,visitor_ip, transaction=1,):
     t = models.Transaction.objects.get(pk=transaction)
@@ -90,6 +109,7 @@ def transactions_detail_view(request,visitor_ip, transaction=1,):
     })
     
 def tags_form_view(request, id=None):
+    #Create a form
     if not id:
         tag = models.LogsTag()
         queryset = models.TagCryteria.objects.none()
@@ -98,7 +118,7 @@ def tags_form_view(request, id=None):
         tag = get_object_or_404(models.LogsTag,pk=id)
         queryset = tag.cryterias.all()
         edited=True
-        
+    #Post form
     if request.method == "POST":
         form = forms.LogsTagForm(request.POST, instance=tag)
         formset = forms.TagCryteriaFormSet(
@@ -106,7 +126,8 @@ def tags_form_view(request, id=None):
             queryset=queryset
         )
         if form.is_valid() and form.has_changed() and formset.is_valid():
-            tag = form.save()          
+            tag = form.save()
+
         if formset.is_valid() and formset.has_changed():
             instances = formset.save(commit=False)
             for new in formset.new_objects:
@@ -121,6 +142,7 @@ def tags_form_view(request, id=None):
                     tag.cryterias.remove(old_cryteria)
                 cryteria, created = models.TagCryteria.objects.get_or_create(name_cryteria=changed_obj.name_cryteria,value_cryteria=changed_obj.value_cryteria)
                 tag.cryterias.add(cryteria)
+
             for to_delete in formset.deleted_objects:
                 old_cryteria = queryset.get(pk=to_delete.pk)
                 if old_cryteria.logstag_set.count() == 1:
@@ -130,6 +152,7 @@ def tags_form_view(request, id=None):
                 if tag.cryterias.count() == 0:
                     tag.delete()
                     return HttpResponseRedirect(reverse("tags"))
+
             models.LogsTagAssign.objects.assign_tags_on_tags_created(tag,edited)
             return HttpResponseRedirect(reverse("tags"))
         return render(request, "tags_form.html",{"formset":formset,"form":form})
@@ -156,25 +179,6 @@ def tags_view(request):
         "form" : filter.form,
         "table": table
     })
-
-def transactions_view(request):
-        filter = filters.TransactionsFilter(request.GET,queryset=models.Transaction.objects.all())
-        subquery = filter.qs.filter(Q(transaction=OuterRef('transaction')) & 
-                                    (Q(name__header_name=settings.SERVER_NAME) | 
-                                     Q(name__header_name=settings.VISITOR_IP)  | 
-                                     Q(name__header_name=settings.REQUEST_URI))).order_by('transaction')
-        
-        queryset = filter.qs.annotate(server=Subquery(subquery.filter(Q(name__header_name=settings.SERVER_NAME)).values('value__header_value')[:1]),
-                                                       visitor_ip=Subquery(subquery.filter(Q(name__header_name=settings.VISITOR_IP)).values('value__header_value')[:1]),
-                                                       request_uri=Subquery(subquery.filter(Q(name__header_name=settings.REQUEST_URI)).values('value__header_value')[:1]))
-        table = tables.TransactionsTable(queryset)    
-        RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
-        return render(request, "transactions.html",  {
-            "form" : filter.form,
-            "tag_field" : "assigned_tags",
-            "table":table,
-            "filter" : filter,
-        })
 
 class VisitorsTablesView(SingleTableView):
     template_name = "visitors.html"

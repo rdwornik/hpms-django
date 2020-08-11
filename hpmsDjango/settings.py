@@ -126,12 +126,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = '/hpms/visitors/'
-LOGIN_URL = '/hpms/login/'
+LOGIN_REDIRECT_URL = '/hpms3/visitors/'
+LOGIN_URL = '/hpms3/login/'
 
 LOGIN_EXEMPT_URLS = (
-    r'^hpms/logout/$',
-    r'^hpms/api/logslogs/$',
+    r'^hpms3/logout/$',
+    r'^hpms3/api/logslogs/$',
 )
 
 #Constraints

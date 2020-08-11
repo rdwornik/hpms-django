@@ -36,4 +36,7 @@
 <script src="/static/js/select.js"></script>
 <script src="/static/js/select-api.js"></script>
 <script src="/static/js/datetimepicker.js"></script>
+<script>
+  $('#select_per_page').val({{ request.GET.per_page }});
+</script>
 {% endblock js %}

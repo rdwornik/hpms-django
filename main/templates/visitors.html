@@ -2,9 +2,14 @@
 {% load django_tables2 %}
 {% block content %}
   <h2>Visitors</h2>
-    {% render_table table "tables/table.html" %}
+  <div class="result">
+    {% render_table table "tables/table.html"  %}
+  </div>
 {% endblock content %}
 {% block js %}
+<script>
+  $('#select_per_page').val({{ request.GET.per_page }});
+</script>
 {% endblock js %}
 
 
