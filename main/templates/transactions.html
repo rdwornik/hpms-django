@@ -38,5 +38,6 @@
 <script src="/static/js/datetimepicker.js"></script>
 <script>
   $('#select_per_page').val({{ request.GET.per_page }});
+  $('#go_to_page_number').val({{ request.GET.page }});
 </script>
 {% endblock js %}

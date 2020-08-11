@@ -89,7 +89,7 @@ def transactions_view(request):
         queryset = filter.qs.annotate(server=Subquery(subquery.filter(Q(name__header_name=settings.SERVER_NAME)).values('value__header_value')[:1]),
                                                        visitor_ip=Subquery(subquery.filter(Q(name__header_name=settings.VISITOR_IP)).values('value__header_value')[:1]),
                                                        request_uri=Subquery(subquery.filter(Q(name__header_name=settings.REQUEST_URI)).values('value__header_value')[:1]))
-        table = tables.TransactionsTable(queryset)    
+        table = tables.TransactionsTable(queryset)
         RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
         return render(request, "transactions.html",  {
             "form" : filter.form,
