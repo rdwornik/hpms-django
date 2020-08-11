@@ -20,11 +20,17 @@ class ActivityTable(tables.Table):
     
     def render_date(self,value, record):
         time_range = self.context.get('time_range')
+        prev_range = utils.prev_range[time_range]
         displayed_value = utils.format_table_date[time_range](value)
+        old = self.request.GET.copy()
         updated = self.request.GET.copy()
         updated["time_after"], updated["time_before"] = (utils.get_time_after_and_before[time_range])(value)
-        return displayed_value if time_range == "minute" else format_html("<a href='{0}?{1}' >{2}</a>".format(reverse_lazy("activity"), updated.urlencode(),displayed_value))
-    
+        if time_range == "minute":
+          value = format_html("<a id='mylink' onclick='make(event);' old='{0}?{3}' range='{4}' prev-range='{5}' >{2}</a>".format(reverse_lazy("activity"), updated.urlencode(), displayed_value,old.urlencode(),time_range,prev_range))
+        else:
+          value = format_html("<a id='mylink' onclick='make(event);' old='{0}?{3}' range='{4}' prev-range='{5}' href='{0}?{1}' >{2}</a>".format(reverse_lazy("activity"), updated.urlencode(), displayed_value,old.urlencode(),time_range,prev_range))
+        return value
+        
     def render_visits_count(self, value, record):
         time_range = self.context.get('time_range')
         updated = self.request.GET.copy()
@@ -36,6 +42,7 @@ class ActivityTable(tables.Table):
           "style": "width:100%;",
           "class": "table table-striped"
         }
+
 class NotesTable(tables.Table):
     selection = tables.CheckBoxColumn(accessor = "pk",
       attrs = {
@@ -85,6 +92,7 @@ class NotesTable(tables.Table):
         attrs = {
           "class": "table table-striped"
         }
+
 class VisitorTable(tables.Table):
     visitor_ip = tables.TemplateColumn(template_name = "tables/visitor_ip_column.html", orderable = False, verbose_name = "Visitors IP",
       attrs = {
@@ -114,6 +122,7 @@ class VisitorTable(tables.Table):
           "class": "table table-striped",
           "style": "width: 60%"
         }
+
 class TagsTable(tables.Table):
     id = tables.Column(visible = False)
     name_cryteria = tables.Column(attrs = {
@@ -169,6 +178,7 @@ class TagsTable(tables.Table):
         attrs = {
           "class": "table table-striped"
         }
+
 class TransactionsDetailTable(tables.Table):
     class Meta:
         model = models.LogsLog
@@ -176,6 +186,7 @@ class TransactionsDetailTable(tables.Table):
         attrs = {
           "class": "table table-striped"
         }     
+
 class TransactionsTable(tables.Table):
     id = tables.Column(orderable = False, visible = False)
     visitor_ip = tables.Column(verbose_name = "Visitor IP",

@@ -48,6 +48,13 @@ time_range = {
     "year"      : lambda td : 450 < td.days,
 }
 
+prev_range = {
+    "minute" : "hour",
+    "hour" : "day",
+    "day"   : "month",
+    "month" : "year",
+}
+
 display_format = {
     "second"    : "HH:mm:ss",
     "minute"    : "HH:mm",
@@ -146,6 +153,6 @@ chart_type = {
 }
 
 distribution_type = {
-    "1" : "distribution",
+    "1" : "linear",
     "2" : "series"
 }

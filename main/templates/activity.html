@@ -30,7 +30,7 @@
     </div>
     <div class="form-group mb-2 mr-2">
       <select id="id_distribution_type" class="form-control" name="distribution_type">
-        <option value="1">distribution</option>
+        <option value="1">linear</option>
         <option value="2">series</option>
       </select>
     </div>
@@ -39,7 +39,11 @@
   </form>   
 </div>
 <div class="flex-container mt-2">
-  <div class="table">
+  <div class="table">     
+    <div style="text-align: center;">
+      <!-- <button id="id_goBackBtn" value="" class="btn btn-primary btn-sm mb-2 mt-2 btn-block" onclick="goBack()">Go Back</button> -->
+      <a id="id_goBackBtn" class="btn btn-primary btn-sm mb-2 mt-2 btn-block" href="#" role="button">Go Back</a>
+    </div> 
     <div class="container-fluid">
       <div class="row justify-content-center">
           <button name="previous_date-btn" type="button" class="btn btn-sm btn-outline-info mb-2"  onclick="location.href='{% url "activity" %}?{% query_transform request time_after=previous.time_after time_before=previous.time_before %}';"><<</button>
@@ -73,6 +77,50 @@
 <script>
   $('#id_distribution_type').val({{ request.GET.distribution_type }});
   $('#id_chart_type').val({{ request.GET.chart_type }});
+
+//invoke = (event) => {
+//  var url = e.target.getAttribute('arg');
+ // window.location.href = url
+ // console.log("hello")
+//}
+function saveData(key,value) {
+  localStorage.setItem(key, value);
+}
+
+function make(e) {
+  //var arg1 = e.target.getAttribute('href');
+    var range = e.target.getAttribute('range');
+    var url = e.target.getAttribute('old');
+    console.log(range)
+    console.log(url)
+    saveData(range,url)
+ //   saveData("prev_range",range)
+     /* $("#id_goBackBtn").attr("href", arg1)
+      console.log(arg1)*/
+      // e.preventDefault();   // if you want to not go to href url uncoment this
+  }
+
+
+//function changeLink(this) {
+ /* var link2 = document.getElementById("mylink");
+  var s = link2.getAttribute('href')
+  saveData(s)*/
+ // console.log(this)
+//}
+function SomeFunction(){
+  var s = $("#mylink").attr("prev-range")
+  //var s = localStorage.getItem("prev_range")
+  link = localStorage.getItem(s)
+  $("#id_goBackBtn").attr("href", link)
+}
+$(document).ready(function () {
+  SomeFunction();
+});
+
+/*function goBack(){
+  params = new URLSearchParams(window.location.search)
+  params.set('time_after',value['x'])
+}*/
 </script>
 {% if not form.errors %}
   <script src="/static/js/chart.js"></script>
