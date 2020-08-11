@@ -108,7 +108,6 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
                 }
                 for k in range(utils.default_chart_time_range[time_range](td) + 1)
             ]
-
         data = {
             'data': data,
             'distribution_type' : distribution_type,

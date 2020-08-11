@@ -61,30 +61,42 @@ display_format = {
 trunc_methods_chart = {
     "second"    : functions.TruncSecond,
     "minute"    : functions.TruncMinute,
+    # "minute"    : functions.TruncSecond,
     "hour"      : functions.TruncHour,
-    "day"       : functions.TruncDay,
+    # "hour"      : functions.TruncMinute,
+    # "day"       : functions.TruncDay,
+    "day"       : functions.TruncHour,
     "month"     : functions.TruncDay,
     "year"      : functions.TruncDay,
 }
 
 default_chart_date_format = {
+    # "minute"    : "%Y-%m-%d %H:%M",
+    # "hour"      : "%Y-%m-%d %H:00",
+    # "day"       : "%Y-%m-%d 00:00",
     "minute"    : "%Y-%m-%d %H:%M",
     "hour"      : "%Y-%m-%d %H:00",
-    "day"       : "%Y-%m-%d 00:00",
+    "day"       : "%Y-%m-%d %H:00",
     "month"     : "%Y-%m-%d 00:00"
 }
 
 default_chart_add_relative = {
     "minute"    : lambda k: relativedelta(minutes=k),
+    # "minute"    : lambda k: relativedelta(seconds=k),
     "hour"      : lambda k: relativedelta(hours=k),
-    "day"       : lambda k: relativedelta(days=k),
+    # "hour"      : lambda k: relativedelta(minutes=k),
+    # "day"       : lambda k: relativedelta(days=k),
+    "day"       : lambda k: relativedelta(hours=k),
     "month"     : lambda k: relativedelta(days=k)
 }
 
 default_chart_time_range = {
     "minute"    : lambda td : td.seconds//60,
+    # "minute"    : lambda td : td.seconds,
     "hour"      : lambda td : (td.seconds)//3600,
-    "day"       : lambda td : td.days,
+    # "hour"      : lambda td : (td.seconds)//60,
+    # "day"       : lambda td : td.days,
+    "day"       : lambda td : td.days*24,
     "month"     : lambda td : td.days,
 }
 
