@@ -20,9 +20,10 @@
           {{ field|add_class:"form-control" }}
       </div>
     {% endfor %}
-    <button type="button" id="id_deleteBtn" class="btn btn-primary btn mb-2 mr-2" onclick="deleteTrans()">Delete</button>
     <button class="btn btn-primary btn mb-2 mr-2" type="submit">Submit</button>
-    <a class="btn btn-primary btn mb-2" href="{% url 'transactions' %}">Reset</a>
+    <a class="btn btn-primary btn mb-2 mr-2" href="{% url 'transactions' %}">Reset</a>
+    <button type="button" id="id_addNoteBtn" class="btn btn-info btn mb-2 mr-2" onclick="addNote()">Add Note</button>
+    <button type="button" id="id_deleteBtn" class="btn btn-danger btn mb-2 mr-2" onclick="deleteTrans()">Delete Visitor</button>
   </form>
 </div>
 <div class="result">
@@ -39,29 +40,56 @@
   $('#select_per_page').val({{ request.GET.per_page }});
   $('#go_to_page_number').val({{ request.GET.page }});
 
-function hide(){
-  var earrings = document.getElementById('id_deleteBtn');
-  earrings.style.visibility = 'hidden';
+function hide(id){
+  var btn = document.getElementById(id);
+  btn.style.visibility = 'hidden';
 }
   
-function show(){
-  var earrings = document.getElementById('id_deleteBtn');
-  earrings.style.visibility = 'visible';
-  }
-  
+function show(id){
+  var btn = document.getElementById(id);
+  btn.style.visibility = 'visible';
+}
+
 function setDeleteBtn(select){
   if(select == 0){
-    hide();
+    hide('id_deleteBtn');
   }else{
-    show();
+    show('id_deleteBtn');
   }}
-  
-function deleteTrans(){
-  
-  URL = "{% url 'transactions' %}delete"
-  console.log(URL)
+
+function setAddNoteBtn(select){
+  if(select == 1){
+    show('id_addNoteBtn');
+  }else{
+    hide('id_addNoteBtn');
+  }}
+
+function addNote(){
+  URL = "{% url 'transactions' %}"
   let data = {
-    toDelete: $('#id_visitor_ip').val()
+    action : "addnote",
+    visitor_ip: $('#id_visitor_ip').val()
+  }
+  
+  $.ajax({
+    method:"GET",
+    url:URL,
+    data: data,
+    traditional: true,
+    success: function(data){
+      window.location.href = data['url']
+    },     
+    error: function(error_data){
+        console.log("error")
+        console.log(error_data)
+    }
+})}
+
+function deleteTrans(){
+  URL = "{% url 'transactions' %}"
+  let data = {
+    action : "delete",
+    visitor_ip: $('#id_visitor_ip').val()
   }
   
   $.ajax({
@@ -70,7 +98,7 @@ function deleteTrans(){
     data: data,
   traditional: true,
     success: function(data){
-       
+      window.location.reload(false);
     },     
     error: function(error_data){
         console.log("error")
@@ -82,10 +110,12 @@ function deleteTrans(){
 $('#id_visitor_ip').on("change", function(e) { 
   // what you would like to happen
   setDeleteBtn($('#id_visitor_ip').val().length)
+  setAddNoteBtn($('#id_visitor_ip').val().length)
 });
 
 $(document).ready(function () {
   setDeleteBtn($('#id_visitor_ip').val().length);
+  setAddNoteBtn($('#id_visitor_ip').val().length)
 });
   
 </script>

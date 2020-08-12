@@ -5,7 +5,7 @@ from django.db.models import Q, Count, DateTimeField, OuterRef, Subquery
 from django_tables2.views import SingleTableView
 from django_tables2 import RequestConfig
 from django_tables2.paginators import LazyPaginator
-
+from django.http import JsonResponse
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
@@ -73,11 +73,18 @@ def activity_view(request):
         "tag_field" : "assigned_tags",
     })
     
-def transactions_view(request, delete=None):
-    if delete:
-        print(request.GET)
-        print(reverse("transactions"))
-        return HttpResponseRedirect(reverse("transactions"))
+def transactions_view(request):
+
+    if request.GET.get("action") == "delete":
+        visitors_to_delete = request.GET.getlist("visitor_ip")
+        models.Transaction.objects.filter(value__in=visitors_to_delete).delete()
+    
+    if request.GET.get("action") == "addnote":
+        visitor_ip = request.GET.get("visitor_ip")
+        value = models.HeaderValue.objects.get(pk=visitor_ip).header_value
+        print(reverse("all_notes_add",kwargs={"visitor_ip":value}))
+        reverse("all_notes_add",kwargs={"visitor_ip":value})
+        return JsonResponse({'url':reverse("all_notes_add",kwargs={"visitor_ip":value})})
 
     filter = filters.TransactionsFilter(request.GET,queryset=models.Transaction.objects.all())
     subquery = filter.qs.filter(Q(transaction=OuterRef('transaction')) & 
