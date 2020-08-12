@@ -82,13 +82,12 @@ def transactions_view(request):
     if request.GET.get("action") == "addnote":
         visitor_ip = request.GET.get("visitor_ip")
         value = models.HeaderValue.objects.get(pk=visitor_ip).header_value
-        print(reverse("all_notes_add",kwargs={"visitor_ip":value}))
         reverse("all_notes_add",kwargs={"visitor_ip":value})
         return JsonResponse({'url':reverse("all_notes_add",kwargs={"visitor_ip":value})})
 
     filter = filters.TransactionsFilter(request.GET,queryset=models.Transaction.objects.all())
     subquery = filter.qs.filter(Q(transaction=OuterRef('transaction')) & 
-                                (Q(name__header_name=settings.SERVER_NAME) | 
+                                    (Q(name__header_name=settings.SERVER_NAME) | 
                                     Q(name__header_name=settings.VISITOR_IP)  | 
                                     Q(name__header_name=settings.REQUEST_URI))).order_by('transaction')
     
