@@ -82,6 +82,7 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class  = filters.ChartFilter
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = [IsAuthenticated]
+    
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         chart_type =        utils.chart_type[str(request.GET.get('chart_type'))] if request.GET.get('chart_type') else utils.chart_type['1']

@@ -111,45 +111,44 @@
 </div>
 {% endblock table-wrapper %}
 <script>
-    function perPageChange(per_page)
+function perPageChange(per_page)
+{
+    /* per_page in querystring : replace the value in the current url */
+    if (location.href.indexOf('per_page=') > 0)
+        url = location.href.replace(/(per_page=)[^\&]+/, '$1' + per_page)
+    else
     {
-        /* per_page in querystring : replace the value in the current url */
-        if (location.href.indexOf('per_page=') > 0)
-            url = location.href.replace(/(per_page=)[^\&]+/, '$1' + per_page)
+    /* per_page not in querystring */
+        /* is there a parameter in querystring */
+        if (location.href.indexOf('?') > 0)
+            addStr = '&'
         else
-        {
-        /* per_page not in querystring */
-            /* is there a parameter in querystring */
-            if (location.href.indexOf('?') > 0)
-                addStr = '&'
-            else
-                addStr = '?'
-            addStr += 'per_page=' + per_page
-            url = location.href + addStr
-        }
-        /* reload the page */
-        location.href = url;
+            addStr = '?'
+        addStr += 'per_page=' + per_page
+        url = location.href + addStr
     }
+    /* reload the page */
+    location.href = url;
+}
 
-    function goToPage()
+function goToPage()
+{
+    page=$('#go_to_page_number').val();
+    /* per_page in querystring : replace the value in the current url */
+    if (location.href.indexOf('page=') > 0)
+        url = location.href.replace(/(page=)[^\&]+/, '$1' + page)
+    else
     {
-        page=$('#go_to_page_number').val();
-        /* per_page in querystring : replace the value in the current url */
-        if (location.href.indexOf('page=') > 0)
-            url = location.href.replace(/(page=)[^\&]+/, '$1' + page)
+    /* per_page not in querystring */
+        /* is there a parameter in querystring */
+        if (location.href.indexOf('?') > 0)
+            addStr = '&'
         else
-        {
-        /* per_page not in querystring */
-            /* is there a parameter in querystring */
-            if (location.href.indexOf('?') > 0)
-                addStr = '&'
-            else
-                addStr = '?'
-            addStr += 'page=' + page
-            url = location.href + addStr
-        }
-        /* reload the page */
-        location.href = url;
+            addStr = '?'
+        addStr += 'page=' + page
+        url = location.href + addStr
     }
-
+    /* reload the page */
+    location.href = url;
+}
 </script>

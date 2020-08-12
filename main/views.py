@@ -14,12 +14,6 @@ from dateutil.relativedelta import relativedelta
 from django.shortcuts import get_object_or_404
 
 from main import models, tables, filters, forms, utils
-#TODO wrzucic na azure
-#TODO dodac paginacje dla visitors spytac sie o ilosc danych czy warrto robic pginacje dla tagow czy tez s 
-#TODO długi czas ładowania ip dodaj opóźnieni
-#TODO Check if viistor ip server in it
-#TODO Clean modules and code review
-#TODO write extra tests
 
 def all_notes_form_view(request,id=None,visitor_ip=None,transaction=None):
     if not id:
