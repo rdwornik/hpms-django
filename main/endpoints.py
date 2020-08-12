@@ -90,12 +90,17 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
         time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.datetime.now() 
         td = time_before - time_after       
         time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
-        trunc_func = utils.trunc_methods_chart[time_range]
-        queryset = queryset.annotate(x=trunc_func('time', output_field=DateTimeField())).values('x').order_by('x').annotate(y=Count('pk'))
-
+        
         if chart_type == 'custom':
+            display_format = utils.custom_display_format
+            trunc_func = utils.custom_trunc_methods_chart[time_range]
+            queryset = queryset.annotate(x=trunc_func('time', output_field=DateTimeField())).values('x').order_by('x').annotate(y=Count('pk'))
             data = serializers.ChartSerializer(queryset,many=True).data
         elif chart_type == 'default':
+            display_format = utils.default_display_format
+            sampling =   int(request.GET.get('sampling'))
+            trunc_func = utils.default_trunc_methods_chart[time_range]
+            queryset = queryset.annotate(x=trunc_func('time', output_field=DateTimeField())).values('x').order_by('x').annotate(y=Count('pk'))
             date_format = utils.default_chart_date_format[time_range]
             tempdict = {
                 row['x'].strftime(date_format) : row['y']
@@ -108,11 +113,14 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
                 }
                 for k in range(utils.default_chart_time_range[time_range](td) + 1)
             ]
+            if sampling != 1:
+                data = utils.trunc_funtcion(data, sampling, time_range)
+
         data = {
             'data': data,
             'distribution_type' : distribution_type,
             'label' : time_range,
-            'displayFormats' : utils.display_format
+            'displayFormats' : display_format
         }
         return Response(data)
 

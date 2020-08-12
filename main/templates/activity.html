@@ -23,9 +23,17 @@
       </div>
     {% endfor %}
     <div class="form-group mb-2 mr-2">
-      <select id="id_chart_type" class="form-control" name="chart_type">
+      <select id="id_chart_type" class="form-control" name="chart_type" onchange="setSampling($(this).val())">
         <option value="1">custom</option>
         <option value="2">default</option>
+      </select>
+    </div>
+    <div class="form-group mb-2 mr-2">
+      <select id="id_sampling" class="form-control" name="sampling">
+        <option value="1">1</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="15">15</option>
       </select>
     </div>
     <div class="form-group mb-2 mr-2">
@@ -41,7 +49,6 @@
 <div class="flex-container mt-2">
   <div class="table">     
     <div style="text-align: center;">
-      <!-- <button id="id_goBackBtn" value="" class="btn btn-primary btn-sm mb-2 mt-2 btn-block" onclick="goBack()">Go Back</button> -->
       <a id="id_goBackBtn" class="btn btn-primary btn-sm mb-2 mt-2 btn-block" href="#" role="button">Go Back</a>
     </div> 
     <div class="container-fluid">
@@ -77,53 +84,49 @@
 <script>
   $('#id_distribution_type').val({{ request.GET.distribution_type }});
   $('#id_chart_type').val({{ request.GET.chart_type }});
+  $('#id_sampling').val({{ request.GET.sampling }});
 
-//invoke = (event) => {
-//  var url = e.target.getAttribute('arg');
- // window.location.href = url
- // console.log("hello")
-//}
 function saveData(key,value) {
   localStorage.setItem(key, value);
 }
 
 function make(e) {
-  //var arg1 = e.target.getAttribute('href');
     var range = e.target.getAttribute('range');
     var url = e.target.getAttribute('old');
-    console.log(range)
-    console.log(url)
     saveData(range,url)
- //   saveData("prev_range",range)
-     /* $("#id_goBackBtn").attr("href", arg1)
-      console.log(arg1)*/
-      // e.preventDefault();   // if you want to not go to href url uncoment this
-  }
+}
 
 
-//function changeLink(this) {
- /* var link2 = document.getElementById("mylink");
-  var s = link2.getAttribute('href')
-  saveData(s)*/
- // console.log(this)
-//}
-function SomeFunction(){
-  var s = $("#mylink").attr("prev-range")
-  //var s = localStorage.getItem("prev_range")
-  link = localStorage.getItem(s)
+function setGoBackBtn(){
+  var prev_range = $("#mylink").attr("prev-range")
+  link = localStorage.getItem(prev_range)
   $("#id_goBackBtn").attr("href", link)
 }
+
+function hide(){
+  var earrings = document.getElementById('id_sampling');
+  earrings.style.visibility = 'hidden';
+}
+  
+function show(){
+  var earrings = document.getElementById('id_sampling');
+  earrings.style.visibility = 'visible';
+}
+
+function setSampling(select){
+  if(select == '2'){
+    show();
+  }else if(select == '1'){
+    hide();
+  }}
+  
 $(document).ready(function () {
-  SomeFunction();
+  setGoBackBtn();
+  setSampling($('#id_chart_type').val());
 });
 
-/*function goBack(){
-  params = new URLSearchParams(window.location.search)
-  params.set('time_after',value['x'])
-}*/
 </script>
 {% if not form.errors %}
   <script src="/static/js/chart.js"></script>
 {% endif %}
-
 {% endblock js %} 

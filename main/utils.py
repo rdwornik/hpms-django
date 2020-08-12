@@ -1,4 +1,6 @@
 import random 
+import datetime
+from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from django.db.models import functions as functions
 
@@ -22,6 +24,27 @@ methods = {
     "HEAD" : ("H", "FFFF00"),
     "None" : ("None","000000")
 }
+
+def trunc_funtcion(data, sampling, time_range):
+    truncated_arranged = []
+    current_slice = []
+    default_chart_add_relative[time_range](sampling)
+    first = datetime.datetime.fromisoformat(data[0]['x'])
+    end_time = first + default_chart_add_relative[time_range](sampling)
+    for d in data:
+        if datetime.datetime.fromisoformat(d['x']) <= end_time:
+            current_slice.append(d)
+        else:
+            count = 0
+            tmp = {}
+            for i in current_slice:
+                count+=i['y']
+            tmp['x'] = current_slice[0]['x']
+            tmp['y'] = count
+            truncated_arranged.append(tmp)
+            current_slice = []
+            end_time = datetime.datetime.fromisoformat(d['x']) + default_chart_add_relative[time_range](sampling)
+    return truncated_arranged
 
 def get_or_create_methods_tag(request_method):
     if request_method not in methods:
@@ -55,7 +78,17 @@ prev_range = {
     "month" : "year",
 }
 
-display_format = {
+###CHART CUSTOM SETTING #####
+custom_trunc_methods_chart = {
+    "second"    : functions.TruncSecond,
+    "minute"    : functions.TruncSecond,
+    "hour"      : functions.TruncHour,
+    "day"       : functions.TruncDay,
+    "month"     : functions.TruncDay,
+    "year"      : functions.TruncDay,
+}
+
+custom_display_format = {
     "second"    : "HH:mm:ss",
     "minute"    : "HH:mm",
     "hour"      : "HH",
@@ -65,47 +98,58 @@ display_format = {
     "year"      : "YYYY",
 }
 
-trunc_methods_chart = {
+###CHART SAMPLING DEFAULT SETTING #####
+
+default_display_format = {
+    "second"    : "HH:mm:ss",
+    "minute"    : "HH:mm",
+    "hour"      : "HH:mm",
+    "day"       : "DD.MM",
+    # "week"    : "DD.MM.YY",
+    "month"     : "MMM YYYY",
+    "year"      : "YYYY",
+}
+
+default_trunc_methods_chart = {
     "second"    : functions.TruncSecond,
     "minute"    : functions.TruncMinute,
-    # "minute"    : functions.TruncSecond,
-    "hour"      : functions.TruncHour,
-    # "hour"      : functions.TruncMinute,
-    # "day"       : functions.TruncDay,
+    "hour"      : functions.TruncMinute,
     "day"       : functions.TruncHour,
     "month"     : functions.TruncDay,
     "year"      : functions.TruncDay,
 }
 
 default_chart_date_format = {
-    # "minute"    : "%Y-%m-%d %H:%M",
-    # "hour"      : "%Y-%m-%d %H:00",
-    # "day"       : "%Y-%m-%d 00:00",
     "minute"    : "%Y-%m-%d %H:%M",
-    "hour"      : "%Y-%m-%d %H:00",
+    "hour"      : "%Y-%m-%d %H:%M",
     "day"       : "%Y-%m-%d %H:00",
-    "month"     : "%Y-%m-%d 00:00"
+    "month"     : "%Y-%m-%d 00:00",
+    "year"     : "%Y-%m-%d"
 }
 
 default_chart_add_relative = {
     "minute"    : lambda k: relativedelta(minutes=k),
     # "minute"    : lambda k: relativedelta(seconds=k),
-    "hour"      : lambda k: relativedelta(hours=k),
-    # "hour"      : lambda k: relativedelta(minutes=k),
+    # "hour"      : lambda k: relativedelta(hours=k),
+    "hour"      : lambda k: relativedelta(minutes=k),
     # "day"       : lambda k: relativedelta(days=k),
     "day"       : lambda k: relativedelta(hours=k),
-    "month"     : lambda k: relativedelta(days=k)
+    "month"     : lambda k: relativedelta(days=k),
+    "year" : lambda k: relativedelta(months=k),
 }
 
 default_chart_time_range = {
     "minute"    : lambda td : td.seconds//60,
     # "minute"    : lambda td : td.seconds,
-    "hour"      : lambda td : (td.seconds)//3600,
-    # "hour"      : lambda td : (td.seconds)//60,
+    # "hour"      : lambda td : (td.seconds)//3600,
+    "hour"      : lambda td : (td.seconds)//60,
     # "day"       : lambda td : td.days,
     "day"       : lambda td : td.days*24,
     "month"     : lambda td : td.days,
+    "year"     :  lambda td : td.days//366,
 }
+
+###END SAMPLING DEFAUL #####
 
 trunc_methods_table = {
     "minute"    : functions.TruncMinute,

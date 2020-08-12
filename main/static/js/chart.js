@@ -3,6 +3,17 @@ Date.prototype.addHours = function(h) {
   return this;
 }
 
+var sampling = $('#id_sampling').val()
+var time_range = $("#mylink").attr("range")
+
+add_hours_dictionary={ 
+  "minute": (sampling/60), 
+  "hour": (sampling/60), 
+  "day":(sampling),
+  "month":(24*sampling),
+  "year": (8760*sampling)
+};
+
 var canvas = document.getElementById("myChart")
 URL_ENDPOINT = canvas.attributes.getNamedItem("url-endpoint-chart").value;
 URL = URL_ENDPOINT.concat(window.location.search)
@@ -85,13 +96,8 @@ function setChart(data)
           params = new URLSearchParams(window.location.search)
           params.set('time_after',value['x'])
           time = new Date(value['x'])
-          if(label == "hour"){
-            time_before = time.addHours(1)
-          }else if(label == "minute"){
-            time_before = time.addHours(1/60)
-          }else{
-            time_before = time.addHours(24)
-          }
+          hours = add_hours_dictionary[time_range]
+          time_before = time.addHours(hours)
           params.set('time_before', moment(time_before).format("YYYY-MM-DD HH:mm"))          
           transactions_url = this.attributes.getNamedItem("transactions").value
           url = transactions_url.concat("?", params.toString())
