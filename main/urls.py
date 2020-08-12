@@ -32,7 +32,17 @@ urlpatterns = [
                 name="transactions"
         ),
         path(
+                "transactions/<str:delete>/",
+                views.transactions_view,
+                name="transactions"
+        ),
+        path(
                 "transactions/<str:visitor_ip>/<int:transaction>/",
+                views.transactions_detail_view,
+                name="transactions_detail"
+        ),
+        path(
+                "transactions/<str:visitor_ip>/<int:transaction>/<str:delete>/",
                 views.transactions_detail_view,
                 name="transactions_detail"
         ),

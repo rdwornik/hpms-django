@@ -73,26 +73,35 @@ def activity_view(request):
         "tag_field" : "assigned_tags",
     })
     
-def transactions_view(request):
-        filter = filters.TransactionsFilter(request.GET,queryset=models.Transaction.objects.all())
-        subquery = filter.qs.filter(Q(transaction=OuterRef('transaction')) & 
-                                    (Q(name__header_name=settings.SERVER_NAME) | 
-                                     Q(name__header_name=settings.VISITOR_IP)  | 
-                                     Q(name__header_name=settings.REQUEST_URI))).order_by('transaction')
-        
-        queryset = filter.qs.annotate(server=Subquery(subquery.filter(Q(name__header_name=settings.SERVER_NAME)).values('value__header_value')[:1]),
-                                                       visitor_ip=Subquery(subquery.filter(Q(name__header_name=settings.VISITOR_IP)).values('value__header_value')[:1]),
-                                                       request_uri=Subquery(subquery.filter(Q(name__header_name=settings.REQUEST_URI)).values('value__header_value')[:1]))
-        table = tables.TransactionsTable(queryset)
-        RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
-        return render(request, "transactions.html",  {
-            "form" : filter.form,
-            "tag_field" : "assigned_tags",
-            "table":table,
-            "filter" : filter,
-        })
+def transactions_view(request, delete=None):
+    if delete:
+        print(request.GET)
+        print(reverse("transactions"))
+        return HttpResponseRedirect(reverse("transactions"))
 
-def transactions_detail_view(request,visitor_ip, transaction=1,):
+    filter = filters.TransactionsFilter(request.GET,queryset=models.Transaction.objects.all())
+    subquery = filter.qs.filter(Q(transaction=OuterRef('transaction')) & 
+                                (Q(name__header_name=settings.SERVER_NAME) | 
+                                    Q(name__header_name=settings.VISITOR_IP)  | 
+                                    Q(name__header_name=settings.REQUEST_URI))).order_by('transaction')
+    
+    queryset = filter.qs.annotate(server=Subquery(subquery.filter(Q(name__header_name=settings.SERVER_NAME)).values('value__header_value')[:1]),
+                                                    visitor_ip=Subquery(subquery.filter(Q(name__header_name=settings.VISITOR_IP)).values('value__header_value')[:1]),
+                                                    request_uri=Subquery(subquery.filter(Q(name__header_name=settings.REQUEST_URI)).values('value__header_value')[:1]))
+    table = tables.TransactionsTable(queryset)
+    RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
+    return render(request, "transactions.html",  {
+        "form" : filter.form,
+        "tag_field" : "assigned_tags",
+        "table":table,
+        "filter" : filter,
+    })
+
+def transactions_detail_view(request,visitor_ip, transaction=1,delete=None):
+    if delete:
+        models.Transaction.objects.get(pk=transaction).delete()
+        return HttpResponseRedirect(reverse("transactions"))
+
     t = models.Transaction.objects.get(pk=transaction)
     table = tables.TransactionsDetailTable(t.logslog_set.all())    
     RequestConfig(request,paginate={"per_page": 25}).configure(table)

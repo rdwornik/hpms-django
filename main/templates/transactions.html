@@ -20,6 +20,7 @@
           {{ field|add_class:"form-control" }}
       </div>
     {% endfor %}
+    <button type="button" id="id_deleteBtn" class="btn btn-primary btn mb-2 mr-2" onclick="deleteTrans()">Delete</button>
     <button class="btn btn-primary btn mb-2 mr-2" type="submit">Submit</button>
     <a class="btn btn-primary btn mb-2" href="{% url 'transactions' %}">Reset</a>
   </form>
@@ -37,5 +38,55 @@
 <script>
   $('#select_per_page').val({{ request.GET.per_page }});
   $('#go_to_page_number').val({{ request.GET.page }});
+
+function hide(){
+  var earrings = document.getElementById('id_deleteBtn');
+  earrings.style.visibility = 'hidden';
+}
+  
+function show(){
+  var earrings = document.getElementById('id_deleteBtn');
+  earrings.style.visibility = 'visible';
+  }
+  
+function setDeleteBtn(select){
+  if(select == 0){
+    hide();
+  }else{
+    show();
+  }}
+  
+function deleteTrans(){
+  
+  URL = "{% url 'transactions' %}delete"
+  console.log(URL)
+  let data = {
+    toDelete: $('#id_visitor_ip').val()
+  }
+  
+  $.ajax({
+    method:"GET",
+    url:URL,
+    data: data,
+  traditional: true,
+    success: function(data){
+       
+    },     
+    error: function(error_data){
+        console.log("error")
+        console.log(error_data)
+    }
+})
+}
+
+$('#id_visitor_ip').on("change", function(e) { 
+  // what you would like to happen
+  setDeleteBtn($('#id_visitor_ip').val().length)
+});
+
+$(document).ready(function () {
+  setDeleteBtn($('#id_visitor_ip').val().length);
+});
+  
 </script>
 {% endblock js %} 
