@@ -125,28 +125,40 @@ class VisitorTable(tables.Table):
 
 class TagsTable(tables.Table):
     id = tables.Column(visible = False)
-    name_cryteria = tables.Column(attrs = {
-      "td": {
+    # name_cryteria = tables.Column(attrs = {
+    #   "td": {
+    #     "style": "word-break: break-all"
+    #   },
+    #   "th": {
+    #     "style": "width: 28%"
+    #   }
+    # })
+    # value_cryteria = tables.Column(attrs = {
+    #   "td": {
+    #     "style": "word-break: break-all"
+    #   },
+    #   "th": {
+    #     "style": "width: 20%"
+    #   }
+    # })
+    count_cryterias = tables.Column(
+      empty_values = (),
+      verbose_name = "Cryterias",
+      attrs = {
+       "td": {
         "style": "word-break: break-all"
       },
       "th": {
-        "style": "width: 28%"
+        "style": "width: 5%"
       }
-    })
-    value_cryteria = tables.Column(attrs = {
-      "td": {
-        "style": "word-break: break-all"
-      },
-      "th": {
-        "style": "width: 20%"
-      }
-    })
+    }
+    )
     description = tables.Column(attrs = {
       "td": {
         "style": "word-break: break-all"
       },
       "th": {
-        "style": "width: 38%"
+        "style": "width: 65%"
       }
     })
     tag_name = tables.LinkColumn("tags_edit",
@@ -157,7 +169,7 @@ class TagsTable(tables.Table):
           "style": "word-break: break-all"
         },
         "th": {
-          "style": "width: 13%"
+          "style": "width: 30%"
         }
       })
     selection = tables.CheckBoxColumn(accessor = "pk",
@@ -174,10 +186,12 @@ class TagsTable(tables.Table):
       })
     class Meta: 
         models = models.LogsTag
-        sequence = ("id", "selection", "tag_name", "name_cryteria", "value_cryteria", "description")
+        sequence = ("id", "selection", "count_cryterias", "tag_name", "description")
         attrs = {
           "class": "table table-striped"
         }
+    def render_count_cryterias(self, record):
+      return record.cryterias.count()
 
 class TransactionsDetailTable(tables.Table):
     class Meta:
