@@ -10,30 +10,6 @@ from django.contrib.postgres.fields import DateTimeRangeField
 from django.contrib.postgres import forms as psql_forms
 from django.forms import inlineformset_factory, modelform_factory,formset_factory,modelformset_factory
 
-
-# class HeaderNameAndValueField(forms.MultiValueField):
-#     def __init__(self, **kwargs):
-#         # Define one message for all fields.
-#         error_messages = {
-#             'incomplete': 'Enter a country calling code and a phone number.',
-#         }
-#         # Or define a different message for each field.
-#         fields = (
-#             forms.Mode,
-#             CharField(
-#                 error_messages={'incomplete': 'Enter a phone number.'},
-#                 validators=[RegexValidator(r'^[0-9]+$', 'Enter a valid phone number.')],
-#             ),
-#             CharField(
-#                 validators=[RegexValidator(r'^[0-9]+$', 'Enter a valid extension.')],
-#                 required=False,
-#             ),
-#         )
-#         super().__init__(
-#             error_messages=error_messages, fields=fields,
-#             require_all_fields=False, **kwargs
-#         )
-
 class DateTimeRangeValidationForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()

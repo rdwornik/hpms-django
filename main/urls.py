@@ -15,6 +15,7 @@ router.register(r"tag-names", LogsTagNameList, basename="tag-names")
 router.register(r"note-titles", LogsNotesTitleList, basename="note-titles")
 router.register(r"note-visitor-ip", LogsNotesVisitorIpList, basename="note-visitor-ip")
 router.register(r"header-name", HeaderNameIpList, basename="header-name")
+
 urlpatterns = [
         path(
                 "",

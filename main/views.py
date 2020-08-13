@@ -15,63 +15,14 @@ from django.shortcuts import get_object_or_404
 
 from main import models, tables, filters, forms, utils
 
-def all_notes_form_view(request,id=None,visitor_ip=None,transaction=None):
-    if not id:
-        note = models.LogsNote(visitor_ip=visitor_ip, transaction=transaction)
-    else:
-        note = get_object_or_404(models.LogsNote,pk=id)
-        
-    if request.method == "POST":
-        form = forms.NoteForm(request.POST,instance=note)
-        if form.has_changed() and form.is_valid():
-            logsnote = form.save()
-            if transaction:
-                t = [models.Transaction.objects.get(pk=transaction)]
-            else:   
-                t = models.Transaction.objects.filter(Q(name__header_name=settings.VISITOR_IP) & Q(value__header_value=visitor_ip))
-            logsnote.transactions.add(*t)
-            return HttpResponseRedirect(reverse("all_notes"))
-        return render(request, "all_notes_form.html", {"form" : form})
-    
-    form = forms.NoteForm(instance=note)
-    return render(request, "all_notes_form.html", {"form" : form})
-
-def all_notes_view(request):
-    queryset = models.LogsNote.objects.all()
-
-    if request.method == "POST"and request.POST.__contains__("selected_notes"):
-            notes_to_delete = request.POST.getlist("selected_notes")
-            queryset.objects.filter(id__in=notes_to_delete).delete()
-
-    filter = filters.NoteFilter(request.GET,queryset=queryset)
-    table = tables.NotesTable(filter.qs, order_by="-id") 
-    RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
-    return render(request, "all_notes.html",  {
-        "form" : filter.form,
-        "table": table
-    })
-
-def activity_view(request):
-    time_after =    datetime.datetime.fromisoformat(request.GET.get('time_after'))  if request.GET.get('time_after')    else (datetime.datetime.now() + relativedelta(years=-1))  
-    time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.datetime.now() 
-    td = time_before - time_after       
-    time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
-    trunc_func = utils.trunc_methods_table[time_range]
-    qs = filters.ChartFilter(request.GET,queryset=models.Transaction.objects.all()).qs
-    queryset = qs.annotate(date=trunc_func('time', output_field=DateTimeField())).values('date').order_by('date').annotate(visits_count=Count('pk'))
-    current_date = utils.get_current_date[time_range](time_before)
-    previous, next = utils.get_previous_and_next[time_range](time_after,time_before)      
-    table = tables.ActivityTable(queryset,request=request,show_header=False)
-    form = filters.ChartFilter(request.GET).form
-    return render(request, "activity.html",  {
-        "time_range": time_range,
-        "current_date":current_date,
-        "next" : next,
-        "previous" : previous,
-        "table" : table,
-        "form" : form,
-        "tag_field" : "assigned_tags",
-    })
+class VisitorsTablesView(SingleTableView):
+    template_name = "visitors.html"
+    table_class = tables.VisitorTable
+    queryset = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITOR_IP)).values("header_value","id",visits=Count("id")) 
+    paginator_class = LazyPaginator
+    table_pagination = {
+        "per_page": 10
+    }
     
 def transactions_view(request):
 
@@ -115,6 +66,28 @@ def transactions_detail_view(request,visitor_ip, transaction=1,delete=None):
         "table":table,
         "transaction": transaction,
         "visitor_ip": visitor_ip
+    })
+
+def activity_view(request):
+    time_after =    datetime.datetime.fromisoformat(request.GET.get('time_after'))  if request.GET.get('time_after')    else (datetime.datetime.now() + relativedelta(years=-1))  
+    time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.datetime.now() 
+    td = time_before - time_after       
+    time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
+    trunc_func = utils.trunc_methods_table[time_range]
+    qs = filters.ChartFilter(request.GET,queryset=models.Transaction.objects.all()).qs
+    queryset = qs.annotate(date=trunc_func('time', output_field=DateTimeField())).values('date').order_by('date').annotate(visits_count=Count('pk'))
+    current_date = utils.get_current_date[time_range](time_before)
+    previous, next = utils.get_previous_and_next[time_range](time_after,time_before)      
+    table = tables.ActivityTable(queryset,request=request,show_header=False)
+    form = filters.ChartFilter(request.GET).form
+    return render(request, "activity.html",  {
+        "time_range": time_range,
+        "current_date":current_date,
+        "next" : next,
+        "previous" : previous,
+        "table" : table,
+        "form" : form,
+        "tag_field" : "assigned_tags",
     })
     
 def tags_form_view(request, id=None):
@@ -189,11 +162,38 @@ def tags_view(request):
         "table": table
     })
 
-class VisitorsTablesView(SingleTableView):
-    template_name = "visitors.html"
-    table_class = tables.VisitorTable
-    queryset = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITOR_IP)).values("header_value","id",visits=Count("id")) 
-    paginator_class = LazyPaginator
-    table_pagination = {
-        "per_page": 10
-    }
+def all_notes_view(request):
+    queryset = models.LogsNote.objects.all()
+
+    if request.method == "POST"and request.POST.__contains__("selected_notes"):
+            notes_to_delete = request.POST.getlist("selected_notes")
+            queryset.objects.filter(id__in=notes_to_delete).delete()
+
+    filter = filters.NoteFilter(request.GET,queryset=queryset)
+    table = tables.NotesTable(filter.qs, order_by="-id") 
+    RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
+    return render(request, "all_notes.html",  {
+        "form" : filter.form,
+        "table": table
+    })
+
+def all_notes_form_view(request,id=None,visitor_ip=None,transaction=None):
+    if not id:
+        note = models.LogsNote(visitor_ip=visitor_ip, transaction=transaction)
+    else:
+        note = get_object_or_404(models.LogsNote,pk=id)
+        
+    if request.method == "POST":
+        form = forms.NoteForm(request.POST,instance=note)
+        if form.has_changed() and form.is_valid():
+            logsnote = form.save()
+            if transaction:
+                t = [models.Transaction.objects.get(pk=transaction)]
+            else:   
+                t = models.Transaction.objects.filter(Q(name__header_name=settings.VISITOR_IP) & Q(value__header_value=visitor_ip))
+            logsnote.transactions.add(*t)
+            return HttpResponseRedirect(reverse("all_notes"))
+        return render(request, "all_notes_form.html", {"form" : form})
+    
+    form = forms.NoteForm(instance=note)
+    return render(request, "all_notes_form.html", {"form" : form})
