@@ -130,6 +130,7 @@ LOGIN_REDIRECT_URL = '/hpms3/visitors/'
 LOGIN_URL = '/hpms3/login/'
 
 LOGIN_EXEMPT_URLS = (
+    r'^$',
     r'^hpms3/logout/$',
     r'^hpms3/api/logslogs/$',
 )

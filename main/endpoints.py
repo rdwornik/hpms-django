@@ -18,7 +18,7 @@ class LogsNotesTitleList(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated] 
     class Meta:
         model = models.LogsNote
-        ordering = ['-pk']
+        
     def get_queryset(self):
         qs = models.LogsNote.objects.all()
         title = self.request.query_params.get('title', None)
@@ -35,7 +35,7 @@ class LogsNotesVisitorIpList(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     class Meta:
         model = models.LogsNote
-        ordering = ['-pk']
+        
     def get_queryset(self):
         qs = models.LogsNote.objects.all().order_by('visitor_ip').distinct('visitor_ip')
         visitor_ip = self.request.query_params.get('visitor_ip', None)
@@ -52,7 +52,7 @@ class LogsTagNameList(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.LogsTagNameModelSerializer 
     class Meta:
         model = models.LogsTag
-        ordering = ['-pk']
+
     def get_queryset(self):
         qs = models.LogsTag.objects.all()
         tag_name = self.request.query_params.get('tag_name', None)
@@ -69,7 +69,7 @@ class VisitorIpList(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     class Meta:
         model = models.HeaderValue
-        ordering = ['-pk']
+        
     def get_queryset(self):
         qs = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITOR_IP)).distinct() 
         visitor_ip = self.request.query_params.getlist('visitor_ip', None)
@@ -87,7 +87,7 @@ class HeaderNameIpList(viewsets.ReadOnlyModelViewSet):
     
     class Meta:
         model = models.HeaderName
-        ordering = ['-pk']
+        
     def get_queryset(self):
         qs = models.HeaderName.objects.all()
         header_name = self.request.query_params.get('header_0', None)

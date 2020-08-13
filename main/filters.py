@@ -11,7 +11,7 @@ from main import forms, models
 class CharRangeFilter(rest_filters.RangeFilter):
     class CharRangeField(fields.RangeField):
         def __init__(self, *args, **kwargs):
-            super().__init__(widget=MultiWidget(widgets=[Select(attrs={"data-url":reverse_lazy("header-name-list"),"tags":"true"}), TextInput]),fields=(
+            super().__init__(widget=MultiWidget(widgets=[Select(attrs={"data-url":reverse_lazy("header-name-list"),"tags":"true"}), TextInput(attrs={"placeholder":"Type header value"})]),fields=(
                 CharField(),
                 CharField()
             ), *args, **kwargs)
@@ -60,8 +60,10 @@ class TransactionsFilter(django_filters.FilterSet):
     def server_filter(self, queryset, name, value):
         return queryset.filter(Q(name__header_name=settings.SERVER_NAME) & Q(value=value))
     def header_filter(self, queryset, name, value):
-        print(value.start, value.stop)
-        return queryset.filter(Q(name__header_name=value.start) & Q(value__header_value=value.stop))
+        if(value.start and value.stop):
+            return queryset.filter(Q(name__header_name=value.start) & Q(value__header_value=value.stop))
+        else:
+            return queryset 
 
     class Meta:
         model = models.Transaction

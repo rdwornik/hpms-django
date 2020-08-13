@@ -19,6 +19,7 @@ def validate_regex(value):
 # Create your models here.
 class HeaderName(models.Model):
     header_name = models.TextField(unique=True)
+
     def __str__(self):
         return "{0}".format(self.header_name)
     class Meta:
@@ -28,6 +29,9 @@ class HeaderName(models.Model):
 class HeaderValue(models.Model):
     header_value = models.TextField(unique=True)
     header_names = models.ManyToManyField(HeaderName, through="LogsLog")
+
+    class Meta:
+        ordering = ('header_value',)
 
     def __str__(self):
         return "{0}".format(self.header_value)

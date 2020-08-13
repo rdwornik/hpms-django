@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<main class="login-form">
-  <div class="cotainer mt-2">
+<main class="login-form" style="width: 90%;" >
+  <div class="cotainer mt-4">
       <div class="row justify-content-center">
           <div class="col-md-8">
               <div class="card">
@@ -15,6 +15,7 @@
                           {{ form.username|add_label_class:"col-md-4 col-form-label text-md-right" }}
                           <div class="col-6">
                                 <input 
+                                  style="width:300px"
                                   type="text"
                                   class="form-control {% if form.username.errors %}is-­invalid{% endif %}"
                                   id="id_username"
@@ -32,6 +33,7 @@
                           {{ form.password|add_label_class:"col-md-4 col-form-label text-md-right" }}
                           <div class="col-6">
                             <input
+                              style="width:300px"
                               type="password"
                               class="form-control{% if form.password.errors %}is-­invalid{% endif %}"
                               id="id_password"
@@ -45,7 +47,7 @@
                           </div>
                         </div>
                         <div class="col-md-6 offset-md-4">
-                            <button id="login-button" type="submit" class="btn btn-primary btn-block">
+                            <button id="login-button" type="submit" class="btn btn-primary">
                                 Login
                             </button> 
                         </div>
