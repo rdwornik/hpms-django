@@ -8,6 +8,13 @@ class HeaderValueModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.HeaderValue
         fields = ('id','text')
+
+class HeaderNameModelSerializer(serializers.ModelSerializer):
+    text = serializers.CharField(source="header_name")
+    id = serializers.CharField(source="header_name")
+    class Meta:
+        model = models.HeaderName
+        fields = ('id','text')
         
 class LogsTagNameModelSerializer(serializers.ModelSerializer):
     text = serializers.CharField(source="tag_name")

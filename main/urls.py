@@ -5,7 +5,7 @@ from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 
 from main import views
-from .endpoints import LogsLogViewSet, ChartViewSet, VisitorIpList, LogsTagNameList, LogsNotesTitleList,LogsNotesVisitorIpList
+from .endpoints import LogsLogViewSet, ChartViewSet, VisitorIpList, LogsTagNameList, LogsNotesTitleList,LogsNotesVisitorIpList, HeaderNameIpList
 
 router = routers.DefaultRouter(trailing_slash=True)
 router.register(r"logslogs", LogsLogViewSet)
@@ -14,7 +14,7 @@ router.register(r"visitor-ip", VisitorIpList, basename="visitor-ip")
 router.register(r"tag-names", LogsTagNameList, basename="tag-names")
 router.register(r"note-titles", LogsNotesTitleList, basename="note-titles")
 router.register(r"note-visitor-ip", LogsNotesVisitorIpList, basename="note-visitor-ip")
-
+router.register(r"header-name", HeaderNameIpList, basename="header-name")
 urlpatterns = [
         path(
                 "",

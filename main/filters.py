@@ -3,10 +3,19 @@ import ast
 
 from django.conf import settings
 from django.db.models import Q
-from django_filters import rest_framework as rest_filters
-from django.forms import SelectMultiple, Select, NumberInput
+from django_filters import rest_framework as rest_filters , fields
+from django.forms import SelectMultiple, Select, NumberInput, MultiWidget, TextInput, ModelChoiceField, CharField
 from django.urls import reverse_lazy
 from main import forms, models
+
+class CharRangeFilter(rest_filters.RangeFilter):
+    class CharRangeField(fields.RangeField):
+        def __init__(self, *args, **kwargs):
+            super().__init__(widget=MultiWidget(widgets=[Select(attrs={"data-url":reverse_lazy("header-name-list"),"tags":"true"}), TextInput]),fields=(
+                CharField(),
+                CharField()
+            ), *args, **kwargs)
+    field_class = CharRangeField
 
 class NoteFilter(django_filters.FilterSet):
     visitor_ip =    django_filters.CharFilter(required=False,method='visitor_ip_filter',widget=Select(attrs={"data-url":reverse_lazy("note-visitor-ip-list"),"tags":"true"}))
@@ -36,11 +45,12 @@ class TransactionsFilter(django_filters.FilterSet):
     assigned_tags = django_filters.ModelMultipleChoiceFilter(required=False,queryset=models.LogsTag.objects.all())
     server =        django_filters.ModelChoiceFilter(required=False,method='server_filter',queryset=models.HeaderValue.objects.filter(Q(header_names__header_name=settings.SERVER_NAME)).distinct())
     time =          django_filters.DateTimeFromToRangeFilter(required=False)
+    header =        CharRangeFilter(required=False,method='header_filter')
 
     def __init__(self, *args, **kwargs):
         super(TransactionsFilter, self).__init__(*args, **kwargs)
         self.form.fields['assigned_tags'].label_from_instance = self.assigned_tags_label_from_instance
-
+        
     @staticmethod
     def assigned_tags_label_from_instance(obj):
         return "%s" % obj.tag_name
@@ -49,6 +59,9 @@ class TransactionsFilter(django_filters.FilterSet):
         return queryset.filter(Q(name__header_name=settings.VISITOR_IP) & Q(value__in=ast.literal_eval(value)))
     def server_filter(self, queryset, name, value):
         return queryset.filter(Q(name__header_name=settings.SERVER_NAME) & Q(value=value))
+    def header_filter(self, queryset, name, value):
+        print(value.start, value.stop)
+        return queryset.filter(Q(name__header_name=value.start) & Q(value__header_value=value.stop))
 
     class Meta:
         model = models.Transaction

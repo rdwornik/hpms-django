@@ -79,6 +79,24 @@ class VisitorIpList(viewsets.ReadOnlyModelViewSet):
         elif visitor_ip :
             qs = qs.filter(pk__in=visitor_ip)
         return qs
+
+class HeaderNameIpList(viewsets.ReadOnlyModelViewSet):
+    serializer_class = serializers.HeaderNameModelSerializer
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = [IsAuthenticated]
+    
+    class Meta:
+        model = models.HeaderName
+        ordering = ['-pk']
+    def get_queryset(self):
+        qs = models.HeaderName.objects.all()
+        header_name = self.request.query_params.get('header_0', None)
+        q = self.request.query_params.get('q', None)
+        if q is not None:
+            qs = qs.filter(header_name__icontains=q)
+        elif header_name:
+            qs = qs.filter(header_name=header_name)
+        return qs
     
 class ChartViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Transaction.objects.all()
