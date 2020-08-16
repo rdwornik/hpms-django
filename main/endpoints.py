@@ -109,8 +109,11 @@ class ChartViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         chart_type =        utils.chart_type[str(request.GET.get('chart_type'))] if request.GET.get('chart_type') else utils.chart_type['1']
         distribution_type = utils.distribution_type[str(request.GET.get('distribution_type'))] if request.GET.get('distribution_type') else utils.distribution_type['2']
-        time_after =    datetime.datetime.fromisoformat(request.GET.get('time_after'))  if request.GET.get('time_after')    else (datetime.datetime.now() + relativedelta(years=-1))  
-        time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.datetime.now() 
+        # time_after =    datetime.datetime.fromisoformat(request.GET.get('time_after'))  if request.GET.get('time_after')    else (datetime.datetime.now() + relativedelta(years=-1))  
+        # time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.datetime.now()
+        d = datetime.date.today()
+        time_after =    datetime.datetime.fromisoformat(request.GET.get('time_after'))  if request.GET.get('time_after')    else (datetime.date(year=d.year, month=1, day=1))  
+        time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.date(year=d.year, month=12, day=31)
         td = time_before - time_after       
         time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
         

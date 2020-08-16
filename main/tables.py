@@ -120,7 +120,7 @@ class VisitorTable(tables.Table):
         sequence = ("visitor_ip", "visits", "add_note")
         attrs = {
           "class": "table table-striped",
-          "style": "width: 60%"
+          "style": "width: 70%"
         }
 
 class TagsTable(tables.Table):
@@ -200,7 +200,9 @@ class TransactionsDetailTable(tables.Table):
         attrs = {
           "class": "table table-striped"
         }     
-
+    def order_name(self, queryset, is_descending):
+        queryset = queryset.order_by(("-" if is_descending else "") + "name__header_name")
+        return (queryset, True)
 class TransactionsTable(tables.Table):
     id = tables.Column(orderable = False, visible = False)
     visitor_ip = tables.Column(verbose_name = "Visitor IP",

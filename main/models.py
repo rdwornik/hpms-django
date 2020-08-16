@@ -54,7 +54,7 @@ class LogsTag(models.Model):
     class Meta:
         verbose_name = "Logs Tag"
         verbose_name_plural = "Logs Tags"
-        ordering = ('id',)
+        ordering = ('-id',)
 
     def __str__(self):
         return "{0} {1}".format(self.id,self.tag_name)

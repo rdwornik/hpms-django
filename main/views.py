@@ -19,16 +19,12 @@ class VisitorsTablesView(SingleTableView):
     template_name = "visitors.html"
     table_class = tables.VisitorTable
     queryset = models.HeaderValue.objects.filter(Q(header_names__header_name=settings.VISITOR_IP)).values("header_value","id",visits=Count("id")) 
-    paginator_class = LazyPaginator
+    # paginator_class = LazyPaginator
     table_pagination = {
         "per_page": 10
     }
     
 def transactions_view(request):
-
-    if request.GET.get("action") == "delete":
-        visitors_to_delete = request.GET.getlist("visitor_ip")
-        models.Transaction.objects.filter(value__in=visitors_to_delete).delete()
     
     if request.GET.get("action") == "addnote":
         visitor_ip = request.GET.get("visitor_ip")
@@ -46,7 +42,8 @@ def transactions_view(request):
                                                     visitor_ip=Subquery(subquery.filter(Q(name__header_name=settings.VISITOR_IP)).values('value__header_value')[:1]),
                                                     request_uri=Subquery(subquery.filter(Q(name__header_name=settings.REQUEST_URI)).values('value__header_value')[:1]))
     table = tables.TransactionsTable(queryset)
-    RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
+    # RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
+    RequestConfig(request,paginate={"per_page": 10}).configure(table)
     return render(request, "transactions.html",  {
         "form" : filter.form,
         "tag_field" : "assigned_tags",
@@ -54,13 +51,10 @@ def transactions_view(request):
         "filter" : filter,
     })
 
-def transactions_detail_view(request,visitor_ip, transaction=1,delete=None):
-    if delete:
-        models.Transaction.objects.get(pk=transaction).delete()
-        return HttpResponseRedirect(reverse("transactions"))
+def transactions_detail_view(request,visitor_ip, transaction=1):
 
     t = models.Transaction.objects.get(pk=transaction)
-    table = tables.TransactionsDetailTable(t.logslog_set.all())    
+    table = tables.TransactionsDetailTable(t.logslog_set.all(),order_by="name")    
     RequestConfig(request,paginate={"per_page": 25}).configure(table)
     return render(request, "transactions_detail.html", {
         "table":table,
@@ -69,8 +63,11 @@ def transactions_detail_view(request,visitor_ip, transaction=1,delete=None):
     })
 
 def activity_view(request):
-    time_after =    datetime.datetime.fromisoformat(request.GET.get('time_after'))  if request.GET.get('time_after')    else (datetime.datetime.now() + relativedelta(years=-1))  
-    time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.datetime.now() 
+    # time_after =    datetime.datetime.fromisoformat(request.GET.get('time_after'))  if request.GET.get('time_after')    else (datetime.datetime.now() + relativedelta(years=-1))  
+    # time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.datetime.now() 
+    d = datetime.date.today()
+    time_after =    datetime.datetime.fromisoformat(request.GET.get('time_after'))  if request.GET.get('time_after')    else (datetime.date(year=d.year, month=1, day=1))  
+    time_before =   datetime.datetime.fromisoformat(request.GET.get('time_before')) if request.GET.get('time_before')   else datetime.date(year=d.year, month=12, day=31)
     td = time_before - time_after       
     time_range = [key for key, value in utils.time_range.items() if value(td) == True][0]                                                
     trunc_func = utils.trunc_methods_table[time_range]
@@ -107,6 +104,10 @@ def tags_form_view(request, id=None):
             request.POST,
             queryset=queryset
         )
+
+        if form.is_valid() and formset.is_valid() and not form.has_changed() and not formset.has_changed():
+            return HttpResponseRedirect(reverse("tags"))
+
         if form.is_valid() and form.has_changed() and formset.is_valid():
             tag = form.save()
 
@@ -134,7 +135,7 @@ def tags_form_view(request, id=None):
                 if tag.cryterias.count() == 0:
                     tag.delete()
                     return HttpResponseRedirect(reverse("tags"))
-
+                            
             models.LogsTagAssign.objects.assign_tags_on_tags_created(tag,edited)
             return HttpResponseRedirect(reverse("tags"))
         return render(request, "tags_form.html",{"formset":formset,"form":form})
@@ -147,7 +148,7 @@ def tags_view(request):
     queryset = models.LogsTag.objects.all()
     if request.method == "POST"and request.POST.__contains__("selected_tags"):
         selected_tags = request.POST.getlist("selected_tags")
-        tags_to_delete = models.LogsTag.objects.filter(id__in=selected_tags)
+        tags_to_delete = queryset.filter(id__in=selected_tags)
         for tag_to_delete in tags_to_delete:
             for cryteria in tag_to_delete.cryterias.all():
                 if cryteria.logstag_set.count() == 1:
@@ -156,7 +157,8 @@ def tags_view(request):
 
     filter = filters.TagFilter(request.GET,queryset=queryset)
     table = tables.TagsTable(filter.qs, order_by="-id") 
-    RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
+    # RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
+    RequestConfig(request,paginate={"per_page": 10}).configure(table)
     return render(request, "tags.html",  {
         "form" : filter.form,
         "table": table
@@ -167,11 +169,12 @@ def all_notes_view(request):
 
     if request.method == "POST"and request.POST.__contains__("selected_notes"):
             notes_to_delete = request.POST.getlist("selected_notes")
-            queryset.objects.filter(id__in=notes_to_delete).delete()
+            queryset.filter(id__in=notes_to_delete).delete()
 
     filter = filters.NoteFilter(request.GET,queryset=queryset)
     table = tables.NotesTable(filter.qs, order_by="-id") 
-    RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
+    # RequestConfig(request,paginate={"per_page": 10,"paginator_class":LazyPaginator}).configure(table)
+    RequestConfig(request,paginate={"per_page": 10}).configure(table)
     return render(request, "all_notes.html",  {
         "form" : filter.form,
         "table": table

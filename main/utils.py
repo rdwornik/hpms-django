@@ -187,7 +187,7 @@ get_previous_and_next = {
 get_time_after_and_before = {
     "minute"    : lambda date: (date.strftime('%Y-%m-%d %H:%M'), (date + relativedelta(minutes=1)).strftime('%Y-%m-%d %H:%M')),       
     "hour"      : lambda date: (date.strftime('%Y-%m-%d %H:%M'), (date + relativedelta(hours=1)     + relativedelta(minutes=-1) ).strftime('%Y-%m-%d %H:%M')),   
-    "day"       : lambda date: (date.strftime('%Y-%m-%d %H:%M'), (date + relativedelta(days=1)      + relativedelta(hours=-1)   ).strftime('%Y-%m-%d %H:%M')),
+    "day"       : lambda date: (date.strftime('%Y-%m-%d %H:%M'), (date + relativedelta(days=1)      + relativedelta(minutes=-1)   ).strftime('%Y-%m-%d %H:%M')),
     "month"     : lambda date: (date.strftime('%Y-%m-%d %H:%M'), (date + relativedelta(months=1)    + relativedelta(days=-1)    ).strftime('%Y-%m-%d %H:%M')),
 }
 

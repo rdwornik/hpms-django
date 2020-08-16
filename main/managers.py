@@ -16,7 +16,6 @@ class LogsTagAssignManager(Manager):
         
     def assign_tags_on_tags_created(self, tag, edited):
         if edited:
-            print("heloo")
             self.filter(tag=tag).delete()
         
         transactions= models.Transaction.objects.all()
